@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sound</title>
+        <link href="css/grayscale.css" rel="stylesheet"/>
+        <script src="lib/jsgamesoup.js"></script>
+        <script src="lib/collisions.js"></script>
+        <script src="lib/audio.js"></script>
+        <script src="lib/simpleclass.js"></script>
+        <script src="js/08_app.js"></script>
+    </head>
+    <body>
+        <canvas id='game' width="600" height="600"></canvas>
+        <div id="score">
+            Your Score: <span class="net"></span>
+            <br/>
+            <small>
+            total score =
+            (-<span class="targets-appeared"></span> number of targets that have appeared)
+            + (-<span class="shots-fired"></span> number of shots fired)
+            + (5x<span class="targets-destroyed"></span> number of targets destroyed)
+            </small>
+        </div>
+        <div id="pointer-coords">
+            X: <span class="x"></span>
+            Y: <span class="y"></span>
+            (coordinates of mouse relative to the game field canvas)
+        </div>
+    </body>
+</html>
