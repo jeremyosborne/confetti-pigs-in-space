@@ -1,4 +1,7 @@
-
+(function(exports) {
+    
+    
+    
     // Keep track of score in the game.
     var Score = SimpleClass(function() {
         this.shotsFired = 0;
@@ -27,3 +30,8 @@
     });
     
     
+    
+    // Export.
+    exports.Score = Score;
+    
+})(window);

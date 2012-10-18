@@ -1,0 +1,11 @@
+{
+    "name": "shootdown",
+    "version": "0.0.1",
+    "description": "A simple video game.",
+    "author": "Jeremy Osborne <jeremywosborne@gmail.com>",
+    "dependencies": {
+    },
+    "devDependencies": {
+    },
+    "engine": "node >= 0.6.x"
+}

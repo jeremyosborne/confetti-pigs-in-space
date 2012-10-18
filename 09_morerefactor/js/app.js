@@ -6,19 +6,19 @@ window.onload = function() {
     //------------------------------------------------------------------- MAIN
     // Early warning if in an old browser that doesn't support certain things.
     if (!document.querySelector || !Array.prototype.filter) {
-        alert("This example needs a newer browser that supports document.querySelector.");
+        alert("This example needs a newer browser. Please get a newer browser.");
     }
 
     // Initialize the game objects and run the game.
-    var game = new JSGameSoup(document.querySelector("#game"), 40);
+    window.game = new JSGameSoup(document.querySelector("#game"), 40);
     // We will need the dimensions provided by world.
-    var world = new World();
+    window.world = new World();
     // Load the explosion audio.
-    var audio = new AudioManager();
-    audio.load("audio/explosion1.wav", "explosion1");
-    audio.load("audio/explosion2.wav", "explosion2");
-    audio.load("audio/explosion3.wav", "explosion3");
-    audio.load("audio/explosion4.wav", "explosion4");
+    window.audio = new AudioManager();
+    audio.load("../audio/explosion1.wav", "explosion1");
+    audio.load("../audio/explosion2.wav", "explosion2");
+    audio.load("../audio/explosion3.wav", "explosion3");
+    audio.load("../audio/explosion4.wav", "explosion4");
     // Add a method to our audio instance that will play
     // a random explosion.
     audio.playExplosion = function() {
@@ -26,7 +26,7 @@ window.onload = function() {
         this.play("explosion"+i);
     };
     // We will need access to the score.
-    var score = new Score();
+    window.score = new Score();
     game.addEntity(world);
     game.addEntity(score);
     game.addEntity(new MouseCoords());
