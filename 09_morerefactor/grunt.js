@@ -20,7 +20,7 @@ module.exports = function(grunt) {
                     "lib/jsgamesoup.js",
                     "lib/collisions.js",
                     "lib/audio.js",
-                    "lib/simpleclass.js",
+                    "lib/klass.js",
                     "js/crosshair.js",
                     "js/flak.js",
                     "js/mousecoords.js",

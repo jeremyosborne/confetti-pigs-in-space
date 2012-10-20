@@ -8,3 +8,6 @@ Purpose of this step
     npm install -g grunt
     grunt
   To build the code.
+* Also, wanted more of a mixin approach to my classes, so changed up
+  the SimpleClass constructor to the klass constructor to accommodate
+  things.
