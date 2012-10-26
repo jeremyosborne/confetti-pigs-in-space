@@ -1,13 +1,7 @@
-Purpose of this step
-====================
-* Code got too big, broke up into a real project structure.
-* integrate with grunt with the intention of building a server side
-  node.js server component, as well as to make building of the code
-  more automatic.
-* From here on, need to:
-    npm install -g grunt
-    grunt
-  To build the code.
-* Also, wanted more of a mixin approach to my classes, so changed up
-  the SimpleClass constructor to the klass constructor to accommodate
-  things.
+Step v10
+========
+* Make it easier to track and locate the various shapes on the screen,
+  starting with the targets. Manage their location and their polygon
+  separately.
+* TODO: Add a surface object for static canvas drawn images. First surface
+  object: the target.

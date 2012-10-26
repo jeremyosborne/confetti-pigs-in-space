@@ -5,10 +5,9 @@
     // Use a crosshair to track the mouse around the game.
     var Crosshair = klass({
         init: function() {
-            // Only when we mouse over show the crosshair.
             // Coordinates are always relative to the canvas.
-            this.x = undefined;
-            this.y = undefined;
+            this.x = 0;
+            this.y = 0;
             // Radial distance of each hand of the crosshair (in pixels).
             this.radius = 10;
         }, 
