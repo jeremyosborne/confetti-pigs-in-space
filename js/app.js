@@ -15,10 +15,10 @@ window.onload = function() {
     window.world = new World();
     // Load the explosion audio.
     window.audio = new AudioManager();
-    audio.load("../audio/explosion1.wav", "explosion1");
-    audio.load("../audio/explosion2.wav", "explosion2");
-    audio.load("../audio/explosion3.wav", "explosion3");
-    audio.load("../audio/explosion4.wav", "explosion4");
+    audio.load("audio/explosion1.wav", "explosion1");
+    audio.load("audio/explosion2.wav", "explosion2");
+    audio.load("audio/explosion3.wav", "explosion3");
+    audio.load("audio/explosion4.wav", "explosion4");
     // Add a method to our audio instance that will play
     // a random explosion.
     audio.playExplosion = function() {
