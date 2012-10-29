@@ -7,8 +7,8 @@
     // Targets start at a random height.
     var Target = klass({
         init: function(y) {
-            // Initial offset is off the screen.
-            this.x = -(this.width);
+            // Initial offset is not quite off screen.
+            this.x = -(this.width + 1);
             this.y = y;
             // How fast does the target move (random).
             // Between 1 and 10 pixels per frame.
@@ -45,11 +45,8 @@
             // Move the target from left to right across the game field.
             update: function(g) {
                 this.x += this.speed;
-                if (this.x > game.world.width) {
-                    // No longer a target, delete from the playfield.
-                    g.delEntity(this);
-                }
-                else if (this.exploding) {
+                
+                if (this.exploding) {
                     g.delEntity(this);
                     // When the target explodes, add flak where the target was.
                     g.addEntity(new Flak(this.x + this.width/2,
@@ -85,7 +82,15 @@
                     // Increase targets we have shot down.
                     game.score.increment("targetsDestroyed");
                 }
-            }
+            },
+            /**
+             * Called when the target does not collide with something during
+             * a negated collision test.
+             */
+            collide_not_aabb: function() {
+                // We're outside the world, we're done.
+                game.delEntity(this);
+            },
         }
     });
     

@@ -29,6 +29,10 @@
                 // removal from the map.
                 game.addEntity(new Flak(game.pointerPosition[0], game.pointerPosition[1]));
             },
+            // For testing if things are within the viewable world or not.
+            get_collision_aabb: function() {
+                return [0, 0, this.width, this.height];
+            },
             update: function(g) {
                 // Check for collisions between targets and explosions.
                 var targets = g.entities.filter(function(entity) {
@@ -41,7 +45,7 @@
                 
                 // Check for targets that have traveled outside of the play
                 // area.
-                collide.aabb(targets, [this]);
+                collide.not_aabb(targets, [this]);
             }
         }
     });

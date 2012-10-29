@@ -59,6 +59,9 @@ Step v10
   global variables.
 * Cut down on the globals, and rename the main app.js to game.js.
 * Bring linting back into the code build process.
-* TODO: Make anti-collision formulas for when I want to know when something
+* Make anti-collision formulas for when I want to know when something
   is no longer colliding with something else.
-* TODO: Have the targets fly in from all sides.
+* Switch the targets testing for their removal by having them test
+  for an anti collision against the world object.
+* TODO: Add a travel velocity to the targets.
+* TODO: Have the targets fly in from random locations around the world.
