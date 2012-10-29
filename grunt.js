@@ -34,7 +34,7 @@ module.exports = function(grunt) {
                     "js/target.js",
                     "js/world.js",
                     // Load this one last.
-                    "js/app.js",
+                    "js/game.js",
                 ],
                 dest : 'dist/<%= pkg.name %>.js',
             }
@@ -66,6 +66,8 @@ module.exports = function(grunt) {
                 boss : true,
                 eqnull : true,
                 browser : true,
+                es5: true,
+                devel: true,
             },
             globals : {},
         },
@@ -74,7 +76,7 @@ module.exports = function(grunt) {
 
     // Default task.
     //grunt.registerTask('default', 'lint qunit concat min');
-    grunt.registerTask('default', 'concat watch');
-    grunt.registerTask('build', 'concat');
-    
+    grunt.registerTask('default', 'lint concat watch');
+
+    grunt.registerTask('build', 'concat');    
 };

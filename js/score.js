@@ -1,3 +1,4 @@
+/*global klass:false, game:false*/
 (function(exports) {
     
     
@@ -14,7 +15,7 @@
                 targetsAppeared: document.querySelector("#score .targets-appeared"),
                 targetsDestroyed: document.querySelector("#score .targets-destroyed"),
                 net: document.querySelector("#score .net")
-            }
+            };
         }, 
         mixin: {
             // Display the score on the page.

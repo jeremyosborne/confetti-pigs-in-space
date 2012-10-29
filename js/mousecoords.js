@@ -1,3 +1,4 @@
+/*global klass:false, game:false*/
 (function(exports) {
     
     

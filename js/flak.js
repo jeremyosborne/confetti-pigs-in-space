@@ -1,3 +1,4 @@
+/*global klass:false, game:false*/
 (function(exports) {
 
 
@@ -10,7 +11,7 @@
             this.y = y;
             
             // Increase shots fired.
-            score.increment("shotsFired");
+            game.score.increment("shotsFired");
         }, 
         mixin: {
             // The current (and initial) radius in pixels of the explosion.

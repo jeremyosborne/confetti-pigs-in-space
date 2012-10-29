@@ -1,3 +1,4 @@
+/*global klass:false, game:false, Flak:false, Surface:false*/
 (function(exports) {
     
 
@@ -13,7 +14,7 @@
             // Between 1 and 10 pixels per frame.
             this.speed = Math.floor(Math.random() * 10 + 1);
             // Increase targets that have appeared.
-            score.increment("targetsAppeared");
+            game.score.increment("targetsAppeared");
         }, 
         mixin: {
             // Relative shape of the object.
@@ -44,7 +45,7 @@
             // Move the target from left to right across the game field.
             update: function(g) {
                 this.x += this.speed;
-                if (this.x > world.width) {
+                if (this.x > game.world.width) {
                     // No longer a target, delete from the playfield.
                     g.delEntity(this);
                 }
@@ -79,10 +80,10 @@
                     this.exploding = true;
                     
                     // Trigger an explosion sound.
-                    audio.playExplosion();
+                    game.audio.playExplosion();
                     
                     // Increase targets we have shot down.
-                    score.increment("targetsDestroyed");
+                    game.score.increment("targetsDestroyed");
                 }
             }
         }

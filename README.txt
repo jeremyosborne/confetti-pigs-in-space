@@ -57,6 +57,7 @@ Step v10
 * Clean up the collision routine (performance improvement during iteration),
   get rid of unnecessary export of helper functions, get rid of accidental
   global variables.
+* TODO: Cut down on the globals, and rename the main app.js to game.js.
 * TODO: Bring linting back into the code build process.
 * TODO: Make anti-collision formulas for when I want to know when something
   is no longer colliding with something else.

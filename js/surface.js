@@ -1,3 +1,4 @@
+/*global klass:false*/
 (function(exports) {
     
     
@@ -26,8 +27,9 @@
             var context;
             
             if (!args.height || !args.width || !args.shapes) {
-                throw new Error("Incorrectly initializing a surface. Missing arguments. Logging arguments to console.");
+                console.error("Incorrectly initializing a surface. Missing arguments. Logging arguments to console.");
                 console.error(arguments);
+                throw new Error("Incorrectly initializing a surface. Missing arguments.");
             }
 
             // Build our canvas element to be used as our image.
@@ -94,7 +96,7 @@
                 
                 c.beginPath();
                 
-                c.moveTo(points[0].x, points[0].y)
+                c.moveTo(points[0].x, points[0].y);
                 for (i = 1; i < points.length; i++) {
                     c.lineTo(points[i].x, points[i].y);
                 }
@@ -116,7 +118,7 @@
                 
                 c.beginPath();
                 
-                c.moveTo(points[0].x, points[0].y)
+                c.moveTo(points[0].x, points[0].y);
                 for (i = 1; i < points.length; i++) {
                     c.lineTo(points[i].x, points[i].y);
                 }
