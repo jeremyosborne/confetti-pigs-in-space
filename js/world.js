@@ -28,8 +28,8 @@
                 // removal from the map.
                 game.addEntity(new Flak(game.pointerPosition[0], game.pointerPosition[1]));
             },
-            // In the update of the world, check for collisions.
             update: function(g) {
+                // Check for collisions between targets and explosions.
                 var targets = g.entities.filter(function(entity) {
                     return entity instanceof Target;
                 });
@@ -37,6 +37,10 @@
                     return entity instanceof Flak;
                 });
                 collide.aabb(targets, flak);
+                
+                // Check for targets that have traveled outside of the play
+                // area.
+                collide.aabb(targets, [this]);
             }
         }
     });
