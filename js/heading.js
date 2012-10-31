@@ -15,14 +15,32 @@
          * @constructs
          */
         init: function(deg) {
+            
             // Need radians in JavaScript.
             var rad = deg/180*Math.PI;
+            
+            // Save heading info.
+            this.angleDeg = deg;
+            this.angleRad = rad;
+
             // Decompose into x and y direction components.
+            // And since these translate into device coordinate directions,
+            // reverse the sign for y.
             this.x = Math.cos(rad);
-            this.y = Math.sin(rad);
+            this.y = -Math.sin(rad);
         },
         mixin: {
             /** @lends Heading.prototype */
+            /**
+             * The polar angle that describes this heading, in degrees.
+             * @type {Number}
+             */
+            angleDeg: null,
+            /**
+             * The polar angle that describes this heading, in radians.
+             * @type {Number}
+             */
+            angleRad: null,
             /**
              * The portion of the heading contributing to the x direction
              * (+ for "right", - for "left").

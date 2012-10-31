@@ -1,4 +1,4 @@
-/*global Flak:false, Surface:false*/
+/*global Flak:false, Surface:false, Heading:false*/
 (function(exports) {
     
     
@@ -13,6 +13,9 @@
             // Initial offset is not quite off screen.
             this.x = -(this.width + 1);
             this.y = y;
+            
+            // Set the direction of travel.
+            this.heading = new Heading(0);
             
             // How fast does the target move (random).
             // Between 1 and 10 pixels per frame.
@@ -91,7 +94,8 @@
              * update method on each call.
              */
             update: function(g) {
-                this.x += this.speed;
+                this.x += this.heading.x * this.speed;
+                this.y += this.heading.y * this.speed;
                 
                 if (this.exploding) {
                     g.delEntity(this);

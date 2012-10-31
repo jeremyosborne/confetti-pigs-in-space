@@ -63,6 +63,6 @@ Step v10
   of what is going on.
 * Add a license for my own code.
 * Improve the package.json file to be more correct and useful.
-* TODO: Build a Heading class.
-* TODO: Add a heading instance to the targets.
+* Build a Heading class.
+* Add a heading instance to the targets.
 * TODO: Have the targets fly in from random locations around the world.
