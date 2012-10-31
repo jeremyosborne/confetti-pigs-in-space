@@ -17,14 +17,10 @@ TABLE OF CONTENTS
 
 REQUIREMENTS
 ============
-* NOT SUPPORTED: IE 6-8. This is an experiment in fun for me as a coder, 
-  not an experiment in tedium and annoyance.
-* An ECMAScript 5 capable browser. See the following compliance chart if you
-  are unfamiliar with what this means:
-    http://kangax.github.com/es5-compat-table/
-* No additions made to the Object.prototype as it might screw up purposefully
-  unprotected enumeration loops -> for (blah in blah) {....}.
 * Node.js + npm to build the code.
+* A web browser, recommend newest versions of Chrome or Firefox.
+    * NOT SUPPORTED: IE 6-8, and other old browsers. Don't try, game will
+      break.
 
 
 
@@ -35,7 +31,7 @@ RUNNING THE GAME
 * Build the code:
     grunt build
 * Load up the game in a browser by opening up index.html.
-* Shoot stuff.
+* Click to shoot things (think old school Missile Command).
 
 
 
@@ -63,5 +59,10 @@ Step v10
   is no longer colliding with something else.
 * Switch the targets testing for their removal by having them test
   for an anti collision against the world object.
-* TODO: Add a travel velocity to the targets.
+* Cleanup and add some documentation to my gruntfile for my own understanding
+  of what is going on.
+* Add a license for my own code.
+* Improve the package.json file to be more correct and useful.
+* TODO: Build a Heading class.
+* TODO: Add a heading instance to the targets.
 * TODO: Have the targets fly in from random locations around the world.

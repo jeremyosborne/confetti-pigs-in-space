@@ -1,4 +1,4 @@
-/*global JSGameSoup:false, World:false, AudioManager:false, Score:false, MouseCoords:false, Crosshair:false, Target:false, game:true */
+/*global JSGameSoup:false, World:false, AudioManager:false, Score:false, MouseCoords:false, Crosshair:false, Target:false */
 
 // Nomenclature and style
 // g -> if used, refers to a local reference to the JSGameSoup class.

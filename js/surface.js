@@ -1,4 +1,3 @@
-/*global klass:false*/
 (function(exports) {
     
     

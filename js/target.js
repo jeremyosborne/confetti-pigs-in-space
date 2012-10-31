@@ -1,23 +1,55 @@
-/*global klass:false, game:false, Flak:false, Surface:false*/
+/*global Flak:false, Surface:false*/
 (function(exports) {
     
-
-
-    // Targets will fly from left to right across the playing field.
-    // Targets start at a random height.
+    
+    
     var Target = klass({
+        /**
+         * Build a target to shoot down.
+         * @constructs
+         */
         init: function(y) {
+            
             // Initial offset is not quite off screen.
             this.x = -(this.width + 1);
             this.y = y;
+            
             // How fast does the target move (random).
             // Between 1 and 10 pixels per frame.
             this.speed = Math.floor(Math.random() * 10 + 1);
+            
             // Increase targets that have appeared.
             game.score.increment("targetsAppeared");
-        }, 
+        },
         mixin: {
-            // Relative shape of the object.
+            /** @lends Target.prototype */
+            /**
+             * Position of this object, as x distance of pixels from the
+             * upper left corner of the game field.
+             * @type {Number}
+             */
+            x: null,
+            /**
+             * Position of this object, as y distance of pixels from the
+             * upper left corner of the game field.
+             * @type {Number}
+             */
+            y: null,
+            /**
+             * Number of pixels that will be traveled, per frame, in the
+             * heading of this element.
+             * @type {Number}
+             */
+            speed: null,
+            /**
+             * Heading of the target as a unit vector.
+             * @type {Heading}
+             */
+            heading: null,
+            /**
+             * Targets are drawn via Canvas surfaces.
+             * @type {Surface}
+             */
             surface: new Surface({
                 height: 20,
                 width: 20,
@@ -37,20 +69,36 @@
                     }
                 ],
             }),
-            // How wide and tall is the target (in pixels)?
+            /**
+             * Height of this target in pixels.
+             * @type {Number}
+             */
             height: 20,
+            /**
+             * Width of this target in pixels.
+             * @type {Number}
+             */
             width: 20,
-            // Are we currently exploding?
+            /**
+             * Is the target exploding?
+             * @type {Boolean}
+             */
             exploding: false,
-            // Move the target from left to right across the game field.
+            /**
+             * Implementation of the .update() jsGameSoup inteface method. 
+             * Called before the .draw() method of each frame.
+             * @param g {jsGameSoup} The jsGameSoup object is passed to the
+             * update method on each call.
+             */
             update: function(g) {
                 this.x += this.speed;
                 
                 if (this.exploding) {
                     g.delEntity(this);
                     // When the target explodes, add flak where the target was.
-                    g.addEntity(new Flak(this.x + this.width/2,
-                        this.y + this.height/2));
+                    g.addEntity(
+                        new Flak(this.x + this.width/2, this.y + this.height/2)
+                    );
                 }
             },
             draw: function(c, g) {

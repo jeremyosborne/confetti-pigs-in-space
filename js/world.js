@@ -1,4 +1,4 @@
-/*global klass:false, game:false, Flak:false, Target:false, collide:false*/
+/*global Flak:false, Target:false, collide:false*/
 (function(exports) {
         
         
