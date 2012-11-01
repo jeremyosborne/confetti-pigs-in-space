@@ -40,7 +40,7 @@ TODO
 * Include code that attempts to predict if the browser viewing the game does
   not meet the technical requirements.
 * Have the targets face the direction they are flying.
-
+* Make multiplayer.
 
 
 Step v10
