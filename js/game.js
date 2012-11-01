@@ -43,8 +43,62 @@ window.onload = function() {
 
     // Repeatedly add targets to the game field.
     setInterval(function() {
-        // Choose a random height for the target
-        var targetY = Math.floor(Math.random() * (game.world.height-Target.prototype.height) + 1);
-        game.addEntity(new Target(targetY));
+        // Which side will the target enter from?
+        var side = Math.floor(Math.random() * 4);
+        // Randomize the direction of travel.
+        var headingDeltaSign = Math.random() > 0.5 ? +1 : -1;
+        var headingDelta = headingDeltaSign * Math.floor(Math.random() * 20);
+        // The speed of the target, between 1 and 10 frames a second.
+        var speed = Math.floor(Math.random() * 10 + 1);
+        // The target we're going to add to the game.
+        var target;
+        
+        switch (side) {
+            case 0:
+                // top, heading down
+                target = new Target({
+                    x: Math.floor(Math.random() * (game.world.width-Target.prototype.width)),
+                    // Just touching the edge so the target doesn't get
+                    // removed before it is even visible.
+                    y: -Target.prototype.height+1,
+                    heading: 270 + headingDelta,
+                    speed: speed
+                });
+                break;
+            case 1:
+                // right, heading left
+                target = new Target({
+                    // Just touching the edge so the target doesn't get
+                    // removed before it is even visible.
+                    x: game.world.width-1,
+                    y: Math.floor(Math.random() * (game.world.height-Target.prototype.height)),
+                    heading: 180 + headingDelta,
+                    speed: speed
+                });
+                break;
+            case 2:
+                // bottom, heading up
+                target = new Target({
+                    x: Math.floor(Math.random() * (game.world.width-Target.prototype.width)),
+                    // Just touching the edge so the target doesn't get
+                    // removed before it is even visible.
+                    y: game.world.width-1,
+                    heading: 90 + headingDelta,
+                    speed: speed
+                });
+                break;
+            case 3:
+                // left, heading right
+                target = new Target({
+                    // Just touching the edge so the target doesn't get
+                    // removed before it is even visible.
+                    x: -Target.prototype.width+1,
+                    y: Math.floor(Math.random() * (game.world.height-Target.prototype.height)),
+                    heading: 0 + headingDelta,
+                    speed: speed
+                });
+                break;
+        }
+        game.addEntity(target);
     }, 1000);
 };

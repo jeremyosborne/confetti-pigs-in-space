@@ -6,20 +6,27 @@
     var Target = klass({
         /**
          * Build a target to shoot down.
+         * @param [config] {Object} Associative array of arguments.
+         * @param [config.x=0] {Number} Starting x-pixel coordinate.
+         * @param [config.y=0] {Number} Starting y-pixel coordinate.
+         * @param [config.heading=0] {Number} Degrees heading the target
+         * is going to travel in.
+         * @param [config.speed=1] {Number} How many pixels per frame does
+         * this target move.
          * @constructs
          */
-        init: function(y) {
+        init: function(config) {
+            config = config || {};
             
-            // Initial offset is not quite off screen.
-            this.x = -(this.width + 1);
-            this.y = y;
+            // Initialize starting location of the target.
+            this.x = config.x || 0;
+            this.y = config.y || 0;
             
             // Set the direction of travel.
-            this.heading = new Heading(0);
+            this.heading = new Heading(config.heading || 0);
             
-            // How fast does the target move (random).
-            // Between 1 and 10 pixels per frame.
-            this.speed = Math.floor(Math.random() * 10 + 1);
+            // How fast does the target move.
+            this.speed = config.speed || 1;
             
             // Increase targets that have appeared.
             game.score.increment("targetsAppeared");

@@ -39,6 +39,7 @@ TODO
 ====
 * Include code that attempts to predict if the browser viewing the game does
   not meet the technical requirements.
+* Have the targets face the direction they are flying.
 
 
 
@@ -65,4 +66,4 @@ Step v10
 * Improve the package.json file to be more correct and useful.
 * Build a Heading class.
 * Add a heading instance to the targets.
-* TODO: Have the targets fly in from random locations around the world.
+* Have the targets fly in from random locations around the world.
