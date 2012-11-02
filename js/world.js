@@ -16,7 +16,7 @@
             // any previous drawings.
             draw: function(c, g) {
                 g.clear();
-                g.background('rgba(100, 100, 100, 1.0)');
+                g.background('rgba(100, 100, 100, 0.0)');
             },
             // To detect mouseclicks in the world, define the bounding box of the
             // world and listen to the click event.

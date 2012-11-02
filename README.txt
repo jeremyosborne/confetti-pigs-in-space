@@ -47,4 +47,5 @@ Step v11
 * Include code that attempts to predict if the browser viewing the game 
   does not meet the technical requirements.
 * Remove the mousecoords code.
-* TODO: Add a bit of flavor to the game.
+* Add a bit of flavor to the game: scrolling background, a bit of styling.
+* TODO: Implement requestAnimationFrame to maybe help speed things up.
