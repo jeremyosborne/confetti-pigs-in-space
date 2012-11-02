@@ -37,20 +37,14 @@ RUNNING THE GAME
 
 TODO
 ====
+* Make multiplayer after the main UI works for single player.
+
+
+
+Step v12
+========
 * Performance improvements: 
   Implement requestAnimationFrame to maybe help speed things up.
   Looks like the CSS3 animation, the way I'm doing it, is killing
   the browser (probably the radial gradients and alpha transparency?).
 * Tighten up the game and make the single player experience a good one.
-* Make multiplayer after the main UI works for single player.
-
-
-
-Step v11
-========
-* Have the targets face the direction they are flying.
-* Include code that attempts to predict if the browser viewing the game 
-  does not meet the technical requirements.
-* Remove the mousecoords code.
-* Add a bit of flavor to the game: scrolling background, a bit of styling.
-* Make a credits file.
