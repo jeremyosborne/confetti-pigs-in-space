@@ -37,7 +37,12 @@ RUNNING THE GAME
 
 TODO
 ====
-* Make multiplayer.
+* Performance improvements: 
+  Implement requestAnimationFrame to maybe help speed things up.
+  Looks like the CSS3 animation, the way I'm doing it, is killing
+  the browser (probably the radial gradients and alpha transparency?).
+* Tighten up the game and make the single player experience a good one.
+* Make multiplayer after the main UI works for single player.
 
 
 
@@ -48,4 +53,4 @@ Step v11
   does not meet the technical requirements.
 * Remove the mousecoords code.
 * Add a bit of flavor to the game: scrolling background, a bit of styling.
-* TODO: Implement requestAnimationFrame to maybe help speed things up.
+* Make a credits file.
