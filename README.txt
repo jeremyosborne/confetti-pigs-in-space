@@ -46,4 +46,5 @@ Step v11
 * Have the targets face the direction they are flying.
 * Include code that attempts to predict if the browser viewing the game 
   does not meet the technical requirements.
+* Remove the mousecoords code.
 * TODO: Add a bit of flavor to the game.

@@ -6,21 +6,21 @@
         <script src="dist/shootdown.js"></script>
     </head>
     <body>
-        <canvas id='game' width="600" height="600"></canvas>
+        <div id="game-container">
+            <canvas id="game" width="600" height="600"></canvas>
+        </div>
         <div id="score">
             Your Score: <span class="net"></span>
             <br/>
             <small>
-            total score =
-            (-<span class="targets-appeared"></span> number of targets that have appeared)
-            + (-<span class="shots-fired"></span> number of shots fired)
-            + (5x<span class="targets-destroyed"></span> number of targets destroyed)
+            score calculated from
+            <br/>
+            -<span class="targets-appeared"></span> (number of targets that have appeared)
+            <br/>
+            -<span class="shots-fired"></span> (number of shots fired)
+            <br/>
+            +<span class="targets-destroyed"></span> (5x number of targets destroyed)
             </small>
-        </div>
-        <div id="pointer-coords">
-            X: <span class="x"></span>
-            Y: <span class="y"></span>
-            (coordinates of mouse relative to the game field canvas)
         </div>
     </body>
 </html>

@@ -1,4 +1,4 @@
-/*global JSGameSoup:false, World:false, AudioManager:false, Score:false, MouseCoords:false, Crosshair:false, Target:false */
+/*global JSGameSoup:false, World:false, AudioManager:false, Score:false, Crosshair:false, Target:false */
 
 // Nomenclature and style
 // g -> if used, refers to a local reference to the JSGameSoup class.
@@ -6,11 +6,6 @@
 window.onload = function() {
 
     //------------------------------------------------------------------- MAIN
-    // Early warning if in an old browser that doesn't support certain things.
-    if (!document.querySelector || !Array.prototype.filter) {
-        alert("This example needs a newer browser. Please get a newer browser.");
-    }
-
     // Initialize the game objects and run the game.
     // The "game" object will be the main global object, an instance of
     // JSGameSoup, and mixed in with other objects that I want to be
@@ -37,7 +32,6 @@ window.onload = function() {
     game.score = new Score();
     game.addEntity(game.world);
     game.addEntity(game.score);
-    game.addEntity(new MouseCoords());
     game.addEntity(new Crosshair());
     game.launch();
 
@@ -100,5 +94,5 @@ window.onload = function() {
                 break;
         }
         game.addEntity(target);
-    }, 1000);
+    }, 650);
 };

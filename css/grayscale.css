@@ -1,9 +1,22 @@
 body, html {
     padding: 0;
     margin: 0;
-    text-align: center;
-    font-style: monospace;
+    
+    font-family: monospace;
+    font-size: 1.3em;
 
     background-color: black;
     color: white;
+    
+    overflow: hidden;
+}
+
+#game-container {
+    padding: 1em 0;
+    text-align: center;
+}
+
+#score {
+    width: 600px;
+    margin: 0 auto;
 }
