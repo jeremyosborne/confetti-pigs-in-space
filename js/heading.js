@@ -17,7 +17,7 @@
         init: function(deg) {
             
             // Need radians in JavaScript.
-            var rad = deg/180*Math.PI;
+            var rad = (deg/180)*Math.PI;
             
             // Save heading info.
             this.angleDeg = deg;

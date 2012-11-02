@@ -27,7 +27,7 @@
             
             // How fast does the target move.
             this.speed = config.speed || 1;
-            
+                        
             // Increase targets that have appeared.
             game.score.increment("targetsAppeared");
         },
@@ -113,11 +113,14 @@
                 }
             },
             draw: function(c, g) {
-                var i;
-
                 c.save();
                 
-                c.drawImage(this.surface.canvas, this.x, this.y);
+                c.translate(this.x+this.width/2, this.y+this.height/2);
+                // NOTE: positive radians is clockwise, negative is counter
+                // clockwise. Opposite of what is being used in the heading
+                // where positive is counter clockwise.
+                c.rotate(-this.heading.angleRad);
+                c.drawImage(this.surface.canvas, -this.width/2, -this.height/2, this.width, this.height);
                 
                 c.restore();
             },
