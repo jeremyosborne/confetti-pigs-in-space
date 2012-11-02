@@ -28,6 +28,9 @@ module.exports = function(grunt) {
          */
         srcFiles: {
             list: [
+                // Browser prerequisite check.
+                "js/browser_prereq.js",
+                // Third party libraries.
                 "lib/jsgamesoup.js",
                 "lib/collisions.js",
                 "lib/audio.js",

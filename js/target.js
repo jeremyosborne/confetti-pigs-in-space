@@ -115,6 +115,10 @@
             draw: function(c, g) {
                 c.save();
                 
+                // Since doing a rotate transform rotates the actual canvas
+                // move the drawing point of the canvas to the center of
+                // the target at its current location, then rotate the
+                // canvas.
                 c.translate(this.x+this.width/2, this.y+this.height/2);
                 // NOTE: positive radians is clockwise, negative is counter
                 // clockwise. Opposite of what is being used in the heading
