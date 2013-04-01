@@ -40,3 +40,5 @@ Notes
 -----
 * Updated to grunt version 0.4.
 * Embrace markdown.
+* Convert to my wrapper game library.
+

@@ -18,6 +18,9 @@ module.exports = function(grunt) {
         //"js/score.js",
         //"js/target.js",
         //"js/world.js",
+        "js/stages.js",
+        "js/stagestart.js",
+        "js/stagethegame.js",
         // Load this one last.
         "js/main.js",
     ];
@@ -107,6 +110,7 @@ module.exports = function(grunt) {
                 globals: {
                     module: false,
                     Game: false,
+                    Stages: false,
                     // The following will be coded out eventually.
                     game: false,
                     klass: false,
