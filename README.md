@@ -41,4 +41,4 @@ Notes
 * Updated to grunt version 0.4.
 * Embrace markdown.
 * Convert to my wrapper game library.
-
+* Break the game into separate stages (which are roughly game states).

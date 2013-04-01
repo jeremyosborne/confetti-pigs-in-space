@@ -21,6 +21,7 @@ module.exports = function(grunt) {
         "js/stages.js",
         "js/stagestart.js",
         "js/stagethegame.js",
+        "js/stageend.js",
         // Load this one last.
         "js/main.js",
     ];
