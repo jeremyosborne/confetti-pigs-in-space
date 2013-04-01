@@ -4,21 +4,22 @@ module.exports = function(grunt) {
         // Browser prerequisite check.
         "js/browser_prereq.js",
         // Third party libraries.
-        "lib/jsgamesoup.js",
-        "lib/collisions.js",
-        "lib/audio.js",
-        "lib/klass.js",
+        "lib/dasspiel.js",
+        //"lib/jsgamesoup.js",
+        //"lib/collisions.js",
+        //"lib/audio.js",
+        //"lib/klass.js",
         // Load priority items.
-        "js/surface.js",
-        "js/heading.js",
+        //"js/surface.js",
+        //"js/heading.js",
         // Load non-priority items.
-        "js/crosshair.js",
-        "js/flak.js",
-        "js/score.js",
-        "js/target.js",
-        "js/world.js",
+        //"js/crosshair.js",
+        //"js/flak.js",
+        //"js/score.js",
+        //"js/target.js",
+        //"js/world.js",
         // Load this one last.
-        "js/game.js",
+        "js/main.js",
     ];
 
 
@@ -105,6 +106,8 @@ module.exports = function(grunt) {
                 // everywhere and are assumed to be used everywhere.
                 globals: {
                     module: false,
+                    Game: false,
+                    // The following will be coded out eventually.
                     game: false,
                     klass: false,
                 },

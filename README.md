@@ -20,7 +20,7 @@ Building the Code
 
         grunt build
 
-* Load up the game in a browser by opening up index.html.
+* Load up the game in a browser by opening up `index.html`.
     * Recommended: [Google Chrome](http://www.google.com/chrome).
     * Purposely Unsupported Browsers: IE 6-8, and probably other old browsers.
 * Click to shoot things.
@@ -33,3 +33,10 @@ TODO
 * Looks like the CSS3 animation, the way I'm doing it, is killing the browser (probably the radial gradients and alpha transparency?).
 * Tighten up the game and make the single player experience a good one.
 * BUG: There seems to be a sound problem on Firefox but only when serving up the files from my home site?
+
+
+
+Notes
+-----
+* Updated to grunt version 0.4.
+* Embrace markdown.
