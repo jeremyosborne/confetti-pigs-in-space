@@ -22,7 +22,7 @@ Building the Code
 
 * Load up the game in a browser by opening up index.html.
     * Recommended: [Google Chrome](http://www.google.com/chrome).
-    * Purposely Unsupported Browsers: IE 6-8, and other old browsers.
+    * Purposely Unsupported Browsers: IE 6-8, and probably other old browsers.
 * Click to shoot things.
 
 
