@@ -99,7 +99,7 @@ var Flak = function(x, y) {
     this.maxRadius = 25;
 
     // Increase shots fired (negative score).
-    this.game.score.mod("shotsFired", -1);
+    this.game.local.score.mod("shotsFired", -1);
 };
 /**
  * Pointer to our Game object.
@@ -179,16 +179,16 @@ ScoreView.prototype.update = function() {
  * @param target {Surface} Where we draw ourselves onto.
  */
 ScoreView.prototype.draw = function(target) {
-    var game = this.game;
-    new game.TextOverlay({
+    var local = this.game.local;
+    new this.game.TextOverlay({
         alignx: "left",
         paddingx: 10,
         aligny: "top",
         paddingy: 10,
         // At time of writing, we need some non-falsey value.
         // Don't pass a simple 0 into text.
-        text: "Score: " + game.score.sum(),
-        font: game.defaultFont,
+        text: "Score: " + local.score.sum(),
+        font: local.defaultFont,
     }).draw(target);
 };
 
@@ -199,7 +199,7 @@ exports.thegame = {
     "id": "thegame",
     "enter": function() {
         var game = this.game;
-        var defaultFont = game.defaultFont;
+        var defaultFont = game.local("defaultFont");
         var TextOverlay = game.TextOverlay;
 
         // Initialize our crosshair.       

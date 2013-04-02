@@ -7,7 +7,7 @@ exports.end = {
     id: "end",
     enter: function() {
         var game = this.game;
-        var defaultFont = game.defaultFont;
+        var defaultFont = game.local("defaultFont");
         var TextOverlay = game.TextOverlay;
 
         // TODO calculate the final score here for display.
@@ -21,7 +21,7 @@ exports.end = {
             alignx: "center",
             aligny: "center",
             paddingy: 25,
-            text: "Your final score is: " + "N/A",
+            text: "Your final score is: " + game.local.score.sum(),
             font: defaultFont,
         });
     },

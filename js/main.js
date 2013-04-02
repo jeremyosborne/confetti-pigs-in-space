@@ -3,9 +3,9 @@ Game.ready(function() {
     var game = this;
     var Noise = game.Noise;
 
-    game.defaultFont = new game.engine.font.Font('22px monospace');
-
-    game.score = new game.ScoreKeeper();
+    // Game specific settings.
+    game.local("defaultFont", new game.engine.font.Font('22px monospace'));
+    game.local("score", new game.ScoreKeeper());
 
     game.explosions = [
         new Noise("audio/explosion1.wav"),

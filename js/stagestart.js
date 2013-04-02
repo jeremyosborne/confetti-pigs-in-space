@@ -6,7 +6,7 @@ exports.start = {
     "id": "start",
     "enter": function() {
         var game = this.game;
-        var defaultFont = game.defaultFont;
+        var defaultFont = game.local("defaultFont");
         var TextOverlay = game.TextOverlay;
         
         // Initialize.
