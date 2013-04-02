@@ -13,7 +13,6 @@ module.exports = function(grunt) {
         //"js/surface.js",
         //"js/heading.js",
         // Load non-priority items.
-        //"js/crosshair.js",
         //"js/flak.js",
         //"js/score.js",
         //"js/target.js",
