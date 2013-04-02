@@ -29,10 +29,12 @@ Building the Code
 
 TODO
 ----
-* Add target creation again.
+* Add in target creation.
 * Add max number of targets allowed on screen at a time.
 * Add collisions back in.
 * Remove targets when they leave the playing field.
+* Do collisions the jsGameSoup way.
+    * Add the jsGameSoup collisions to dasspiel.
 * Add particles for exploding targets.
 * Really need alignable multiline text.
 * Separate scoring from object constructors (Target and Flak).
