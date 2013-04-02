@@ -29,9 +29,7 @@ Building the Code
 
 TODO
 ----
-* Implement requestAnimationFrame to maybe help speed things up.
-* Looks like the CSS3 animation, the way I'm doing it, is killing the browser (probably the radial gradients and alpha transparency?).
-* Tighten up the game and make the single player experience a good one.
+* Add a timer in the upper right.
 * BUG: There seems to be a sound problem on Firefox but only when serving up the files from my home site?
 * BUG: TextOverlay with an empty string fails, but it seems the failure is due to gamejs.
 

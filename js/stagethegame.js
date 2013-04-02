@@ -192,6 +192,8 @@ ScoreView.prototype.draw = function(target) {
     }).draw(target);
 };
 
+
+
 // Manages the game until the game is over.
 exports.thegame = {
     "id": "thegame",
