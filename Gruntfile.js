@@ -5,15 +5,10 @@ module.exports = function(grunt) {
         "js/browser_prereq.js",
         // Third party libraries.
         "lib/dasspiel.js",
-        //"lib/jsgamesoup.js",
         //"lib/collisions.js",
-        //"lib/audio.js",
         //"lib/klass.js",
         // Load priority items.
-        //"js/surface.js",
-        //"js/heading.js",
         // Load non-priority items.
-        //"js/target.js",
         //"js/world.js",
         "js/stages.js",
         "js/stagestart.js",

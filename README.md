@@ -29,10 +29,13 @@ Building the Code
 
 TODO
 ----
-* Really need alignable multiline text.
-* Add targets, and a max number of targets allowed on screen at a time.
+* Add target creation again.
+* Add max number of targets allowed on screen at a time.
 * Add collisions back in.
+* Remove targets when they leave the playing field.
 * Add particles for exploding targets.
+* Really need alignable multiline text.
+* Separate scoring from object constructors (Target and Flak).
 * BUG: There seems to be a sound problem on Firefox but only when serving up the files from my home site?
 * BUG: TextOverlay with an empty string fails, but it seems the failure is due to gamejs.
 

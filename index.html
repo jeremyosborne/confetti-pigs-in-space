@@ -1,27 +1,12 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>shootdown</title>
-        <link href="css/grayscale.css" rel="stylesheet"/>
-        <script src="dist/shootdown.js"></script>
-    </head>
-    <body>
-        <div id="game-container">
-            <div class="scrolling-background"></div>
-            <canvas id="game" width="600" height="600"></canvas>
-        </div>
-        <div id="score">
-            Your Score: <span class="net"></span>
-            <br/>
-            <small>
-            score calculated from
-            <br/>
-            -<span class="targets-appeared"></span> (number of targets that have appeared)
-            <br/>
-            -<span class="shots-fired"></span> (number of shots fired)
-            <br/>
-            +<span class="targets-destroyed"></span> (5x number of targets destroyed)
-            </small>
-        </div>
-    </body>
+<head lang="en-US">
+    <title>shootdown</title>
+    <link href="css/grayscale.css" rel="stylesheet"/>
+</head>
+<body>
+    <div id="gjs-loader"><h1 id="gjs-loader-message">Loading...</h1></div>
+    <canvas id="gjs-canvas" width="600" height="600"></canvas>
+    <script src="dist/shootdown.js"></script>
+</body>
 </html>

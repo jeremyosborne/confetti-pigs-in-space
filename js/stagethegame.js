@@ -163,6 +163,95 @@ Flak.prototype.draw = function(target) {
 
 
 /**
+ * A target to shoot down.
+ * @param [config] {Object} Associative array of arguments.
+ * @param [config.x=0] {Number} Starting x-pixel coordinate.
+ * @param [config.y=0] {Number} Starting y-pixel coordinate.
+ * @param [config.heading=0] {Number} Degrees heading the target
+ * is going to travel in. 0 degrees is a heading of right across the playing 
+ * field, 90 is up the playing field.
+ * @param [config.speed=100] {Number} Speed in pixels/sec.
+ * @constructs
+ */
+var Target = function(config) {
+    config = config || {};
+    
+    // The center of the target.
+    this.x = config.x || 0;
+    //this.y = config.y || 0;
+    // DEBUG
+    this.y = 300;
+    // The rate of change of the target.
+    // Convert heading into proportional x and y units, multiply by speed.
+    config.heading = config.heading || 0;
+    config.speed = config.speed || 100;
+    this.dx = Math.cos(config.heading*Math.PI/180)*config.speed;
+    this.dy = Math.sin(config.heading*Math.PI/180)*config.speed;
+                
+    // TODO: Increment the game score when targets appear, but not here.
+    // Do the scoring out of the object creation.
+    //game.score.increment("targetsAppeared");
+
+    // Target needs access to the Surface object.
+    this.surface = new this.game.engine.Surface(20, 20);
+    // surface, color, points, width (0 means fill)
+    this.game.engine.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
+};
+/**
+ * Pointer to our Game object.
+ * @type {Game}
+ */
+Target.prototype.game = Game;
+/**
+ * Will reveal whether this target is alive or dead.
+ * @return {Boolean} Returns a status of whether this particle is considered
+ * alive (true) or dead (false).
+ */
+Target.prototype.isAlive = function() {
+    // TODO: Test to see if particle is outside of its container.
+    return true;
+};
+/**
+ * Gets the size of the target. 
+ * @return {Number[]} the size of the target as [width, height] pixel array.
+ */
+Target.prototype.size = function() {
+    return !this.surface ? null : this.surface.getSize();
+};
+/**
+ * Where is the upper left of our target?
+ * @return {Number[]} What should be considered the upperleft of our target
+ * as an array made up of [x, y] coordinates.
+ */
+Target.prototype.upperLeft = function() {
+    var size = this.size();
+    
+    return [this.x-size[0]/2, this.y-size[1]/2];
+};
+/**
+ * Update function.
+ * @param ms {Number} The number of milliseconds elapsed since the
+ * last call to this function.
+ * @return {Boolean} Returns a status of whether this target is considered
+ * alive (true) or dead (false).
+ */
+Target.prototype.update = function(ms) {
+    var msRatio = ms / 1000;
+    this.x += this.dx * msRatio;
+    this.y += this.dy * msRatio;
+    return this.isAlive();
+};
+/**
+ * Blits our target onto whatever surface we pass in.
+ * @param target {Surface} Our target surface.
+ */
+Target.prototype.draw = function(target) {
+    target.blit(this.surface, this.upperLeft());
+};
+
+
+
+/**
  * @class Display of the points.
  */
 var ScoreView = function() {};
@@ -301,6 +390,11 @@ exports.thegame = {
         // The view is managed as a game object.
         this.countdownView = new CountdownView(this.countdown);
         this.stageObjects.push(this.countdownView);
+        
+        
+        // DEBUG
+        // Single test target.
+        this.stageObjects.push(new Target());
     },
     "heartbeat": function(msDuration) {
         var game = this.game;
