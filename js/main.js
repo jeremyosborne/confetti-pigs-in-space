@@ -5,6 +5,8 @@ Game.ready(function() {
 
     game.defaultFont = new game.engine.font.Font('22px monospace');
 
+    game.score = new game.ScoreKeeper();
+
     game.explosions = [
         new Noise("audio/explosion1.wav"),
         new Noise("audio/explosion2.wav"),

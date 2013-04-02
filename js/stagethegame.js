@@ -98,9 +98,8 @@ var Flak = function(x, y) {
      */
     this.maxRadius = 25;
 
-    // TODO: Include stats via ScoreKeeper.
-    // Increase shots fired.
-    //game.score.increment("shotsFired");
+    // Increase shots fired (negative score).
+    this.game.score.mod("shotsFired", -1);
 };
 /**
  * Pointer to our Game object.
@@ -163,6 +162,36 @@ Flak.prototype.draw = function(target) {
 
 
 
+/**
+ * @class Display of the points.
+ */
+var ScoreView = function() {};
+/**
+ * Shared reference to our Game object.
+ * @type {Game}
+ */
+ScoreView.prototype.game = Game;
+ScoreView.prototype.update = function() {
+    return true;
+};
+/**
+ * Called during the draw stage.
+ * @param target {Surface} Where we draw ourselves onto.
+ */
+ScoreView.prototype.draw = function(target) {
+    var game = this.game;
+    new game.TextOverlay({
+        alignx: "left",
+        paddingx: 10,
+        aligny: "top",
+        paddingy: 10,
+        // At time of writing, we need some non-falsey value.
+        // Don't pass a simple 0 into text.
+        text: "Score: " + game.score.sum(),
+        font: game.defaultFont,
+    }).draw(target);
+};
+
 // Manages the game until the game is over.
 exports.thegame = {
     "id": "thegame",
@@ -170,18 +199,14 @@ exports.thegame = {
         var game = this.game;
         var defaultFont = game.defaultFont;
         var TextOverlay = game.TextOverlay;
-                
-        // Initialize.
-        this.gameText = new TextOverlay({
-            alignx: "center",
-            aligny: "center",
-            text: "[placeholder for the game. click to end.]",
-            font: defaultFont,
-        });
 
         // Initialize our crosshair.       
         this.crosshair = new Crosshair(game);
         this.stageObjects.push(this.crosshair);
+        
+        // Initialize the score of the game.
+        this.scoreView = new ScoreView();
+        this.stageObjects.push(this.scoreView);
     },
     "heartbeat": function(msDuration) {
         var game = this.game;
@@ -214,13 +239,13 @@ exports.thegame = {
         });
 
     },
-    // Created during initialization.
-    gameText: null,
     // All of the objects managed during an update loop.
     // All objects promise to have an update function.
     stageObjects: [],
     // Special treatment for the crosshairs. Created during initialization.
     crossHair: null,
+    // Special treatment for the scores.
+    scoreView: null,
 };
 
 
