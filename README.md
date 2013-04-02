@@ -29,9 +29,13 @@ Building the Code
 
 TODO
 ----
-* Add a timer in the upper right.
+* Really need alignable multiline text.
+* Add targets, and a max number of targets allowed on screen at a time.
+* Add collisions back in.
+* Add particles for exploding targets.
 * BUG: There seems to be a sound problem on Firefox but only when serving up the files from my home site?
 * BUG: TextOverlay with an empty string fails, but it seems the failure is due to gamejs.
+
 
 
 Notes
@@ -40,3 +44,4 @@ Notes
 * Embrace markdown.
 * Convert to my wrapper game library.
 * Break the game into separate stages (which are roughly game states).
+* Game timer added.

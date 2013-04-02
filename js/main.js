@@ -7,6 +7,7 @@ Game.ready(function() {
     game.local("defaultFont", new game.engine.font.Font('22px monospace'));
     game.local("score", new game.ScoreKeeper());
 
+    // TODO: Add explosions to local object, not directly on Game.
     game.explosions = [
         new Noise("audio/explosion1.wav"),
         new Noise("audio/explosion2.wav"),
