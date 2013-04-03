@@ -1,9 +1,0 @@
-jsGameSoup
-Copyright 2009-2012 Chris McCormick
-LGPL version 3 (see http://jsgamesoup.net/COPYING.txt for details)
-==================================================================
-
-
-A CSS Pattern from Lea Verou's pattern gallery
-http://lea.verou.me/css3patterns/#starry-night
-==============================================

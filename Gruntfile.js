@@ -3,13 +3,9 @@ module.exports = function(grunt) {
     var srcFiles = [
         // Browser prerequisite check.
         "js/browser_prereq.js",
-        // Third party libraries.
+        // Third party modules/libraries.
         "lib/dasspiel.js",
-        //"lib/collisions.js",
-        //"lib/klass.js",
-        // Load priority items.
-        // Load non-priority items.
-        //"js/world.js",
+        // App modules.
         "js/stages.js",
         "js/stagestart.js",
         "js/stagethegame.js",

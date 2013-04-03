@@ -147,8 +147,8 @@ Flak.prototype.draw = function(target) {
         );
     }
 };
-// Use a rectangular collision for the explosion.
-// get_collision_aabb: function() {
+// Collision boundaries for a flak explosion (rectangular boundaries).
+// collision_rect_boundaries: function() {
     // // If our radius describes the circle, grab a collision bounding box 
     // // that fits within our circle.
     // // Bounding box returned is described from the upper left corner as
@@ -178,22 +178,21 @@ var Target = function(config) {
     
     // The center of the target.
     this.x = config.x || 0;
-    //this.y = config.y || 0;
-    // DEBUG
-    this.y = 300;
+    this.y = config.y || 0;
     // The rate of change of the target.
     // Convert heading into proportional x and y units, multiply by speed.
     config.heading = config.heading || 0;
     config.speed = config.speed || 100;
     this.dx = Math.cos(config.heading*Math.PI/180)*config.speed;
-    this.dy = Math.sin(config.heading*Math.PI/180)*config.speed;
+    // Need to reverse the sign for our coordinate system (+1 is down, not up).
+    this.dy = -1*Math.sin(config.heading*Math.PI/180)*config.speed;
                 
     // TODO: Increment the game score when targets appear, but not here.
     // Do the scoring out of the object creation.
     //game.score.increment("targetsAppeared");
 
     // Target needs access to the Surface object.
-    this.surface = new this.game.engine.Surface(20, 20);
+    this.surface = new this.game.engine.Surface(this.width, this.height);
     // surface, color, points, width (0 means fill)
     this.game.engine.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
 };
@@ -202,6 +201,16 @@ var Target = function(config) {
  * @type {Game}
  */
 Target.prototype.game = Game;
+/**
+ * How wide is the target?
+ * @type {Number}
+ */
+Target.prototype.width = 20;
+/**
+ * How tall is the target?
+ * @type {Number}
+ */
+Target.prototype.height = 20;
 /**
  * Will reveal whether this target is alive or dead.
  * @return {Boolean} Returns a status of whether this particle is considered
@@ -247,6 +256,74 @@ Target.prototype.update = function(ms) {
  */
 Target.prototype.draw = function(target) {
     target.blit(this.surface, this.upperLeft());
+};
+/**
+ * For our purposes, call to generate a target instance randomized to one
+ * of the four sides of the map.
+ * @return {Target} Target correctly positioned and ready to go, but not
+ * under control of any collection.
+ */
+var targetFactory = function() {
+    // Which side will the target enter from?
+    var side = Math.floor(Math.random() * 4);
+    // Randomize the direction of travel.
+    var headingDeltaSign = Math.random() > 0.5 ? +1 : -1;
+    var headingDelta = headingDeltaSign * Math.floor(Math.random() * 20);
+    // How many pixels a second?
+    var speed = Math.floor(Math.random() * 100 + 50);
+    // The target we're going to create and return.
+    var target;
+    // What are the display dimensions?
+    var displayDims = Game.display.getSize();
+    
+    switch (side) {
+        case 0:
+            // top, heading down
+            target = new Target({
+                x: displayDims[0]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[0]/4-Target.prototype.width)),
+                // Just touching the edge so the target doesn't get
+                // removed before it is even visible.
+                y: -Target.prototype.height+1,
+                heading: 270 + headingDelta,
+                speed: speed
+            });
+            break;
+        case 1:
+            // right, heading left
+            target = new Target({
+                // Just touching the edge so the target doesn't get
+                // removed before it is even visible.
+                x: displayDims[0]-1,
+                y: displayDims[1]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[1]/4-Target.prototype.height)),
+                heading: 180 + headingDelta,
+                speed: speed
+            });
+            break;
+        case 2:
+            // bottom, heading up
+            target = new Target({
+                x: displayDims[0]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[0]/4-Target.prototype.width)),
+                // Just touching the edge so the target doesn't get
+                // removed before it is even visible.
+                y: displayDims[1]-1,
+                heading: 90 + headingDelta,
+                speed: speed
+            });
+            break;
+        case 3:
+            // left, heading right
+            target = new Target({
+                // Just touching the edge so the target doesn't get
+                // removed before it is even visible.
+                x: -Target.prototype.width+1,
+                y: displayDims[1]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[1]/4-Target.prototype.height)),
+                heading: 0 + headingDelta,
+                speed: speed
+            });
+            break;
+    }
+    
+    return target;
 };
 
 
@@ -394,7 +471,7 @@ exports.thegame = {
         
         // DEBUG
         // Single test target.
-        this.stageObjects.push(new Target());
+        this.stageObjects.push(targetFactory());
     },
     "heartbeat": function(msDuration) {
         var game = this.game;

@@ -29,13 +29,12 @@ Building the Code
 
 TODO
 ----
+* Remove the debug target and add in randomized targets.
+* Add max number of targets allowed on screen at a time.
 * Do collisions the jsGameSoup way.
     * Update the interface for batch polygon collisions in collisions.js.
     * Add the jsGameSoup collisions to dasspiel.
     * Add some tests to help ensure collisions work.
-* Credit the authors of jsGameSoup and gamejs in dasspiel.
-* Add in target creation.
-* Add max number of targets allowed on screen at a time.
 * Add collisions back in.
 * Remove targets when they leave the playing field.
 * Add particles for exploding targets.
