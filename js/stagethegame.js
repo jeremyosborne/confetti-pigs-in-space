@@ -97,9 +97,6 @@ var Flak = function(x, y) {
      * @type {Number}
      */
     this.maxRadius = 25;
-
-    // Increase shots fired (negative score).
-    this.game.local.score.mod("shotsFired", -1);
 };
 /**
  * Pointer to our Game object.
@@ -186,15 +183,21 @@ var Target = function(config) {
     this.dx = Math.cos(config.heading*Math.PI/180)*config.speed;
     // Need to reverse the sign for our coordinate system (+1 is down, not up).
     this.dy = -1*Math.sin(config.heading*Math.PI/180)*config.speed;
-                
-    // TODO: Increment the game score when targets appear, but not here.
-    // Do the scoring out of the object creation.
-    //game.score.increment("targetsAppeared");
+
+    // For tracking a minimum age of a target, allows us to start outside
+    // of the boundary area.
+    this.age = 0;
 
     // Target needs access to the Surface object.
     this.surface = new this.game.engine.Surface(this.width, this.height);
     // surface, color, points, width (0 means fill)
     this.game.engine.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
+    // The gamejs rotation works by clockwise rotation only.
+    this.surface = this.game.engine.transform.rotate(this.surface, -config.heading);
+    
+    // Targets have three states: moving, exploding, outofbounds.
+    // Moving is the only "living" state.
+    this.state = "moving";
 };
 /**
  * Pointer to our Game object.
@@ -217,15 +220,14 @@ Target.prototype.height = 20;
  * alive (true) or dead (false).
  */
 Target.prototype.isAlive = function() {
-    // TODO: Test to see if particle is outside of its container.
-    return true;
+    return this.state == "moving";
 };
 /**
  * Gets the size of the target. 
  * @return {Number[]} the size of the target as [width, height] pixel array.
  */
 Target.prototype.size = function() {
-    return !this.surface ? null : this.surface.getSize();
+    return this.surface.getSize();
 };
 /**
  * Where is the upper left of our target?
@@ -246,6 +248,7 @@ Target.prototype.upperLeft = function() {
  */
 Target.prototype.update = function(ms) {
     var msRatio = ms / 1000;
+    this.age += ms;
     this.x += this.dx * msRatio;
     this.y += this.dy * msRatio;
     return this.isAlive();
@@ -256,6 +259,28 @@ Target.prototype.update = function(ms) {
  */
 Target.prototype.draw = function(target) {
     target.blit(this.surface, this.upperLeft());
+};
+/**
+ * Allows for rectangular collision tests.
+ * @return {Number[]} Rectangular collision area as an array conforming to
+ * [left, top, width, height].
+ */
+Target.prototype.collision_rect_boundaries = function() {
+    // We use size, not width and height, because a rotated target takes
+    // up more space.
+    return this.upperLeft().concat(this.size());
+};
+/**
+ * Responds to a "not rect" anti-collision test.
+ * @param target {Object} What we did _not_ collide with.
+ */
+Target.prototype.collision_not_rect = function(target) {
+    // We're trusting that the only thing we are anti-colliding with
+    // is the game.
+    if (this.age > 1000) {
+        // Only targets more than 1 second old can be marked out of bounds.
+        this.state = "outofbounds";
+    }
 };
 /**
  * For our purposes, call to generate a target instance randomized to one
@@ -283,7 +308,7 @@ var targetFactory = function() {
                 x: displayDims[0]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[0]/4-Target.prototype.width)),
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                y: -Target.prototype.height+1,
+                y: -Target.prototype.height,
                 heading: 270 + headingDelta,
                 speed: speed
             });
@@ -293,7 +318,7 @@ var targetFactory = function() {
             target = new Target({
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                x: displayDims[0]-1,
+                x: displayDims[0],
                 y: displayDims[1]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[1]/4-Target.prototype.height)),
                 heading: 180 + headingDelta,
                 speed: speed
@@ -305,7 +330,7 @@ var targetFactory = function() {
                 x: displayDims[0]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[0]/4-Target.prototype.width)),
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                y: displayDims[1]-1,
+                y: displayDims[1],
                 heading: 90 + headingDelta,
                 speed: speed
             });
@@ -315,7 +340,7 @@ var targetFactory = function() {
             target = new Target({
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                x: -Target.prototype.width+1,
+                x: -Target.prototype.width,
                 y: displayDims[1]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[1]/4-Target.prototype.height)),
                 heading: 0 + headingDelta,
                 speed: speed
@@ -463,17 +488,13 @@ exports.thegame = {
         this.stageObjects.push(this.scoreView);
         
         // The countdown timer. (not an object directly managed by the game).
-        this.countdown = new Countdown(7000).reset();
+        this.countdown = new Countdown(60000).reset();
         // The view is managed as a game object.
         this.countdownView = new CountdownView(this.countdown);
-        this.stageObjects.push(this.countdownView);
-        
-        
-        // DEBUG
-        // Single test target.
-        this.stageObjects.push(targetFactory());
+        this.stageObjects.push(this.countdownView);        
     },
     "heartbeat": function(msDuration) {
+        var stage = this;
         var game = this.game;
         var display = game.display;
         var event = game.engine.event;
@@ -481,30 +502,68 @@ exports.thegame = {
         var MOUSE_MOTION = event.MOUSE_MOTION;
         var stageObjects = this.stageObjects;
         var crosshair = this.crosshair;
+        var collisions = game.collisions;
         
-        // First and foremost check our timer. If done, leave.
+        // Endgame conditions.
         if (!this.countdown.remaining()) {
             this.game.activateStage("end");
         }
+        
+        // Check to make new targets.
+        // The randomness might affect some game scores, but given this
+        // will get called between 40 and 60 times a second, the chances
+        // will be low that the screen is not filled with targets.
+        // At 50% chance, allowing for non-optimal framerate:
+        // 50 calls / sec * .3 targets/calls = 15 targets/sec
+        if (this.numTargets < this.maxTargets && Math.random() > 0.7) {
+            this.numTargets += 1;
+            this.stageObjects.push(targetFactory());
+        }
 
+        // Handle events.
         event.get().forEach(function(e) {
             if (e.type == MOUSE_MOTION) {
-                // Special treatment for the crosshair.
+                // Crosshair follows the mouse.
                 crosshair.x = e.pos[0];
                 crosshair.y = e.pos[1];
             }
             else if (e.type === MOUSE_DOWN) {
+                // Mouse down triggers a flak launch and changes score.
                 stageObjects.push(new Flak(e.pos[0], e.pos[1]));
+                this.game.local.score.mod("shotsFired", -1);
             }
         });
         
-        
+        // Update and draw.
         display.fill('#000000');
-        stageObjects = stageObjects.filter(function(obj) {
+        this.stageObjects = stageObjects.filter(function(obj) {
             var isAlive = obj.update(msDuration);
+            
+            // One definition of alive is whether it can be drawn or not.
             if (isAlive) {
                 obj.draw(display);
             }
+
+            // Additional tests for targets, as they need additional help.
+            if (obj instanceof Target) {
+
+                // In bounds or out of bounds? If out, the target will mark
+                // itself as "outofbounds" and it will be removed next frame.
+                collisions.not_rects([obj], [game]);
+                
+                // TODO: Collide targets with flak after checking for out of
+                // bounds.
+
+                // More targets can now appear.
+                if (!isAlive) {
+                    stage.numTargets -= 1;
+                    // Decrease score of the target went out of bounds.
+                    if (obj.state == "outofbounds") {
+                        game.local.score.mod("targetsEscaped", -1);
+                    }
+                }
+            }
+
             return isAlive;
         });
 
@@ -514,9 +573,12 @@ exports.thegame = {
     stageObjects: [],
     // These more important objects created during initialization and
     // referenced here.
-    crossHair: null,
+    crosshair: null,
     scoreView: null,
     countdown: null,
+    // Total number of targets on screen now, and the max allowed.
+    numTargets: 0,
+    maxTargets: 15,
 };
 
 

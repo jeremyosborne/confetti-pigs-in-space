@@ -18,7 +18,10 @@ Game.ready(function() {
         this[Math.floor(Math.random()*this.length)].play();
     };
 
-
+    // For testing for collisions within the game boundaries.
+    game.collision_rect_boundaries = function() {
+        return [0, 0].concat(this.display.getSize());
+    };
 
     game.createDisplay(600, 600)
         .addStage(Stages.start)

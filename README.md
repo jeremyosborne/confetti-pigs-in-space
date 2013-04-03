@@ -29,19 +29,8 @@ Building the Code
 
 TODO
 ----
-* Remove the debug target and add in randomized targets.
-* Add max number of targets allowed on screen at a time.
-* Do collisions the jsGameSoup way.
-    * Update the interface for batch polygon collisions in collisions.js.
-    * Add the jsGameSoup collisions to dasspiel.
-    * Add some tests to help ensure collisions work.
-* Add collisions back in.
-* Remove targets when they leave the playing field.
+* Collide targets with flak for big money, big prizes.
 * Add particles for exploding targets.
-* Really need alignable multiline text.
-* Separate scoring from object constructors (Target and Flak).
-* BUG: There seems to be a sound problem on Firefox but only when serving up the files from my home site?
-* BUG: TextOverlay with an empty string fails, but it seems the failure is due to gamejs.
 
 
 
@@ -49,9 +38,10 @@ Notes
 -----
 * Updated to grunt version 0.4.
 * Embrace markdown.
-* Convert to my wrapper game library.
+* Convert to my wrapper game library dasspiel.
 * Break the game into separate stages (which are roughly game states).
 * Game timer added.
+* Added a max number of targets on screen at a time.
 
 
 
