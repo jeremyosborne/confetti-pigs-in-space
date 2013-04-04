@@ -144,18 +144,22 @@ Flak.prototype.draw = function(target) {
         );
     }
 };
-// Collision boundaries for a flak explosion (rectangular boundaries).
-// collision_rect_boundaries: function() {
-    // // If our radius describes the circle, grab a collision bounding box 
-    // // that fits within our circle.
-    // // Bounding box returned is described from the upper left corner as
-    // // [x, y, w, h].
-    // var radius = this.radius;
-    // var radiusSquared = radius * radius;
-    // var diameter = radius*2;
-    // var offset = Math.sqrt(radiusSquared + radiusSquared);
-    // return [this.x-offset, this.y-offset, diameter, diameter];
-// }
+/**
+ * Allows for rectangular collision tests.
+ * @return {Number[]} Rectangular collision area as an array conforming to
+ * [left, top, width, height].
+ */
+Flak.prototype.collision_rect_boundaries = function() {
+    // If our radius describes the circle, grab a collision bounding box 
+    // that fits within our circle.
+    // Bounding box returned is described from the upper left corner as
+    // [x, y, w, h].
+    var radius = this.radius;
+    var radiusSquared = radius * radius;
+    var diameter = radius*2;
+    var offset = Math.sqrt(radiusSquared + radiusSquared);
+    return [this.x-offset, this.y-offset, diameter, diameter];
+};
 
 
 
@@ -280,6 +284,16 @@ Target.prototype.collision_not_rect = function(target) {
     if (this.age > 1000) {
         // Only targets more than 1 second old can be marked out of bounds.
         this.state = "outofbounds";
+    }
+};
+/**
+ * Responds to a rectangular collision test.
+ * @param target {Object} What we collided with.
+ */
+Target.prototype.collision_rect = function(target) {
+    if (target instanceof Flak) {
+        // We are dead.
+        this.state = "exploding";
     }
 };
 /**
@@ -501,6 +515,8 @@ exports.thegame = {
         var MOUSE_DOWN = event.MOUSE_DOWN;
         var MOUSE_MOTION = event.MOUSE_MOTION;
         var stageObjects = this.stageObjects;
+        // Manage flak objects separately.
+        var flakObjects = this.flakObjects;
         var crosshair = this.crosshair;
         var collisions = game.collisions;
         
@@ -528,9 +544,9 @@ exports.thegame = {
                 crosshair.y = e.pos[1];
             }
             else if (e.type === MOUSE_DOWN) {
-                // Mouse down triggers a flak launch and changes score.
-                stageObjects.push(new Flak(e.pos[0], e.pos[1]));
-                this.game.local.score.mod("shotsFired", -1);
+                // Mouse down triggers a flak launch and lowers score.
+                flakObjects.push(new Flak(e.pos[0], e.pos[1]));
+                game.local.score.mod("shotsFired", -1);
             }
         });
         
@@ -551,19 +567,36 @@ exports.thegame = {
                 // itself as "outofbounds" and it will be removed next frame.
                 collisions.not_rects([obj], [game]);
                 
-                // TODO: Collide targets with flak after checking for out of
-                // bounds.
+                // Test targets against flak objects.
+                // This will queue up an explosion next frame if they hit.
+                collisions.rects([obj], flakObjects);
 
-                // More targets can now appear.
                 if (!isAlive) {
+                    // More targets can now appear.
                     stage.numTargets -= 1;
-                    // Decrease score of the target went out of bounds.
                     if (obj.state == "outofbounds") {
+                        // Decrease score for missing a target.
                         game.local.score.mod("targetsEscaped", -1);
+                    }
+                    else if (obj.state == "exploding") {
+                        // Increase score.
+                        game.local.score.mod("targetsDestroyed", 3);                        
+                        // And launch another, free explosion.
+                        flakObjects.push(new Flak(obj.x, obj.y));
                     }
                 }
             }
+            return isAlive;
+        });
 
+        // Need to update flakObjects separately so we have access to the
+        // objects separately to test for collisions.
+        this.flakObjects = flakObjects = flakObjects.filter(function(obj) {
+            var isAlive = obj.update(msDuration);
+            // One definition of alive is whether it can be drawn or not.
+            if (isAlive) {
+                obj.draw(display);
+            }
             return isAlive;
         });
 
@@ -571,6 +604,7 @@ exports.thegame = {
     // All of the objects managed during an update loop.
     // All objects promise to have an update function.
     stageObjects: [],
+    flakObjects: [],
     // These more important objects created during initialization and
     // referenced here.
     crosshair: null,

@@ -29,7 +29,6 @@ Building the Code
 
 TODO
 ----
-* Collide targets with flak for big money, big prizes.
 * Add particles for exploding targets.
 
 
@@ -39,7 +38,7 @@ Notes
 * Updated to grunt version 0.4.
 * Embrace markdown.
 * Convert to my wrapper game library dasspiel.
-* Break the game into separate stages (which are roughly game states).
+* Break the game into separate stages (which are essentially overall game states).
 * Game timer added.
 * Added a max number of targets on screen at a time.
 
