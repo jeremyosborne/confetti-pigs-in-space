@@ -20,9 +20,13 @@ Building the Code
 
         grunt build
 
+* If you are going to tweak the code and test things out, recommend:
+
+        grunt watch
+
 * Load up the game in a browser by opening up `index.html`.
     * Recommended: [Google Chrome](http://www.google.com/chrome).
-    * Purposely Unsupported Browsers: IE 6-8, and probably other old browsers.
+    * Purposely Unsupported Browsers: IE 6-8, and likely other old browsers.
 * Click to shoot things.
 
 
@@ -44,6 +48,7 @@ Notes
 * Calculate a single final score.
 * Add particles upon explosion of targets.
 * Add sound on any explosion, flak or target (add the sound in the flak constructor).
+* Allow replay by clicking on the end stage.
 
 
 

@@ -30,18 +30,39 @@ exports.end = {
             text: "Your final score is: " + game.local.score.sum(),
             font: defaultFont,
         });
+        this.restartMessage = new TextOverlay({
+            alignx: "center",
+            aligny: "center",
+            // Skip a line.
+            paddingy: 100,
+            text: "Click to restart.",
+            font: defaultFont,
+        });
     },
     heartbeat: function(msDuration) {
-        var display = this.game.display;
+        var game = this.game;
+        var display = game.display;
+        var event = game.engine.event;
+        var MOUSE_DOWN = event.MOUSE_DOWN;
+
+        event.get().forEach(function(e) {
+            if (e.type === MOUSE_DOWN) {
+                // Transition back to game.
+                game.activateStage("thegame");
+            }
+        });
+
         display.fill('#000000');
         this.theEndText.draw(display);
         this.theEndText2.draw(display);
         this.finalScoreText.draw(display);
+        this.restartMessage.draw(display);
     },
     // Text Overlays, created during enter initialization.
     theEndText: null,
     theEndTest2: null,
     finalScoreText: null,
+    restartMessage: null,
 };
 
 

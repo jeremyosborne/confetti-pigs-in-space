@@ -527,18 +527,20 @@ exports.thegame = {
         // Initialize our crosshair.       
         this.crosshair = new Crosshair(game);
         this.stageObjects.push(this.crosshair);
-        
+
+        // In case this is the nth time playing, reset the scores.
+        game.local.score.fromJSON({});
         // Initialize the score of the game.
         this.scoreView = new ScoreView();
         this.stageObjects.push(this.scoreView);
         
         // The countdown timer. (not an object directly managed by the game).
-        this.countdown = new Countdown(60000).reset();
+        this.countdown = new Countdown(this.gameDuration).reset();
         // The view is managed as a game object.
         this.countdownView = new CountdownView(this.countdown);
         this.stageObjects.push(this.countdownView);        
     },
-    "heartbeat": function(msDuration) {
+    "heartbeat": function(msDuration) {        
         var stage = this;
         var game = this.game;
         var display = game.display;
@@ -551,10 +553,12 @@ exports.thegame = {
         var particles = this.particles;
         var crosshair = this.crosshair;
         var collisions = game.collisions;
-        
+                
         // Endgame conditions.
         if (!this.countdown.remaining()) {
             this.game.activateStage("end");
+            // Do not run the rest of the function, duh.
+            return;
         }
         
         // Check to make new targets.
@@ -647,6 +651,18 @@ exports.thegame = {
         });
 
     },
+    // Clean up so we can come back to a clean game.
+    exit: function(config) {
+        this.stageObjects = [];
+        this.flakObjects = [];
+        this.particles = [];
+        this.crosshair = null;
+        this.scoreView = null;
+        this.countdown = null;
+        this.numTargets = 0;
+        
+        config.done();
+    },
     // All of the objects managed during an update loop.
     // All objects promise to have an update function.
     stageObjects: [],
@@ -659,7 +675,9 @@ exports.thegame = {
     countdown: null,
     // Total number of targets on screen now, and the max allowed.
     numTargets: 0,
+    // These should be constant.
     maxTargets: 15,
+    gameDuration: 5000,
 };
 
 
