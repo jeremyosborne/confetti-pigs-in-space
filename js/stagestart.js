@@ -48,4 +48,4 @@ exports.start = {
 
 
 
-})(Stages);
+})(Game.local.Stages);

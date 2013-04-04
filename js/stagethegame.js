@@ -97,6 +97,9 @@ var Flak = function(x, y) {
      * @type {Number}
      */
     this.maxRadius = 25;
+    
+    // Flak goes boom when we construct it.
+    Game.local.explosions.playRandom();
 };
 /**
  * Pointer to our Game object.
@@ -485,6 +488,34 @@ CountdownView.prototype.draw = function(target) {
 
 
 
+/**
+ * Generates debris for the exploded targets.
+ * @param x {Number} x pixel where to generate the debris.
+ * @param y {Number} y pixel where to generate the debris.
+ */
+var targetDebrisFactory = function(x, y) {
+    var r1 = Math.random();
+    var r2 = Math.random();
+    var r3 = Math.random();
+    
+    var surface = new Game.engine.Surface(5, 5);
+    surface.fill("rgb("+Math.floor(r1*256)+","+Math.floor(r2*256)+","+Math.floor(r3*256)+")");
+    
+    return new Game.Particle({
+        x: x,
+        y: y,
+        dx: (10 + r1 * 40) * (r2 > 0.5 ? -1 : 1),
+        dy: (10 + r2 * 40) * (r1 > 0.5 ? -1 : 1),
+        // Only gravity change.
+        ddy: 100,
+        alpha: r3,
+        maxAge: 2000 + r3*2000,
+        surface: surface
+    });
+};
+
+
+
 // Manages the game until the game is over.
 exports.thegame = {
     "id": "thegame",
@@ -515,8 +546,9 @@ exports.thegame = {
         var MOUSE_DOWN = event.MOUSE_DOWN;
         var MOUSE_MOTION = event.MOUSE_MOTION;
         var stageObjects = this.stageObjects;
-        // Manage flak objects separately.
+        // Manage some objects separately.
         var flakObjects = this.flakObjects;
+        var particles = this.particles;
         var crosshair = this.crosshair;
         var collisions = game.collisions;
         
@@ -583,8 +615,22 @@ exports.thegame = {
                         game.local.score.mod("targetsDestroyed", 3);                        
                         // And launch another, free explosion.
                         flakObjects.push(new Flak(obj.x, obj.y));
+                        // With accompanying confeti.
+                        particles.push(targetDebrisFactory(obj.x, obj.y));
+                        particles.push(targetDebrisFactory(obj.x, obj.y));
+                        particles.push(targetDebrisFactory(obj.x, obj.y));
+                        particles.push(targetDebrisFactory(obj.x, obj.y));
+                        particles.push(targetDebrisFactory(obj.x, obj.y));
                     }
                 }
+            }
+            return isAlive;
+        });
+
+        this.particles = particles.filter(function(obj) {
+            var isAlive = obj.update(msDuration);
+            if (isAlive) {
+                obj.draw(display);
             }
             return isAlive;
         });
@@ -605,6 +651,7 @@ exports.thegame = {
     // All objects promise to have an update function.
     stageObjects: [],
     flakObjects: [],
+    particles: [],
     // These more important objects created during initialization and
     // referenced here.
     crosshair: null,
@@ -617,4 +664,4 @@ exports.thegame = {
 
 
 
-})(Stages);
+})(Game.local.Stages);

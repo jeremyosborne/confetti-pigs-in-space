@@ -46,4 +46,4 @@ exports.end = {
 
 
 
-})(Stages);
+})(Game.local.Stages);
