@@ -33,6 +33,7 @@ Building the Code
 
 TODO
 ----
+* Turn the game timer back up to 60 seconds.
 * Refactor again (need to somewhat normalize how I define entities).
 
 

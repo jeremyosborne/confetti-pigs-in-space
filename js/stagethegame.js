@@ -58,10 +58,10 @@ var Crosshair = function() {
     };
 };
 /**
- * Pointer to our Game object.
- * @type {Game}
+ * Pointer to our $g object.
+ * @type {$g}
  */
-Crosshair.prototype.game = Game;
+Crosshair.prototype.game = $g;
 
 
 /**
@@ -99,13 +99,13 @@ var Flak = function(x, y) {
     this.maxRadius = 25;
     
     // Flak goes boom when we construct it.
-    Game.local.explosions.playRandom();
+    $g.local.explosions.playRandom();
 };
 /**
- * Pointer to our Game object.
- * @type {Game}
+ * Pointer to our $g object.
+ * @type {$g}
  */
-Flak.prototype.game = Game;
+Flak.prototype.game = $g;
 /**
  * Called to update the data.
  * @param msDuration {Number} How many ms since our last update.
@@ -207,10 +207,10 @@ var Target = function(config) {
     this.state = "moving";
 };
 /**
- * Pointer to our Game object.
- * @type {Game}
+ * Pointer to our $g object.
+ * @type {$g}
  */
-Target.prototype.game = Game;
+Target.prototype.game = $g;
 /**
  * How wide is the target?
  * @type {Number}
@@ -316,7 +316,7 @@ var targetFactory = function() {
     // The target we're going to create and return.
     var target;
     // What are the display dimensions?
-    var displayDims = Game.display.getSize();
+    var displayDims = $g.display.getSize();
     
     switch (side) {
         case 0:
@@ -375,10 +375,10 @@ var targetFactory = function() {
  */
 var ScoreView = function() {};
 /**
- * Shared reference to our Game object.
- * @type {Game}
+ * Shared reference to our $g object.
+ * @type {$g}
  */
-ScoreView.prototype.game = Game;
+ScoreView.prototype.game = $g;
 ScoreView.prototype.update = function() {
     return true;
 };
@@ -458,10 +458,10 @@ var CountdownView = function(countdown) {
     this.countdown = countdown;
 };
 /**
- * Shared reference to our Game object.
- * @type {Game}
+ * Shared reference to our $g object.
+ * @type {$g}
  */
-CountdownView.prototype.game = Game;
+CountdownView.prototype.game = $g;
 /**
  * We always run, never remove.
  */
@@ -498,10 +498,10 @@ var targetDebrisFactory = function(x, y) {
     var r2 = Math.random();
     var r3 = Math.random();
     
-    var surface = new Game.engine.Surface(5, 5);
+    var surface = new $g.engine.Surface(5, 5);
     surface.fill("rgb("+Math.floor(r1*256)+","+Math.floor(r2*256)+","+Math.floor(r3*256)+")");
     
-    return new Game.Particle({
+    return new $g.Particle({
         x: x,
         y: y,
         dx: (10 + r1 * 40) * (r2 > 0.5 ? -1 : 1),
@@ -682,4 +682,4 @@ exports.thegame = {
 
 
 
-})(Game.local.Stages);
+})($g.local.Stages);

@@ -67,4 +67,4 @@ exports.end = {
 
 
 
-})(Game.local.Stages);
+})($g.local.Stages);

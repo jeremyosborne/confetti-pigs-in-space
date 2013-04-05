@@ -98,11 +98,7 @@ module.exports = function(grunt) {
                 // everywhere and are assumed to be used everywhere.
                 globals: {
                     module: false,
-                    Game: false,
-                    Stages: false,
-                    // The following will be coded out eventually.
-                    game: false,
-                    klass: false,
+                    $g: false,
                 },
             },
         },

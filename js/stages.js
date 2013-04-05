@@ -3,4 +3,4 @@
     // Attach stages here.
     exports.Stages = {};
     
-})(Game.local);
+})($g.local);

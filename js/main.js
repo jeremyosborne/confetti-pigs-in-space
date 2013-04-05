@@ -1,5 +1,5 @@
-Game.ready(function() {
-    // Points to the dasspiel Game object.
+$g.ready(function() {
+    // Points to the dasspiel $g object.
     var game = this;
     var Noise = game.Noise;
 
