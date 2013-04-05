@@ -23,7 +23,7 @@ $g.ready(function() {
         return [0, 0].concat(this.display.getSize());
     };
 
-    game.createDisplay(600, 600)
+    game.displayCreate(600, 600)
         .stageAdd(game.local.Stages.start)
         .stageAdd(game.local.Stages.thegame)
         .stageAdd(game.local.Stages.end)
