@@ -14,12 +14,12 @@ var Crosshair = function() {
     //this.alpha = 0;
     
     // Crosshair needs access to the Surface object.
-    this.surface = new this.game.engine.Surface(20, 20);
+    this.surface = new this.game.gamejs.Surface(20, 20);
     // surface, color, startPos, endPos, width
-    this.game.engine.draw.line(this.surface, "#ffffff", [9, 0], [9, 3], 1);
-    this.game.engine.draw.line(this.surface, "#ffffff", [9, 16], [9, 19], 1);
-    this.game.engine.draw.line(this.surface, "#ffffff", [0, 9], [3, 9], 1);
-    this.game.engine.draw.line(this.surface, "#ffffff", [16, 9], [19, 9], 1);
+    this.game.gamejs.draw.line(this.surface, "#ffffff", [9, 0], [9, 3], 1);
+    this.game.gamejs.draw.line(this.surface, "#ffffff", [9, 16], [9, 19], 1);
+    this.game.gamejs.draw.line(this.surface, "#ffffff", [0, 9], [3, 9], 1);
+    this.game.gamejs.draw.line(this.surface, "#ffffff", [16, 9], [19, 9], 1);
     
     this.isAlive = function() {
         // We're always alive.
@@ -132,14 +132,14 @@ Flak.prototype.update = function(msDuration) {
  */
 Flak.prototype.draw = function(target) {
     // Modify the color based on radius.
-    var rng = this.game.engine.utils.prng;
+    var rng = this.game.gamejs.utils.prng;
     var red = rng.integer(0, 255);
     var green = rng.integer(0, 255);
     var blue = rng.integer(0,255);
     
     // The greater than zero has to do with a silliness in gamejs.
     if (this.radius > 0) {
-        this.game.engine.draw.circle(
+        this.game.gamejs.draw.circle(
             target,
             "rgb("+red+","+green+","+blue+")",
             [this.x, this.y], 
@@ -196,11 +196,11 @@ var Target = function(config) {
     this.age = 0;
 
     // Target needs access to the Surface object.
-    this.surface = new this.game.engine.Surface(this.width, this.height);
+    this.surface = new this.game.gamejs.Surface(this.width, this.height);
     // surface, color, points, width (0 means fill)
-    this.game.engine.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
+    this.game.gamejs.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
     // The gamejs rotation works by clockwise rotation only.
-    this.surface = this.game.engine.transform.rotate(this.surface, -config.heading);
+    this.surface = this.game.gamejs.transform.rotate(this.surface, -config.heading);
     
     // Targets have three states: moving, exploding, outofbounds.
     // Moving is the only "living" state.
@@ -498,7 +498,7 @@ var targetDebrisFactory = function(x, y) {
     var r2 = Math.random();
     var r3 = Math.random();
     
-    var surface = new $g.engine.Surface(5, 5);
+    var surface = new $g.gamejs.Surface(5, 5);
     surface.fill("rgb("+Math.floor(r1*256)+","+Math.floor(r2*256)+","+Math.floor(r3*256)+")");
     
     return new $g.Particle({
@@ -544,7 +544,7 @@ exports.thegame = {
         var stage = this;
         var game = this.game;
         var display = game.display;
-        var event = game.engine.event;
+        var event = game.gamejs.event;
         var MOUSE_DOWN = event.MOUSE_DOWN;
         var MOUSE_MOTION = event.MOUSE_MOTION;
         var stageObjects = this.stageObjects;

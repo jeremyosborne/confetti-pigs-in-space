@@ -42,7 +42,7 @@ exports.end = {
     heartbeat: function(msDuration) {
         var game = this.game;
         var display = game.display;
-        var event = game.engine.event;
+        var event = game.gamejs.event;
         var MOUSE_DOWN = event.MOUSE_DOWN;
 
         event.get().forEach(function(e) {

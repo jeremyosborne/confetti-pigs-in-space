@@ -4,7 +4,7 @@ $g.ready(function() {
     var Noise = game.Noise;
 
     // Game specific settings.
-    game.local("defaultFont", new game.engine.font.Font('22px monospace'));
+    game.local("defaultFont", new game.gamejs.font.Font('22px monospace'));
     game.local("score", new game.ScoreKeeper());
 
     // What flak and explosions sound like in this game.
