@@ -24,10 +24,10 @@ $g.ready(function() {
     };
 
     game.createDisplay(600, 600)
-        .addStage(game.local.Stages.start)
-        .addStage(game.local.Stages.thegame)
-        .addStage(game.local.Stages.end)
-        .activateStage("start")
+        .stageAdd(game.local.Stages.start)
+        .stageAdd(game.local.Stages.thegame)
+        .stageAdd(game.local.Stages.end)
+        .stageActivate("start")
         .run();
     
 });

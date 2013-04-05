@@ -33,7 +33,7 @@ exports.start = {
         event.get().forEach(function(e) {
             if (e.type === MOUSE_DOWN) {
                 // Transition.
-                game.activateStage("thegame");
+                game.stageActivate("thegame");
             }
         });
         

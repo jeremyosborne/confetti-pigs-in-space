@@ -556,7 +556,7 @@ exports.thegame = {
                 
         // Endgame conditions.
         if (!this.countdown.remaining()) {
-            this.game.activateStage("end");
+            this.game.stageActivate("end");
             // Do not run the rest of the function, duh.
             return;
         }

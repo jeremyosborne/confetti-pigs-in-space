@@ -48,7 +48,7 @@ exports.end = {
         event.get().forEach(function(e) {
             if (e.type === MOUSE_DOWN) {
                 // Transition back to game.
-                game.activateStage("thegame");
+                game.stageActivate("thegame");
             }
         });
 
