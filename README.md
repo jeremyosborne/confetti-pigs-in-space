@@ -33,8 +33,9 @@ Building the Code
 
 TODO
 ----
-* Turn the game timer back up to 60 seconds.
+* Probably a good moment to add a v12 tag.
 * Orient the flying pig objects correctly (and include them correctly).
+* Make multiline text and improve the TextOverlay.
 * Refactor again (need to somewhat normalize how I define entities).
 
 

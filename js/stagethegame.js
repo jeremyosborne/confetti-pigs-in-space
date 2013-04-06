@@ -195,10 +195,15 @@ var Target = function(config) {
     // of the boundary area.
     this.age = 0;
 
+    // OLD BORING TARGET.
     // Target needs access to the Surface object.
     this.surface = new this.game.gamejs.Surface(this.width, this.height);
     // surface, color, points, width (0 means fill)
     this.game.gamejs.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
+    
+    // NEW CONFETTI PIG YAR!!!!
+    //this.surface = $g.imgToSurface($g.assets.get("img/confetti_pig.png"));
+    
     // The gamejs rotation works by clockwise rotation only.
     this.surface = this.game.gamejs.transform.rotate(this.surface, -config.heading);
     
@@ -625,6 +630,7 @@ exports.thegame = {
                         particles.push(targetDebrisFactory(obj.x, obj.y));
                         particles.push(targetDebrisFactory(obj.x, obj.y));
                         particles.push(targetDebrisFactory(obj.x, obj.y));
+                        particles.push(targetDebrisFactory(obj.x, obj.y));
                     }
                 }
             }
@@ -677,7 +683,7 @@ exports.thegame = {
     numTargets: 0,
     // These should be constant.
     maxTargets: 15,
-    gameDuration: 5000,
+    gameDuration: 60000,
 };
 
 
