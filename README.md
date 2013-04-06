@@ -34,6 +34,7 @@ Building the Code
 TODO
 ----
 * Turn the game timer back up to 60 seconds.
+* Orient the flying pig objects correctly (and include them correctly).
 * Refactor again (need to somewhat normalize how I define entities).
 
 

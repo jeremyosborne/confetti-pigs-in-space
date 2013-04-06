@@ -7,6 +7,7 @@ module.exports = function(grunt) {
         "lib/dasspiel.js",
         // App modules.
         "js/stages.js",
+        "js/stageload.js",
         "js/stagestart.js",
         "js/stagethegame.js",
         "js/stageend.js",
