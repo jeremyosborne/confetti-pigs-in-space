@@ -33,26 +33,9 @@ Building the Code
 
 TODO
 ----
-* Probably a good moment to add a v12 tag.
-* Next round.
-    * Refactor again (need to somewhat normalize how I define entities).
-    * Make multiline text and improve the TextOverlay.
-    * Include the flying confetti pigs, and orient correctly.
-
-
-
-Notes
------
-* Updated to grunt version 0.4.
-* Embrace markdown.
-* Convert to my wrapper game library dasspiel.
-* Break the game into separate stages (which are essentially overall game states).
-* Game timer added.
-* Added a max number of targets on screen at a time.
-* Calculate a single final score.
-* Add particles upon explosion of targets.
-* Add sound on any explosion, flak or target (add the sound in the flak constructor).
-* Allow replay by clicking on the end stage.
+* Refactor again (need to somewhat normalize how I define entities).
+* Make multiline text and improve the TextOverlay.
+* Include the flying confetti pigs, and orient correctly.
 
 
 
