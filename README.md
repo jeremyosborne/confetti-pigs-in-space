@@ -1,7 +1,7 @@
 shootdown
 =========
 
-A silly little game for my own spare time coding and fun. also an experiment documenting my organic coding procedures, which aren't always pretty.
+An experiment documenting my organic coding procedures. Also a game.
 
 
 
@@ -34,9 +34,10 @@ Building the Code
 TODO
 ----
 * Probably a good moment to add a v12 tag.
-* Orient the flying pig objects correctly (and include them correctly).
-* Make multiline text and improve the TextOverlay.
-* Refactor again (need to somewhat normalize how I define entities).
+* Next round.
+    * Refactor again (need to somewhat normalize how I define entities).
+    * Make multiline text and improve the TextOverlay.
+    * Include the flying confetti pigs, and orient correctly.
 
 
 
