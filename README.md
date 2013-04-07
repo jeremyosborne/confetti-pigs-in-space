@@ -46,5 +46,6 @@ Even though I have a habit of modifying and changing code, the following are ack
 * [Chris McCormick](http://mccormickit.com/) and [jsGameSoup](http://jsgamesoup.net/). Code I am using from jsGameSoup:
     * collisions.js
 * [Simon Oberhammer](https://github.com/oberhamsi) and [gamejs](https://github.com/oberhamsi/gamejs). I am using a lot of gamejs, in particular the Surface object which is a nice wrapper for canvas overlays.
+* [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for some simple, easy to generate sound effects.
 
 The licenses from these libraries are included in the LICENSE.txt file if a license was available. If I have incorrectly attributed anyone, please let me know and I'll correct it.
