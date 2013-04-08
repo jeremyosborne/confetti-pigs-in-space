@@ -1,7 +1,7 @@
 $g.ready(function() {
     // Points to the dasspiel $g object.
     var game = this;
-    var Noise = game.Noise;
+    var Sound = game.Sound;
 
     // Game specific settings.
     game.local("defaultFont", new game.gamejs.font.Font('22px monospace'));
@@ -9,10 +9,10 @@ $g.ready(function() {
 
     // What flak and explosions sound like in this game.
     game.local.explosions = [
-        new Noise("audio/explosion1.wav"),
-        new Noise("audio/explosion2.wav"),
-        new Noise("audio/explosion3.wav"),
-        new Noise("audio/explosion4.wav"),
+        new Sound("audio/explosion1.wav"),
+        new Sound("audio/explosion2.wav"),
+        new Sound("audio/explosion3.wav"),
+        new Sound("audio/explosion4.wav"),
     ];
     game.local.explosions.playRandom = function() {
         this[Math.floor(Math.random()*this.length)].play();
