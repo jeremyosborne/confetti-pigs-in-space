@@ -19,7 +19,7 @@ $g.ready(function() {
     };
 
     // For testing for collisions within the game boundaries.
-    game.collision_rect_boundaries = function() {
+    game.collisionRectBoundaries = function() {
         return [0, 0].concat(this.display.getSize());
     };
 

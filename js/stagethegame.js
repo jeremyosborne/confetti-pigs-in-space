@@ -152,7 +152,7 @@ Flak.prototype.draw = function(target) {
  * @return {Number[]} Rectangular collision area as an array conforming to
  * [left, top, width, height].
  */
-Flak.prototype.collision_rect_boundaries = function() {
+Flak.prototype.collisionRectBoundaries = function() {
     // If our radius describes the circle, grab a collision bounding box 
     // that fits within our circle.
     // Bounding box returned is described from the upper left corner as
@@ -277,7 +277,7 @@ Target.prototype.draw = function(target) {
  * @return {Number[]} Rectangular collision area as an array conforming to
  * [left, top, width, height].
  */
-Target.prototype.collision_rect_boundaries = function() {
+Target.prototype.collisionRectBoundaries = function() {
     // We use size, not width and height, because a rotated target takes
     // up more space.
     return this.upperLeft().concat(this.size());
@@ -286,7 +286,7 @@ Target.prototype.collision_rect_boundaries = function() {
  * Responds to a "not rect" anti-collision test.
  * @param target {Object} What we did _not_ collide with.
  */
-Target.prototype.collision_not_rect = function(target) {
+Target.prototype.collisionNotRect = function(target) {
     // We're trusting that the only thing we are anti-colliding with
     // is the game.
     if (this.age > 1000) {
@@ -298,7 +298,7 @@ Target.prototype.collision_not_rect = function(target) {
  * Responds to a rectangular collision test.
  * @param target {Object} What we collided with.
  */
-Target.prototype.collision_rect = function(target) {
+Target.prototype.collisionRect = function(target) {
     if (target instanceof Flak) {
         // We are dead.
         this.state = "exploding";
@@ -330,7 +330,7 @@ var targetFactory = function() {
                 x: displayDims[0]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[0]/4-Target.prototype.width)),
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                y: -Target.prototype.height,
+                y: -Target.prototype.height/2,
                 heading: 270 + headingDelta,
                 speed: speed
             });
@@ -340,7 +340,7 @@ var targetFactory = function() {
             target = new Target({
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                x: displayDims[0],
+                x: displayDims[0]+Target.prototype.width/2,
                 y: displayDims[1]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[1]/4-Target.prototype.height)),
                 heading: 180 + headingDelta,
                 speed: speed
@@ -352,7 +352,7 @@ var targetFactory = function() {
                 x: displayDims[0]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[0]/4-Target.prototype.width)),
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                y: displayDims[1],
+                y: displayDims[1]-Target.prototype.height/2,
                 heading: 90 + headingDelta,
                 speed: speed
             });
@@ -362,7 +362,7 @@ var targetFactory = function() {
             target = new Target({
                 // Just touching the edge so the target doesn't get
                 // removed before it is even visible.
-                x: -Target.prototype.width,
+                x: -Target.prototype.width/2,
                 y: displayDims[1]/2+(Math.random() > 0.5 ? +1 : -1)*Math.floor(Math.random() * (displayDims[1]/4-Target.prototype.height)),
                 heading: 0 + headingDelta,
                 speed: speed
@@ -606,7 +606,7 @@ exports.thegame = {
 
                 // In bounds or out of bounds? If out, the target will mark
                 // itself as "outofbounds" and it will be removed next frame.
-                collisions.not_rects([obj], [game]);
+                collisions.notRects([obj], [game]);
                 
                 // Test targets against flak objects.
                 // This will queue up an explosion next frame if they hit.
