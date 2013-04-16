@@ -8,15 +8,16 @@ $g.ready(function() {
     game.local("score", new game.ScoreKeeper());
 
     // What flak and explosions sound like in this game.
-    game.local.explosions = [
+    game.local("explosions", [
         new Sound("audio/explosion1.wav"),
         new Sound("audio/explosion2.wav"),
         new Sound("audio/explosion3.wav"),
         new Sound("audio/explosion4.wav"),
-    ];
+    ]);
     game.local.explosions.playRandom = function() {
         this[Math.floor(Math.random()*this.length)].play();
     };
+    game.local("flaksound", new Sound("audio/flak.wav"));
 
     // For testing for collisions within the game boundaries.
     game.collisionRectBoundaries = function() {

@@ -96,10 +96,7 @@ var Flak = function(x, y) {
      * Maximum radius in pixels.
      * @type {Number}
      */
-    this.maxRadius = 25;
-    
-    // Flak goes boom when we construct it.
-    $g.local.explosions.playRandom();
+    this.maxRadius = 25;    
 };
 /**
  * Pointer to our $g object.
@@ -588,6 +585,8 @@ exports.thegame = {
                 // Mouse down triggers a flak launch and lowers score.
                 flakObjects.push(new Flak(e.pos[0], e.pos[1]));
                 game.local.score.mod("shotsFired", -1);
+                // Flak has a regular sound.
+                $g.local.flaksound.play();
             }
         });
         
@@ -624,6 +623,8 @@ exports.thegame = {
                         game.local.score.mod("targetsDestroyed", 3);                        
                         // And launch another, free explosion.
                         flakObjects.push(new Flak(obj.x, obj.y));
+                        // Explosions sound different and varied.
+                        $g.local.explosions.playRandom();
                         // With accompanying confeti.
                         particles.push(targetDebrisFactory(obj.x, obj.y));
                         particles.push(targetDebrisFactory(obj.x, obj.y));
