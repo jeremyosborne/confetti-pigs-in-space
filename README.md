@@ -18,7 +18,7 @@ Building the Code
         
 * Build the code:
 
-        grunt build
+        grunt
 
 * If you are going to tweak the code and test things out, recommend:
 
