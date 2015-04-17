@@ -1,39 +1,33 @@
 # shootdown
 
-Click and blow stuff up.
+Click and blow stuff up. Current version of code should be hosted on this project's github pages at http://jeremyosborne.github.io/shootdown.
 
 
 
 ## Build the Game
 
 * Get [Node.js](http://nodejs.org/download/).
-* Get [Grunt Commandline](http://gruntjs.com/getting-started):
+* Get [Gulp](http://gruntjs.com/getting-started):
 
-        npm install -g grunt-cli
+        npm install -g gulp
 
 * Install other build tools:
 
         npm install
 
-* Build the code:
+* Build code, auto-rebuild code when changed, and start dev server:
 
-        grunt
+        gulp
 
-* If you are going to tweak the code and test things out, recommend:
-
-        grunt watch
-
-* Run game -> load `index.html` in browser.
-    * Recommended: [Google Chrome](http://www.google.com/chrome).
-* Click to shoot things.
+* Run game in modern browser
+    * go to: http://localhost:4242
+    * or just open `index.html` with a double click
 
 
 
-## TODO
+## Playing the game
 
-* Refactor again (need to somewhat normalize how I define entities).
-* Make multiline text and improve the TextOverlay.
-* Include the flying confetti pigs, and orient correctly.
+Click to shoot things. Such high scores. Much wow.
 
 
 
