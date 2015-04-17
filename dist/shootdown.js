@@ -1,32 +1,9 @@
 /*!
-    shootdown
-    v0.0.1
-    built 2015-04-17
-    
-    Copyright (c) 2015 Jeremy Osborne <jeremywosborne@gmail.com>
-    Licensed MIT 
+ * Shootdown
+ * Build date: 2015-04-17 18:44:02
+ * Build version: 0.0.1
  */
-(function() {
-    /*
-     * Check for features that we need in the browser, and fail
-     * out if we fail these checks.
-     */
-    try {
-        if (!document.querySelector) {
-            throw new Error();
-        }
-        if (!document.createElement("canvas").getContext) {
-            throw new Error();
-        }
-        if (!Array.prototype.filter) {
-            throw new Error();
-        }
-    }
-    catch(err) {
-        alert("This game will likely not work on your browser. Please consider upgrading to a newer browser like Google Chrome or Mozilla Firefox.");
-    }
-})();
-;/*!
+/*!
     dasspiel
     v0.0.1
     built 2013-04-15
@@ -7230,7 +7207,29 @@ exports.TextOverlay = TextOverlay;
 // Assume and enforce either attachment to the Game object or this.
 // (Global/exports style of export allows easier testing.)
 })(typeof window != "undefined" && window.$g ? window.$g : this);
-;/* jshint unused:true, undef:true, browser:true */
+
+(function() {
+    /*
+     * Check for features that we need in the browser, and fail
+     * out if we fail these checks.
+     */
+    try {
+        if (!document.querySelector) {
+            throw new Error();
+        }
+        if (!document.createElement("canvas").getContext) {
+            throw new Error();
+        }
+        if (!Array.prototype.filter) {
+            throw new Error();
+        }
+    }
+    catch(err) {
+        alert("This game will likely not work on your browser. Please consider upgrading to a newer browser.");
+    }
+})();
+
+/* jshint unused:true, undef:true, browser:true */
 /* global $g:false */
 
 
@@ -7329,7 +7328,8 @@ exports.CountdownView = CountdownView;
 
 
 })($g.local);
-;/* jshint unused:true, undef:true, browser:true */
+
+/* jshint unused:true, undef:true, browser:true */
 /* global $g:false */
 
 
@@ -7487,7 +7487,8 @@ exports.ScoreKeeperView = ScoreKeeperView;
 
 
 })($g.local);
-;(function(exports) {
+
+(function(exports) {
 
 
 
@@ -7541,7 +7542,8 @@ exports.Sound = Sound;
 // Assume and enforce either attachment to the Game object or this.
 // (Global/exports style of export allows easier testing.)
 })(typeof window != "undefined" && window.$g ? window.$g : this);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 
@@ -7610,7 +7612,8 @@ exports.Crosshair = Crosshair;
 
 
 })($g.local);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 
@@ -7723,7 +7726,8 @@ exports.Flak = Flak;
 
 
 })($g.local);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 
@@ -7878,7 +7882,8 @@ exports.Target = Target;
 
 
 })($g.local);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 (function(exports) {
@@ -7945,7 +7950,8 @@ exports.stageLoad = {
 
 
 })($g.local);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 (function(exports) {
@@ -7999,7 +8005,8 @@ exports.stageStart = {
 
 
 })($g.local);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 (function(exports) {
@@ -8275,7 +8282,8 @@ exports.stageTheGame = {
 
 
 })($g.local);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 (function(exports) {
@@ -8348,7 +8356,8 @@ exports.stageEnd = {
 
 
 })($g.local);
-;/* jshint unused:true, undef:true */
+
+/* jshint unused:true, undef:true */
 /* global $g:false */
 
 $g.ready(function() {
@@ -8366,10 +8375,14 @@ $g.ready(function() {
         this[Math.floor(Math.random() * this.length)].play();
     };
     $g.local("flaksound", new $g.Sound("audio/flak.wav"));
+
+
     // For testing for collisions within the game boundaries.
     $g.collisionRectBoundaries = function() {
         return [0, 0].concat(this.display.getSize());
     };
+
+
 
     $g.displayCreate(600, 600)
         .stageAdd($g.local.stageLoad)
