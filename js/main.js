@@ -1,3 +1,6 @@
+/* jshint unused:true, undef:true */
+/* global $g:false */
+
 $g.ready(function() {
     // Points to the dasspiel $g object.
     var game = this;
@@ -31,5 +34,5 @@ $g.ready(function() {
         .stageAdd(game.local.Stages.end)
         .stageActivate("load")
         .run();
-    
+
 });

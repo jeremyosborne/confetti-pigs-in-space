@@ -1,3 +1,6 @@
+/* jshint unused:true, undef:true */
+/* global $g:false */
+
 (function(exports) {
 
 
@@ -39,7 +42,7 @@ exports.end = {
             font: defaultFont,
         });
     },
-    heartbeat: function(msDuration) {
+    heartbeat: function(/*msDuration*/) {
         var game = this.game;
         var display = game.display;
         var event = game.gamejs.event;

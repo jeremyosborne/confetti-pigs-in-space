@@ -3,7 +3,7 @@
 
 (function(exports) {
 
-    // Attach stages here.
-    exports.Stages = {};
+    // Attach entities here.
+    exports.entities = {};
 
 })($g.local);

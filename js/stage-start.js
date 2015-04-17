@@ -1,14 +1,17 @@
+/* jshint unused:true, undef:true */
+/* global $g:false */
+
 (function(exports) {
 
 
 // Welcome screen. Assumes a transition to the game.
 exports.start = {
-    "id": "start",
-    "enter": function() {
+    id: "start",
+    enter: function() {
         var game = this.game;
         var defaultFont = game.local("defaultFont");
         var TextOverlay = game.TextOverlay;
-        
+
         // Initialize.
         this.welcomeText = new TextOverlay({
             alignx: "center",
@@ -24,7 +27,7 @@ exports.start = {
             font: defaultFont,
         });
     },
-    "heartbeat": function(msDuration) {
+    heartbeat: function(/*msDuration*/) {
         var game = this.game;
         var display = game.display;
         var event = game.gamejs.event;
@@ -36,7 +39,7 @@ exports.start = {
                 game.stageActivate("thegame");
             }
         });
-        
+
         display.fill('#000000');
         this.welcomeText.draw(display);
         this.helpText.draw(display);

@@ -1,7 +1,7 @@
 /*!
     shootdown
     v0.0.1
-    built 2015-04-13
+    built 2015-04-16
     
     Copyright (c) 2015 Jeremy Osborne <jeremywosborne@gmail.com>
     Licensed MIT 
@@ -7230,128 +7230,21 @@ exports.TextOverlay = TextOverlay;
 // Assume and enforce either attachment to the Game object or this.
 // (Global/exports style of export allows easier testing.)
 })(typeof window != "undefined" && window.$g ? window.$g : this);
-;(function(exports) {
-    
-    // Attach stages here.
-    exports.Stages = {};
-    
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+(function(exports) {
+
+    // Attach entities here.
+    exports.entities = {};
+
 })($g.local);
-;(function(exports) {
-
-
-// Welcome screen. Assumes a transition to the game.
-exports.load = {
-    "id": "load",
-    "enter": function() {
-        var pigImgSrc = "img/confetti_pig.png";
-        var self = this;
-        var game = this.game;
-        var defaultFont = game.local("defaultFont");
-        var TextOverlay = game.TextOverlay;
-        
-        // Initialize.
-        this.loadingText = new TextOverlay({
-            alignx: "center",
-            aligny: "center",
-            text: "loading assets....",
-            font: defaultFont,
-        });
-        
-        // Setup asset load listeners.
-        game.assets.onloadsuccess = function(data) {
-            self.loadingText = new TextOverlay({
-                alignx: "center",
-                aligny: "center",
-                text: "assets loaded. click to continue...",
-                font: defaultFont,
-            });
-        };
-        game.assets.onloadfail = function(data) {
-            self.loadingText = new TextOverlay({
-                alignx: "center",
-                aligny: "center",
-                text: "error loading assets....",
-                font: defaultFont,
-            });
-        };
-        game.assets.imgLoad(pigImgSrc);
-    },
-    "heartbeat": function(msDuration) {
-        var game = this.game;
-        var display = game.display;
-        var event = game.gamejs.event;
-        var MOUSE_DOWN = event.MOUSE_DOWN;
-        var assetsLoaded = !game.assets.isLoading();
-
-        event.get().forEach(function(e) {
-            if (e.type === MOUSE_DOWN && assetsLoaded) {
-                // Transition.
-                game.stageActivate("start");
-            }
-        });
-        
-        display.fill('#000000');
-        this.loadingText.draw(display);
-    },
-    // Initialized when this stage is entered.
-    loadingText: null,
-};
+;/* jshint unused:true, undef:true */
+/* global $g:false */
 
 
 
-})($g.local.Stages);
-;(function(exports) {
-
-
-// Welcome screen. Assumes a transition to the game.
-exports.start = {
-    "id": "start",
-    "enter": function() {
-        var game = this.game;
-        var defaultFont = game.local("defaultFont");
-        var TextOverlay = game.TextOverlay;
-        
-        // Initialize.
-        this.welcomeText = new TextOverlay({
-            alignx: "center",
-            aligny: "center",
-            text: "shootdown",
-            font: defaultFont,
-        });
-        this.helpText = new TextOverlay({
-            alignx: "center",
-            aligny: "center",
-            paddingy: 25,
-            text: "click to start. click to shoot things.",
-            font: defaultFont,
-        });
-    },
-    "heartbeat": function(msDuration) {
-        var game = this.game;
-        var display = game.display;
-        var event = game.gamejs.event;
-        var MOUSE_DOWN = event.MOUSE_DOWN;
-
-        event.get().forEach(function(e) {
-            if (e.type === MOUSE_DOWN) {
-                // Transition.
-                game.stageActivate("thegame");
-            }
-        });
-        
-        display.fill('#000000');
-        this.welcomeText.draw(display);
-        this.helpText.draw(display);
-    },
-    // Initialized when this stage is entered.
-    "welcomeText": null,
-    "helpText": null,
-};
-
-
-
-})($g.local.Stages);
-;(function(exports) {
+(function(exports) {
 
 
 
@@ -7362,64 +7255,71 @@ var Crosshair = function() {
     // Start outside of the canvas.
     this.x = -100;
     this.y = -100;
-    
+
     // remember, gamejs is assbackwards with alpha.
     //this.alpha = 0;
-    
+
     // Crosshair needs access to the Surface object.
-    this.surface = new this.game.gamejs.Surface(20, 20);
+    this.surface = new $g.gamejs.Surface(20, 20);
     // surface, color, startPos, endPos, width
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [9, 0], [9, 3], 1);
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [9, 16], [9, 19], 1);
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [0, 9], [3, 9], 1);
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [16, 9], [19, 9], 1);
-    
-    this.isAlive = function() {
-        // We're always alive.
-        return true;
-    };
-    this.size = function() {
-        return !this.surface ? null : this.surface.getSize();
-    };
-    this.upperLeft = function() {
-        var size = this.size();
-        if (size) {
-            return [this.x-size[0]/2, this.y-size[1]/2];
-        }
-        else {
-            return [this.x, this.y];
-        }
-    };
-    /**
-     * Called to update the data.
-     * @param msDuration {Number} How many ms since our last update.
-     * @return {Boolean} Whether we should be included in future updates
-     * or garbage collected.
-     */
-    this.update = function(msDuration) {
-        return this.isAlive();
-    };
-    /**
-     * Called during the draw stage.
-     * @param target {Surface} Where we draw ourselves onto.
-     */
-    this.draw = function(target) {
-        if (this.surface) {
-            //this.surface.setAlpha(this.alpha);
-            target.blit(this.surface, this.upperLeft());
-        }
-    };
+    $g.gamejs.draw.line(this.surface, "#ffffff", [9, 0], [9, 3], 1);
+    $g.gamejs.draw.line(this.surface, "#ffffff", [9, 16], [9, 19], 1);
+    $g.gamejs.draw.line(this.surface, "#ffffff", [0, 9], [3, 9], 1);
+    $g.gamejs.draw.line(this.surface, "#ffffff", [16, 9], [19, 9], 1);
+};
+Crosshair.prototype.isAlive = function() {
+    // We're always alive.
+    return true;
+};
+Crosshair.prototype.size = function() {
+    return !this.surface ? null : this.surface.getSize();
+};
+Crosshair.prototype.upperLeft = function() {
+    var size = this.size();
+    if (size) {
+        return [this.x-size[0]/2, this.y-size[1]/2];
+    }
+    else {
+        return [this.x, this.y];
+    }
 };
 /**
- * Pointer to our $g object.
- * @type {$g}
+ * Called to update the data.
+ * @param msDuration {Number} How many ms since our last update.
+ * @return {Boolean} Whether we should be included in future updates
+ * or garbage collected.
  */
-Crosshair.prototype.game = $g;
+Crosshair.prototype.update = function(/*msDuration*/) {
+    return this.isAlive();
+};
+/**
+ * Called during the draw stage.
+ * @param target {Surface} Where we draw ourselves onto.
+ */
+Crosshair.prototype.draw = function(target) {
+    if (this.surface) {
+        //this.surface.setAlpha(this.alpha);
+        target.blit(this.surface, this.upperLeft());
+    }
+};
+
+exports.Crosshair = Crosshair;
+
+
+
+})($g.local.entities);
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+
+
+(function(exports) {
+
 
 
 /**
  * @class An expanding, collidable particle.
- * 
+ *
  * @param x {Number} Center of explosion x pixel.
  * @param y {Number} Center of explosion y pixel.
  */
@@ -7434,7 +7334,7 @@ var Flak = function(x, y) {
      * @type {Number}
      */
     this.y = y;
-    
+
     /**
      * Current radius in pixels.
      * @type {Number}
@@ -7449,7 +7349,7 @@ var Flak = function(x, y) {
      * Maximum radius in pixels.
      * @type {Number}
      */
-    this.maxRadius = 25;    
+    this.maxRadius = 25;
 };
 /**
  * Pointer to our $g object.
@@ -7465,13 +7365,13 @@ Flak.prototype.game = $g;
 Flak.prototype.update = function(msDuration) {
     // Time ratio.
     var dt = msDuration/1000;
-    
+
     // Flak explosions expand and then contract.
     if (this.radius >= this.maxRadius && this.dradius > 0) {
         this.dradius = -1*this.dradius;
     }
     this.radius += this.dradius*dt;
-    
+
     // Determine when we get removed from the list of objects.
     // We want to return true if we are _not_ dead.
     return (this.dradius == -1 ? this.radius > 0 : true);
@@ -7486,13 +7386,13 @@ Flak.prototype.draw = function(target) {
     var red = rng.integer(0, 255);
     var green = rng.integer(0, 255);
     var blue = rng.integer(0,255);
-    
+
     // The greater than zero has to do with a silliness in gamejs.
     if (this.radius > 0) {
         this.game.gamejs.draw.circle(
             target,
             "rgb("+red+","+green+","+blue+")",
-            [this.x, this.y], 
+            [this.x, this.y],
             this.radius
         );
     }
@@ -7503,7 +7403,7 @@ Flak.prototype.draw = function(target) {
  * [left, top, width, height].
  */
 Flak.prototype.collisionRectBoundaries = function() {
-    // If our radius describes the circle, grab a collision bounding box 
+    // If our radius describes the circle, grab a collision bounding box
     // that fits within our circle.
     // Bounding box returned is described from the upper left corner as
     // [x, y, w, h].
@@ -7516,20 +7416,34 @@ Flak.prototype.collisionRectBoundaries = function() {
 
 
 
+exports.Flak = Flak;
+
+
+
+})($g.local.entities);
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+
+
+(function(exports) {
+
+
+
 /**
  * A target to shoot down.
  * @param [config] {Object} Associative array of arguments.
  * @param [config.x=0] {Number} Starting x-pixel coordinate.
  * @param [config.y=0] {Number} Starting y-pixel coordinate.
  * @param [config.heading=0] {Number} Degrees heading the target
- * is going to travel in. 0 degrees is a heading of right across the playing 
+ * is going to travel in. 0 degrees is a heading of right across the playing
  * field, 90 is up the playing field.
  * @param [config.speed=100] {Number} Speed in pixels/sec.
  * @constructs
  */
 var Target = function(config) {
     config = config || {};
-    
+
     // The center of the target.
     this.x = config.x || 0;
     this.y = config.y || 0;
@@ -7545,18 +7459,18 @@ var Target = function(config) {
     // of the boundary area.
     this.age = 0;
 
-    // OLD BORING TARGET.
+    // OLD TARGET.
     // Target needs access to the Surface object.
-    this.surface = new this.game.gamejs.Surface(this.width, this.height);
+    //this.surface = new this.game.gamejs.Surface(this.width, this.height);
     // surface, color, points, width (0 means fill)
-    this.game.gamejs.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
-    
-    // NEW CONFETTI PIG YAR!!!!
-    //this.surface = $g.imgToSurface($g.assets.get("img/confetti_pig.png"));
-    
+    //this.game.gamejs.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
+
+    // CONFETTI PIG!!!!
+    this.surface = $g.imgToSurface($g.assets.get("img/confetti_pig.png"));
+
     // The gamejs rotation works by clockwise rotation only.
     this.surface = this.game.gamejs.transform.rotate(this.surface, -config.heading);
-    
+
     // Targets have three states: moving, exploding, outofbounds.
     // Moving is the only "living" state.
     this.state = "moving";
@@ -7585,7 +7499,7 @@ Target.prototype.isAlive = function() {
     return this.state == "moving";
 };
 /**
- * Gets the size of the target. 
+ * Gets the size of the target.
  * @return {Number[]} the size of the target as [width, height] pixel array.
  */
 Target.prototype.size = function() {
@@ -7598,7 +7512,7 @@ Target.prototype.size = function() {
  */
 Target.prototype.upperLeft = function() {
     var size = this.size();
-    
+
     return [this.x-size[0]/2, this.y-size[1]/2];
 };
 /**
@@ -7636,7 +7550,7 @@ Target.prototype.collisionRectBoundaries = function() {
  * Responds to a "not rect" anti-collision test.
  * @param target {Object} What we did _not_ collide with.
  */
-Target.prototype.collisionNotRect = function(target) {
+Target.prototype.collisionNotRect = function(/*target*/) {
     // We're trusting that the only thing we are anti-colliding with
     // is the game.
     if (this.age > 1000) {
@@ -7649,11 +7563,156 @@ Target.prototype.collisionNotRect = function(target) {
  * @param target {Object} What we collided with.
  */
 Target.prototype.collisionRect = function(target) {
-    if (target instanceof Flak) {
+    if (target instanceof $g.local.entities.Flak) {
         // We are dead.
         this.state = "exploding";
     }
 };
+
+
+
+exports.Target = Target;
+
+
+
+})($g.local.entities);
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+(function(exports) {
+
+    // Attach stages here.
+    exports.Stages = {};
+
+})($g.local);
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+(function(exports) {
+
+
+// Welcome screen. Assumes a transition to the game.
+exports.load = {
+    id: "load",
+    enter: function() {
+        var pigImgSrc = "img/confetti_pig.png";
+        var self = this;
+        var game = this.game;
+        var defaultFont = game.local("defaultFont");
+        var TextOverlay = game.TextOverlay;
+
+        // Initialize.
+        this.loadingText = new TextOverlay({
+            alignx: "center",
+            aligny: "center",
+            text: "loading assets....",
+            font: defaultFont,
+        });
+
+        // Setup asset load listeners.
+        game.assets.onloadsuccess = function(/*data*/) {
+            self.loadingText = new TextOverlay({
+                alignx: "center",
+                aligny: "center",
+                text: "assets loaded. click to continue...",
+                font: defaultFont,
+            });
+        };
+        game.assets.onloadfail = function(/*data*/) {
+            self.loadingText = new TextOverlay({
+                alignx: "center",
+                aligny: "center",
+                text: "error loading assets....",
+                font: defaultFont,
+            });
+        };
+        game.assets.imgLoad(pigImgSrc);
+    },
+    heartbeat: function(/*msDuration*/) {
+        var game = this.game;
+        var display = game.display;
+        var event = game.gamejs.event;
+        var MOUSE_DOWN = event.MOUSE_DOWN;
+        var assetsLoaded = !game.assets.isLoading();
+
+        event.get().forEach(function(e) {
+            if (e.type === MOUSE_DOWN && assetsLoaded) {
+                // Transition.
+                game.stageActivate("start");
+            }
+        });
+
+        display.fill('#000000');
+        this.loadingText.draw(display);
+    },
+    // Initialized when this stage is entered.
+    loadingText: null,
+};
+
+
+
+})($g.local.Stages);
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+(function(exports) {
+
+
+// Welcome screen. Assumes a transition to the game.
+exports.start = {
+    id: "start",
+    enter: function() {
+        var game = this.game;
+        var defaultFont = game.local("defaultFont");
+        var TextOverlay = game.TextOverlay;
+
+        // Initialize.
+        this.welcomeText = new TextOverlay({
+            alignx: "center",
+            aligny: "center",
+            text: "shootdown",
+            font: defaultFont,
+        });
+        this.helpText = new TextOverlay({
+            alignx: "center",
+            aligny: "center",
+            paddingy: 25,
+            text: "click to start. click to shoot things.",
+            font: defaultFont,
+        });
+    },
+    heartbeat: function(/*msDuration*/) {
+        var game = this.game;
+        var display = game.display;
+        var event = game.gamejs.event;
+        var MOUSE_DOWN = event.MOUSE_DOWN;
+
+        event.get().forEach(function(e) {
+            if (e.type === MOUSE_DOWN) {
+                // Transition.
+                game.stageActivate("thegame");
+            }
+        });
+
+        display.fill('#000000');
+        this.welcomeText.draw(display);
+        this.helpText.draw(display);
+    },
+    // Initialized when this stage is entered.
+    "welcomeText": null,
+    "helpText": null,
+};
+
+
+
+})($g.local.Stages);
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+(function(exports) {
+
+
+
 /**
  * For our purposes, call to generate a target instance randomized to one
  * of the four sides of the map.
@@ -7672,7 +7731,9 @@ var targetFactory = function() {
     var target;
     // What are the display dimensions?
     var displayDims = $g.display.getSize();
-    
+
+    var Target = $g.local.entities.Target;
+
     switch (side) {
         case 0:
             // top, heading down
@@ -7719,7 +7780,7 @@ var targetFactory = function() {
             });
             break;
     }
-    
+
     return target;
 };
 
@@ -7785,7 +7846,7 @@ var Countdown = function(ms) {
 Countdown.prototype.reset = function() {
     this._start = Date.now();
     this._end = this._start + this.duration;
-    
+
     return this;
 };
 /**
@@ -7852,10 +7913,10 @@ var targetDebrisFactory = function(x, y) {
     var r1 = Math.random();
     var r2 = Math.random();
     var r3 = Math.random();
-    
+
     var surface = new $g.gamejs.Surface(5, 5);
     surface.fill("rgb("+Math.floor(r1*256)+","+Math.floor(r2*256)+","+Math.floor(r3*256)+")");
-    
+
     return new $g.Particle({
         x: x,
         y: y,
@@ -7873,14 +7934,12 @@ var targetDebrisFactory = function(x, y) {
 
 // Manages the game until the game is over.
 exports.thegame = {
-    "id": "thegame",
-    "enter": function() {
+    id: "thegame",
+    enter: function() {
         var game = this.game;
-        var defaultFont = game.local("defaultFont");
-        var TextOverlay = game.TextOverlay;
 
-        // Initialize our crosshair.       
-        this.crosshair = new Crosshair(game);
+        // Initialize our crosshair.
+        this.crosshair = new game.local.entities.Crosshair(game);
         this.stageObjects.push(this.crosshair);
 
         // In case this is the nth time playing, reset the scores.
@@ -7888,14 +7947,14 @@ exports.thegame = {
         // Initialize the score of the game.
         this.scoreView = new ScoreView();
         this.stageObjects.push(this.scoreView);
-        
+
         // The countdown timer. (not an object directly managed by the game).
         this.countdown = new Countdown(this.gameDuration).reset();
         // The view is managed as a game object.
         this.countdownView = new CountdownView(this.countdown);
-        this.stageObjects.push(this.countdownView);        
+        this.stageObjects.push(this.countdownView);
     },
-    "heartbeat": function(msDuration) {        
+    heartbeat: function(msDuration) {
         var stage = this;
         var game = this.game;
         var display = game.display;
@@ -7908,14 +7967,14 @@ exports.thegame = {
         var particles = this.particles;
         var crosshair = this.crosshair;
         var collisions = game.collisions;
-                
+
         // Endgame conditions.
         if (!this.countdown.remaining()) {
             this.game.stageActivate("end");
             // Do not run the rest of the function, duh.
             return;
         }
-        
+
         // Check to make new targets.
         // The randomness might affect some game scores, but given this
         // will get called between 40 and 60 times a second, the chances
@@ -7936,30 +7995,30 @@ exports.thegame = {
             }
             else if (e.type === MOUSE_DOWN) {
                 // Mouse down triggers a flak launch and lowers score.
-                flakObjects.push(new Flak(e.pos[0], e.pos[1]));
+                flakObjects.push(new $g.local.entities.Flak(e.pos[0], e.pos[1]));
                 game.local.score.mod("shotsFired", -1);
                 // Flak has a regular sound.
                 $g.local.flaksound.play();
             }
         });
-        
+
         // Update and draw.
         display.fill('#000000');
         this.stageObjects = stageObjects.filter(function(obj) {
             var isAlive = obj.update(msDuration);
-            
+
             // One definition of alive is whether it can be drawn or not.
             if (isAlive) {
                 obj.draw(display);
             }
 
             // Additional tests for targets, as they need additional help.
-            if (obj instanceof Target) {
+            if (obj instanceof $g.local.entities.Target) {
 
                 // In bounds or out of bounds? If out, the target will mark
                 // itself as "outofbounds" and it will be removed next frame.
                 collisions.notRects([obj], [game]);
-                
+
                 // Test targets against flak objects.
                 // This will queue up an explosion next frame if they hit.
                 collisions.rects([obj], flakObjects);
@@ -7973,9 +8032,9 @@ exports.thegame = {
                     }
                     else if (obj.state == "exploding") {
                         // Increase score.
-                        game.local.score.mod("targetsDestroyed", 3);                        
+                        game.local.score.mod("targetsDestroyed", 3);
                         // And launch another, free explosion.
-                        flakObjects.push(new Flak(obj.x, obj.y));
+                        flakObjects.push(new $g.local.entities.Flak(obj.x, obj.y));
                         // Explosions sound different and varied.
                         $g.local.explosions.playRandom();
                         // With accompanying confeti.
@@ -8020,7 +8079,7 @@ exports.thegame = {
         this.scoreView = null;
         this.countdown = null;
         this.numTargets = 0;
-        
+
         config.done();
     },
     // All of the objects managed during an update loop.
@@ -8043,7 +8102,10 @@ exports.thegame = {
 
 
 })($g.local.Stages);
-;(function(exports) {
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+(function(exports) {
 
 
 
@@ -8084,7 +8146,7 @@ exports.end = {
             font: defaultFont,
         });
     },
-    heartbeat: function(msDuration) {
+    heartbeat: function(/*msDuration*/) {
         var game = this.game;
         var display = game.display;
         var event = game.gamejs.event;
@@ -8113,7 +8175,10 @@ exports.end = {
 
 
 })($g.local.Stages);
-;$g.ready(function() {
+;/* jshint unused:true, undef:true */
+/* global $g:false */
+
+$g.ready(function() {
     // Points to the dasspiel $g object.
     var game = this;
     var Sound = game.Sound;
@@ -8146,5 +8211,5 @@ exports.end = {
         .stageAdd(game.local.Stages.end)
         .stageActivate("load")
         .run();
-    
+
 });

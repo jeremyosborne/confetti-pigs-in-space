@@ -2,15 +2,19 @@ module.exports = function(grunt) {
     // List of source files, in order of least-to-most dependency.
     var srcFiles = [
         // Browser prerequisite check.
-        "js/browser_prereq.js",
+        "js/browser-prereq.js",
         // Third party modules/libraries.
-        "lib/dasspiel.js",
+        "js/lib/dasspiel.js",
         // App modules.
+        "js/entities.js",
+        "js/entity-crosshair.js",
+        "js/entity-flak.js",
+        "js/entity-target.js",
         "js/stages.js",
-        "js/stageload.js",
-        "js/stagestart.js",
-        "js/stagethegame.js",
-        "js/stageend.js",
+        "js/stage-load.js",
+        "js/stage-start.js",
+        "js/stage-thegame.js",
+        "js/stage-end.js",
         // Load this one last.
         "js/main.js",
     ];
@@ -18,31 +22,31 @@ module.exports = function(grunt) {
 
 
     grunt.initConfig({
-        
-        
-        
+
+
+
         pkg: grunt.file.readJSON('package.json'),
-        
-        
-        
+
+
+
         meta: {
             banner: ''+
                 '/*!\n' +
                 '    <%= pkg.title || pkg.name %>\n' +
-                '    v<%= pkg.version %>\n' + 
-                '    built <%= grunt.template.today("yyyy-mm-dd") %>\n' + 
-                '    <%= pkg.homepage || "" %>\n' + 
-                '    Copyright (c) <%= grunt.template.today("yyyy") %> <% pkg.author.name ? print(pkg.author.name+" <"+pkg.author.email+">") : print(pkg.author) %>\n' + 
+                '    v<%= pkg.version %>\n' +
+                '    built <%= grunt.template.today("yyyy-mm-dd") %>\n' +
+                '    <%= pkg.homepage || "" %>\n' +
+                '    Copyright (c) <%= grunt.template.today("yyyy") %> <% pkg.author.name ? print(pkg.author.name+" <"+pkg.author.email+">") : print(pkg.author) %>\n' +
                 '    Licensed <%= pkg.license || _.pluck(pkg.licenses, "type").join(", ") %> \n' +
                 ' */\n',
         },
-        
-        
-        
+
+
+
         clean: ["dist/"],
-        
-        
-        
+
+
+
         concat: {
             options: {
                 banner: '<%= meta.banner %>',
@@ -53,9 +57,9 @@ module.exports = function(grunt) {
                 dest: 'dist/<%= pkg.name %>.js'
             }
         },
-        
-      
-        
+
+
+
         // Move files from spot A to spot B
         // copy: {
             // main: {
@@ -69,31 +73,32 @@ module.exports = function(grunt) {
                 // ]
             // }
         // },
-        
-        
-        
+
+
+
         // Configuration for JSHint and the lint task.
         jshint: {
-            // Which files should we lint?
-            files: ['Gruntfile.js', 'js/**/*.js'],
-            // see 
+            // Which files should we lint? (Ignore the lib files for now.)
+            files: ['Gruntfile.js', 'js/*.js'],
+            // see
             //     http://www.jshint.com/docs/
             // for a list of options
             options: {
+                boss: true,
+                browser: true,
                 curly: true,
+                devel: true,
                 eqeqeq: false,
+                eqnull: true,
+                es5: true,
                 immed: true,
+                jquery: true,
                 latedef: true,
                 newcap: true,
                 noarg: false,
                 sub: true,
                 undef: true,
-                boss: true,
-                eqnull: true,
-                browser: true,
-                es5: true,
-                devel: true,
-                jquery: true,
+                unused: true,
                 // Define globals here, with a true if they should be modifiable
                 // and false if not. Use these for project globals that appear
                 // everywhere and are assumed to be used everywhere.
@@ -103,15 +108,15 @@ module.exports = function(grunt) {
                 },
             },
         },
-        
-        
+
+
         // Qunit files run in phantomjs and are expected to be .html files.
         // qunit: {
             // files: ['tests/**/*.html']
         // },
 
 
-        
+
         // minification task.
         uglify: {
             options: {

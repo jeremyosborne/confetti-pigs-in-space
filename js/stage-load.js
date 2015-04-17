@@ -1,16 +1,19 @@
+/* jshint unused:true, undef:true */
+/* global $g:false */
+
 (function(exports) {
 
 
 // Welcome screen. Assumes a transition to the game.
 exports.load = {
-    "id": "load",
-    "enter": function() {
+    id: "load",
+    enter: function() {
         var pigImgSrc = "img/confetti_pig.png";
         var self = this;
         var game = this.game;
         var defaultFont = game.local("defaultFont");
         var TextOverlay = game.TextOverlay;
-        
+
         // Initialize.
         this.loadingText = new TextOverlay({
             alignx: "center",
@@ -18,9 +21,9 @@ exports.load = {
             text: "loading assets....",
             font: defaultFont,
         });
-        
+
         // Setup asset load listeners.
-        game.assets.onloadsuccess = function(data) {
+        game.assets.onloadsuccess = function(/*data*/) {
             self.loadingText = new TextOverlay({
                 alignx: "center",
                 aligny: "center",
@@ -28,7 +31,7 @@ exports.load = {
                 font: defaultFont,
             });
         };
-        game.assets.onloadfail = function(data) {
+        game.assets.onloadfail = function(/*data*/) {
             self.loadingText = new TextOverlay({
                 alignx: "center",
                 aligny: "center",
@@ -38,7 +41,7 @@ exports.load = {
         };
         game.assets.imgLoad(pigImgSrc);
     },
-    "heartbeat": function(msDuration) {
+    heartbeat: function(/*msDuration*/) {
         var game = this.game;
         var display = game.display;
         var event = game.gamejs.event;
@@ -51,7 +54,7 @@ exports.load = {
                 game.stageActivate("start");
             }
         });
-        
+
         display.fill('#000000');
         this.loadingText.draw(display);
     },

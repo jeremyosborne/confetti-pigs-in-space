@@ -1,306 +1,10 @@
+/* jshint unused:true, undef:true */
+/* global $g:false */
+
 (function(exports) {
 
 
 
-/**
- * @class Crosshair used to track the mouse targeting in the game.
- */
-var Crosshair = function() {
-    // Start outside of the canvas.
-    this.x = -100;
-    this.y = -100;
-    
-    // remember, gamejs is assbackwards with alpha.
-    //this.alpha = 0;
-    
-    // Crosshair needs access to the Surface object.
-    this.surface = new this.game.gamejs.Surface(20, 20);
-    // surface, color, startPos, endPos, width
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [9, 0], [9, 3], 1);
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [9, 16], [9, 19], 1);
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [0, 9], [3, 9], 1);
-    this.game.gamejs.draw.line(this.surface, "#ffffff", [16, 9], [19, 9], 1);
-    
-    this.isAlive = function() {
-        // We're always alive.
-        return true;
-    };
-    this.size = function() {
-        return !this.surface ? null : this.surface.getSize();
-    };
-    this.upperLeft = function() {
-        var size = this.size();
-        if (size) {
-            return [this.x-size[0]/2, this.y-size[1]/2];
-        }
-        else {
-            return [this.x, this.y];
-        }
-    };
-    /**
-     * Called to update the data.
-     * @param msDuration {Number} How many ms since our last update.
-     * @return {Boolean} Whether we should be included in future updates
-     * or garbage collected.
-     */
-    this.update = function(msDuration) {
-        return this.isAlive();
-    };
-    /**
-     * Called during the draw stage.
-     * @param target {Surface} Where we draw ourselves onto.
-     */
-    this.draw = function(target) {
-        if (this.surface) {
-            //this.surface.setAlpha(this.alpha);
-            target.blit(this.surface, this.upperLeft());
-        }
-    };
-};
-/**
- * Pointer to our $g object.
- * @type {$g}
- */
-Crosshair.prototype.game = $g;
-
-
-/**
- * @class An expanding, collidable particle.
- * 
- * @param x {Number} Center of explosion x pixel.
- * @param y {Number} Center of explosion y pixel.
- */
-var Flak = function(x, y) {
-    /**
-     * Center of explosion x pixel.
-     * @type {Number}
-     */
-    this.x = x;
-    /**
-     * Center of explosion y pixel.
-     * @type {Number}
-     */
-    this.y = y;
-    
-    /**
-     * Current radius in pixels.
-     * @type {Number}
-     */
-    this.radius = 1;
-    /**
-     * Delta radius per second.
-     * @type {Number}
-     */
-    this.dradius = 25;
-    /**
-     * Maximum radius in pixels.
-     * @type {Number}
-     */
-    this.maxRadius = 25;    
-};
-/**
- * Pointer to our $g object.
- * @type {$g}
- */
-Flak.prototype.game = $g;
-/**
- * Called to update the data.
- * @param msDuration {Number} How many ms since our last update.
- * @return {Boolean} Whether we should be included in future updates
- * or garbage collected.
- */
-Flak.prototype.update = function(msDuration) {
-    // Time ratio.
-    var dt = msDuration/1000;
-    
-    // Flak explosions expand and then contract.
-    if (this.radius >= this.maxRadius && this.dradius > 0) {
-        this.dradius = -1*this.dradius;
-    }
-    this.radius += this.dradius*dt;
-    
-    // Determine when we get removed from the list of objects.
-    // We want to return true if we are _not_ dead.
-    return (this.dradius == -1 ? this.radius > 0 : true);
-};
-/**
- * Called during the draw stage.
- * @param target {Surface} Where we draw ourselves onto.
- */
-Flak.prototype.draw = function(target) {
-    // Modify the color based on radius.
-    var rng = this.game.gamejs.utils.prng;
-    var red = rng.integer(0, 255);
-    var green = rng.integer(0, 255);
-    var blue = rng.integer(0,255);
-    
-    // The greater than zero has to do with a silliness in gamejs.
-    if (this.radius > 0) {
-        this.game.gamejs.draw.circle(
-            target,
-            "rgb("+red+","+green+","+blue+")",
-            [this.x, this.y], 
-            this.radius
-        );
-    }
-};
-/**
- * Allows for rectangular collision tests.
- * @return {Number[]} Rectangular collision area as an array conforming to
- * [left, top, width, height].
- */
-Flak.prototype.collisionRectBoundaries = function() {
-    // If our radius describes the circle, grab a collision bounding box 
-    // that fits within our circle.
-    // Bounding box returned is described from the upper left corner as
-    // [x, y, w, h].
-    var radius = this.radius;
-    var radiusSquared = radius * radius;
-    var diameter = radius*2;
-    var offset = Math.sqrt(radiusSquared + radiusSquared);
-    return [this.x-offset, this.y-offset, diameter, diameter];
-};
-
-
-
-/**
- * A target to shoot down.
- * @param [config] {Object} Associative array of arguments.
- * @param [config.x=0] {Number} Starting x-pixel coordinate.
- * @param [config.y=0] {Number} Starting y-pixel coordinate.
- * @param [config.heading=0] {Number} Degrees heading the target
- * is going to travel in. 0 degrees is a heading of right across the playing 
- * field, 90 is up the playing field.
- * @param [config.speed=100] {Number} Speed in pixels/sec.
- * @constructs
- */
-var Target = function(config) {
-    config = config || {};
-    
-    // The center of the target.
-    this.x = config.x || 0;
-    this.y = config.y || 0;
-    // The rate of change of the target.
-    // Convert heading into proportional x and y units, multiply by speed.
-    config.heading = config.heading || 0;
-    config.speed = config.speed || 100;
-    this.dx = Math.cos(config.heading*Math.PI/180)*config.speed;
-    // Need to reverse the sign for our coordinate system (+1 is down, not up).
-    this.dy = -1*Math.sin(config.heading*Math.PI/180)*config.speed;
-
-    // For tracking a minimum age of a target, allows us to start outside
-    // of the boundary area.
-    this.age = 0;
-
-    // OLD BORING TARGET.
-    // Target needs access to the Surface object.
-    this.surface = new this.game.gamejs.Surface(this.width, this.height);
-    // surface, color, points, width (0 means fill)
-    this.game.gamejs.draw.polygon(this.surface, "#ffffff", [[0, 0], [20, 10], [0, 20]], 0);
-    
-    // NEW CONFETTI PIG YAR!!!!
-    //this.surface = $g.imgToSurface($g.assets.get("img/confetti_pig.png"));
-    
-    // The gamejs rotation works by clockwise rotation only.
-    this.surface = this.game.gamejs.transform.rotate(this.surface, -config.heading);
-    
-    // Targets have three states: moving, exploding, outofbounds.
-    // Moving is the only "living" state.
-    this.state = "moving";
-};
-/**
- * Pointer to our $g object.
- * @type {$g}
- */
-Target.prototype.game = $g;
-/**
- * How wide is the target?
- * @type {Number}
- */
-Target.prototype.width = 20;
-/**
- * How tall is the target?
- * @type {Number}
- */
-Target.prototype.height = 20;
-/**
- * Will reveal whether this target is alive or dead.
- * @return {Boolean} Returns a status of whether this particle is considered
- * alive (true) or dead (false).
- */
-Target.prototype.isAlive = function() {
-    return this.state == "moving";
-};
-/**
- * Gets the size of the target. 
- * @return {Number[]} the size of the target as [width, height] pixel array.
- */
-Target.prototype.size = function() {
-    return this.surface.getSize();
-};
-/**
- * Where is the upper left of our target?
- * @return {Number[]} What should be considered the upperleft of our target
- * as an array made up of [x, y] coordinates.
- */
-Target.prototype.upperLeft = function() {
-    var size = this.size();
-    
-    return [this.x-size[0]/2, this.y-size[1]/2];
-};
-/**
- * Update function.
- * @param ms {Number} The number of milliseconds elapsed since the
- * last call to this function.
- * @return {Boolean} Returns a status of whether this target is considered
- * alive (true) or dead (false).
- */
-Target.prototype.update = function(ms) {
-    var msRatio = ms / 1000;
-    this.age += ms;
-    this.x += this.dx * msRatio;
-    this.y += this.dy * msRatio;
-    return this.isAlive();
-};
-/**
- * Blits our target onto whatever surface we pass in.
- * @param target {Surface} Our target surface.
- */
-Target.prototype.draw = function(target) {
-    target.blit(this.surface, this.upperLeft());
-};
-/**
- * Allows for rectangular collision tests.
- * @return {Number[]} Rectangular collision area as an array conforming to
- * [left, top, width, height].
- */
-Target.prototype.collisionRectBoundaries = function() {
-    // We use size, not width and height, because a rotated target takes
-    // up more space.
-    return this.upperLeft().concat(this.size());
-};
-/**
- * Responds to a "not rect" anti-collision test.
- * @param target {Object} What we did _not_ collide with.
- */
-Target.prototype.collisionNotRect = function(target) {
-    // We're trusting that the only thing we are anti-colliding with
-    // is the game.
-    if (this.age > 1000) {
-        // Only targets more than 1 second old can be marked out of bounds.
-        this.state = "outofbounds";
-    }
-};
-/**
- * Responds to a rectangular collision test.
- * @param target {Object} What we collided with.
- */
-Target.prototype.collisionRect = function(target) {
-    if (target instanceof Flak) {
-        // We are dead.
-        this.state = "exploding";
-    }
-};
 /**
  * For our purposes, call to generate a target instance randomized to one
  * of the four sides of the map.
@@ -319,7 +23,9 @@ var targetFactory = function() {
     var target;
     // What are the display dimensions?
     var displayDims = $g.display.getSize();
-    
+
+    var Target = $g.local.entities.Target;
+
     switch (side) {
         case 0:
             // top, heading down
@@ -366,7 +72,7 @@ var targetFactory = function() {
             });
             break;
     }
-    
+
     return target;
 };
 
@@ -432,7 +138,7 @@ var Countdown = function(ms) {
 Countdown.prototype.reset = function() {
     this._start = Date.now();
     this._end = this._start + this.duration;
-    
+
     return this;
 };
 /**
@@ -499,10 +205,10 @@ var targetDebrisFactory = function(x, y) {
     var r1 = Math.random();
     var r2 = Math.random();
     var r3 = Math.random();
-    
+
     var surface = new $g.gamejs.Surface(5, 5);
     surface.fill("rgb("+Math.floor(r1*256)+","+Math.floor(r2*256)+","+Math.floor(r3*256)+")");
-    
+
     return new $g.Particle({
         x: x,
         y: y,
@@ -520,14 +226,12 @@ var targetDebrisFactory = function(x, y) {
 
 // Manages the game until the game is over.
 exports.thegame = {
-    "id": "thegame",
-    "enter": function() {
+    id: "thegame",
+    enter: function() {
         var game = this.game;
-        var defaultFont = game.local("defaultFont");
-        var TextOverlay = game.TextOverlay;
 
-        // Initialize our crosshair.       
-        this.crosshair = new Crosshair(game);
+        // Initialize our crosshair.
+        this.crosshair = new game.local.entities.Crosshair(game);
         this.stageObjects.push(this.crosshair);
 
         // In case this is the nth time playing, reset the scores.
@@ -535,14 +239,14 @@ exports.thegame = {
         // Initialize the score of the game.
         this.scoreView = new ScoreView();
         this.stageObjects.push(this.scoreView);
-        
+
         // The countdown timer. (not an object directly managed by the game).
         this.countdown = new Countdown(this.gameDuration).reset();
         // The view is managed as a game object.
         this.countdownView = new CountdownView(this.countdown);
-        this.stageObjects.push(this.countdownView);        
+        this.stageObjects.push(this.countdownView);
     },
-    "heartbeat": function(msDuration) {        
+    heartbeat: function(msDuration) {
         var stage = this;
         var game = this.game;
         var display = game.display;
@@ -555,14 +259,14 @@ exports.thegame = {
         var particles = this.particles;
         var crosshair = this.crosshair;
         var collisions = game.collisions;
-                
+
         // Endgame conditions.
         if (!this.countdown.remaining()) {
             this.game.stageActivate("end");
             // Do not run the rest of the function, duh.
             return;
         }
-        
+
         // Check to make new targets.
         // The randomness might affect some game scores, but given this
         // will get called between 40 and 60 times a second, the chances
@@ -583,30 +287,30 @@ exports.thegame = {
             }
             else if (e.type === MOUSE_DOWN) {
                 // Mouse down triggers a flak launch and lowers score.
-                flakObjects.push(new Flak(e.pos[0], e.pos[1]));
+                flakObjects.push(new $g.local.entities.Flak(e.pos[0], e.pos[1]));
                 game.local.score.mod("shotsFired", -1);
                 // Flak has a regular sound.
                 $g.local.flaksound.play();
             }
         });
-        
+
         // Update and draw.
         display.fill('#000000');
         this.stageObjects = stageObjects.filter(function(obj) {
             var isAlive = obj.update(msDuration);
-            
+
             // One definition of alive is whether it can be drawn or not.
             if (isAlive) {
                 obj.draw(display);
             }
 
             // Additional tests for targets, as they need additional help.
-            if (obj instanceof Target) {
+            if (obj instanceof $g.local.entities.Target) {
 
                 // In bounds or out of bounds? If out, the target will mark
                 // itself as "outofbounds" and it will be removed next frame.
                 collisions.notRects([obj], [game]);
-                
+
                 // Test targets against flak objects.
                 // This will queue up an explosion next frame if they hit.
                 collisions.rects([obj], flakObjects);
@@ -620,9 +324,9 @@ exports.thegame = {
                     }
                     else if (obj.state == "exploding") {
                         // Increase score.
-                        game.local.score.mod("targetsDestroyed", 3);                        
+                        game.local.score.mod("targetsDestroyed", 3);
                         // And launch another, free explosion.
-                        flakObjects.push(new Flak(obj.x, obj.y));
+                        flakObjects.push(new $g.local.entities.Flak(obj.x, obj.y));
                         // Explosions sound different and varied.
                         $g.local.explosions.playRandom();
                         // With accompanying confeti.
@@ -667,7 +371,7 @@ exports.thegame = {
         this.scoreView = null;
         this.countdown = null;
         this.numTargets = 0;
-        
+
         config.done();
     },
     // All of the objects managed during an update loop.
