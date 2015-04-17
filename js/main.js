@@ -1,6 +1,8 @@
 /* jshint unused:true, undef:true */
 /* global $g:false */
 
+
+
 $g.ready(function() {
     // Game specific settings.
     $g.local("defaultFont", new $g.gamejs.font.Font('22px monospace'));

@@ -13,6 +13,10 @@ var concat = require("gulp-concat");
 var connect = require("gulp-connect");
 // Add headers to files.
 var header = require("gulp-header");
+// Inject code at build time. The only advantage is preventing code from
+// being checked in that is either production specific or dev specific (and
+// likely shouldn't be in the code repo).
+var insert = require("gulp-insert");
 // Static analysis of JavaScript code.
 var jshint = require("gulp-jshint");
 // Force tasks to run in series even if tasks do not depend on each other.
@@ -136,6 +140,7 @@ gulp.task("lint", function() {
             unused: true,
             globals: {
                 $g: false,
+                APP_CONFIG: false,
             },
         }))
         .pipe(jshint.reporter('default'));
@@ -145,8 +150,12 @@ gulp.task("lint", function() {
 
 // not-minified for desktop development, in debug mode
 gulp.task("js-dev", ["lint"], function() {
+    var APP_CONFIG = {
+        BUILD_DATE: buildDate(),
+    };
     return gulp.src(jsFiles)
         .pipe(concat("shootdown.js"))
+        .pipe(insert.prepend("var APP_CONFIG = " + JSON.stringify(APP_CONFIG) + ";\n"))
         //.pipe(uglify())
         .pipe(header(bannerMaker()))
         .pipe(gulp.dest("./"));
@@ -157,7 +166,6 @@ gulp.task("js-dev", ["lint"], function() {
 // For testing. Start a static document server.
 gulp.task("serve-dev", function() {
     connect.server({
-        root: ".",
         port: "4242",
     });
 });

@@ -1,5 +1,5 @@
 /* jshint unused:true, undef:true */
-/* global $g:false */
+/* global $g:false, APP_CONFIG:false */
 
 (function(exports) {
 
@@ -12,20 +12,29 @@ exports.stageStart = {
         var defaultFont = game.local("defaultFont");
         var TextOverlay = game.TextOverlay;
 
-        // Initialize.
-        this.welcomeText = new TextOverlay({
-            alignx: "center",
-            aligny: "center",
-            text: "shootdown",
-            font: defaultFont,
-        });
-        this.helpText = new TextOverlay({
-            alignx: "center",
-            aligny: "center",
-            paddingy: 25,
-            text: "click to start. click to shoot things.",
-            font: defaultFont,
-        });
+
+        this.titleText = [
+            new TextOverlay({
+                alignx: "center",
+                aligny: "center",
+                text: "shootdown",
+                font: defaultFont,
+            }),
+            new TextOverlay({
+                alignx: "center",
+                aligny: "center",
+                paddingy: 27,
+                text: "click to start. click to shoot things.",
+                font: defaultFont,
+            }),
+            new TextOverlay({
+                alignx: "center",
+                aligny: "center",
+                paddingy: 120,
+                text: "build date: " + APP_CONFIG.BUILD_DATE,
+                font: defaultFont,
+            }),
+        ];
     },
     heartbeat: function(/*msDuration*/) {
         var game = this.game;
@@ -41,12 +50,12 @@ exports.stageStart = {
         });
 
         display.fill('#000000');
-        this.welcomeText.draw(display);
-        this.helpText.draw(display);
+        for (var i = 0; i < this.titleText.length; i++) {
+            this.titleText[i].draw(display);
+        }
     },
-    // Initialized when this stage is entered.
-    "welcomeText": null,
-    "helpText": null,
+    // Initialized when this stage is entered. Array of text objects.
+    titleText: null,
 };
 
 
