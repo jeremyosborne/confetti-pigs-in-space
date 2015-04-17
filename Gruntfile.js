@@ -6,14 +6,15 @@ module.exports = function(grunt) {
         // Third party modules/libraries.
         "js/lib/dasspiel.js",
         // App modules.
-        "js/entities.js",
-        "js/entity-crosshair.js",
-        "js/entity-flak.js",
-        "js/entity-target.js",
-        "js/stages.js",
+        "js/countdown.js",
+        "js/score-keeper.js",
+        "js/sound.js",
+        "js/crosshair.js",
+        "js/flak.js",
+        "js/target.js",
         "js/stage-load.js",
         "js/stage-start.js",
-        "js/stage-thegame.js",
+        "js/stage-the-game.js",
         "js/stage-end.js",
         // Load this one last.
         "js/main.js",

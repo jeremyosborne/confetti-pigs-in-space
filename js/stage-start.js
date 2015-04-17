@@ -5,7 +5,7 @@
 
 
 // Welcome screen. Assumes a transition to the game.
-exports.start = {
+exports.stageStart = {
     id: "start",
     enter: function() {
         var game = this.game;
@@ -51,4 +51,4 @@ exports.start = {
 
 
 
-})($g.local.Stages);
+})($g.local);

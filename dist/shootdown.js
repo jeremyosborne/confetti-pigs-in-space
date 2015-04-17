@@ -1,7 +1,7 @@
 /*!
     shootdown
     v0.0.1
-    built 2015-04-16
+    built 2015-04-17
     
     Copyright (c) 2015 Jeremy Osborne <jeremywosborne@gmail.com>
     Licensed MIT 
@@ -7230,15 +7230,317 @@ exports.TextOverlay = TextOverlay;
 // Assume and enforce either attachment to the Game object or this.
 // (Global/exports style of export allows easier testing.)
 })(typeof window != "undefined" && window.$g ? window.$g : this);
-;/* jshint unused:true, undef:true */
+;/* jshint unused:true, undef:true, browser:true */
 /* global $g:false */
+
+
 
 (function(exports) {
 
-    // Attach entities here.
-    exports.entities = {};
+
+
+
+/**
+ * @class How long the game will last.
+ * @param ms {Number} How many milliseconds will the countdown last?
+ */
+var Countdown = function(ms) {
+    /**
+     * The time when this countdown was started (ms since the epoch).
+     * @param {Number}
+     */
+    this._start = null;
+    /**
+     * The time when this countdown will be done (ms since the epoch).
+     * @param {Number}
+     */
+    this._end = null;
+    /**
+     * The total duration of the countdown in milliseconds.
+     * @param {Number}
+     */
+    this.duration = ms;
+};
+/**
+ * Call when you wish to begin/reset the countdown timer.
+ * @return {Countdown} Our self reference.
+ */
+Countdown.prototype.reset = function() {
+    this._start = Date.now();
+    this._end = this._start + this.duration;
+
+    return this;
+};
+/**
+ * How much time is remaining relative to real time?
+ * @return {Number} of milliseconds remaining. This number will normalize
+ * at zero and will never return less than zero (where zero indicates the
+ * time is over).
+ */
+Countdown.prototype.remaining = function() {
+    var remaining = this._end - Date.now();
+    return remaining > 0 ? remaining : 0;
+};
+
+exports.Countdown = Countdown;
+
+
+
+
+
+
+/**
+ * @class Display of the game timer.
+ * @param countdown {Countdown} The countdown managing this view.
+ */
+var CountdownView = function(countdown) {
+    /**
+     * The countdown managing this view.
+     * @type {Countdown}
+     */
+    this.countdown = countdown;
+};
+/**
+ * We always run, never remove.
+ */
+CountdownView.prototype.update = function() {
+    return true;
+};
+/**
+ * Called during the draw stage.
+ * @param target {Surface} Where we draw ourselves onto.
+ */
+CountdownView.prototype.draw = function(target) {
+    var secondsRemaining = Math.floor(this.countdown.remaining() / 1000);
+    new $g.TextOverlay({
+        alignx: "right",
+        paddingx: 10,
+        aligny: "top",
+        paddingy: 10,
+        // At time of writing, we need some non-falsey value.
+        // Don't pass a simple 0 into text.
+        text: "Time remaining: " + secondsRemaining,
+        font: $g.local.defaultFont,
+    }).draw(target);
+};
+
+exports.CountdownView = CountdownView;
+
+
 
 })($g.local);
+;/* jshint unused:true, undef:true, browser:true */
+/* global $g:false */
+
+
+
+(function(exports) {
+
+
+
+/**
+ * @class Used for tracking stats.
+ */
+var ScoreKeeper = function() {
+    /**
+     * Internal hash of scores.
+     * @type {Object}
+     */
+    // Prototypeless object prevents need for hasOwnProperty checking.
+    this._scores = Object.create(null);
+};
+/**
+ * Rebuilds the internal JSON cache of scores from that which is passed in.
+ * Calling this method will replace any and all previous scores.
+ * @param json {Object} An object to convert JSON from.
+ * @return {ScoreKeeper} Chainable command.
+ */
+ScoreKeeper.prototype.fromJSON = function(json) {
+    var scores = Object.create(null);
+    var score;
+
+    for (score in json) {
+        // We'll be a bit more careful about things being passed in.
+        if (json.hasOwnProperty(score)) {
+            scores[score] = json[score];
+        }
+    }
+
+    // reset
+    this._scores = scores;
+
+    return this;
+};
+/**
+ * Modifies the current value of a score.
+ * Will also initialize a score to zero that did not previously exist, and
+ * then modify it with the value.
+ * @param score {String} Which score to modify.
+ * @param [val=1] {Number} How much to modify the score by (positive or
+ * negative). If for whatever reason you wish to not modify the score, make
+ * sure to set val=0 during your call, but it's better practice to just use
+ * set.
+ * @return {ScoreKeeper} Chainable command.
+ */
+ScoreKeeper.prototype.mod = function(score, val) {
+    if (val === undefined) {
+        val = 1;
+    }
+    if (!this._scores[score]) {
+        this._scores[score] = 0;
+    }
+    this._scores[score] += val;
+
+    return this;
+};
+/**
+ * Set the value of a specific score.
+ * Also functions as an init method.
+ * @param score {String} Which score to modify.
+ * @param [val=0] {Number} What to set the score to, deleting any previous
+ * score values.
+ * @return {ScoreKeeper} Chainable command.
+ */
+ScoreKeeper.prototype.set = function(score, val) {
+    // Here this is safe, as 0 will still be set to 0, no false reset.
+    val = val || 0;
+    this._scores[score] = val;
+
+    return this;
+};
+/**
+ * What is the value of a particular score?
+ * @param score {String} Which score to return.
+ * @return {Number} Returns either the score value, or 0 for any
+ * non-initialized score.
+ */
+ScoreKeeper.prototype.val = function(score) {
+    return this._scores[score] || 0;
+};
+/**
+ * Add all existing scores together in a single value.
+ * @return {Number} Returns the total value of all existing scores, added
+ * together. If no scores, 0 will still be returned.
+ */
+ScoreKeeper.prototype.sum = function() {
+    var scores = this._scores;
+    var score;
+    var total = 0;
+
+    for (score in scores) {
+        // Assumes prototypeless object.
+        total += scores[score];
+    }
+
+    return total;
+};
+/**
+ * Returns a copy of the internal JSON structure.
+ * Does not return a reference.
+ * @return {Object} The scores as a simple JSON object.
+ */
+ScoreKeeper.prototype.toJSON = function() {
+    // Prevent the need for hasOwnProperty checking.
+    var out = Object.create(null);
+    var scores = this._scores;
+    var score;
+
+    for (score in scores) {
+        out[score] = scores[score];
+    }
+
+    return out;
+};
+
+exports.ScoreKeeper = ScoreKeeper;
+
+
+
+/**
+ * @class Display of the points.
+ */
+var ScoreKeeperView = function() {};
+ScoreKeeperView.prototype.update = function() {
+    return true;
+};
+/**
+ * Called during the draw stage.
+ * @param target {Surface} Where we draw ourselves onto.
+ */
+ ScoreKeeperView.prototype.draw = function(target) {
+    var local = $g.local;
+    new $g.TextOverlay({
+        alignx: "left",
+        paddingx: 10,
+        aligny: "top",
+        paddingy: 10,
+        // At time of writing, we need some non-falsey value.
+        // Don't pass a simple 0 into text.
+        text: "Score: " + local.score.sum(),
+        font: local.defaultFont,
+    }).draw(target);
+};
+
+
+exports.ScoreKeeperView = ScoreKeeperView;
+
+
+
+})($g.local);
+;(function(exports) {
+
+
+
+/**
+ * Making use of HTML5 Audio as best as possible, as simply as possible.
+ * @param src {String} URL to the sound we wish to play.
+ */
+var Sound = function(src) {
+    var self = this;
+
+    /**
+     * The URL to this sound.
+     * @type {String}
+     */
+    this.src = src;
+
+    /**
+     * Reference to the Audio object that we'll use to play this audio.
+     * @type {Audio}
+     */
+    this._audio = new Audio();
+    // Allows us to listen to when the audio is done and maybe do
+    // something.
+    this._audio.addEventListener("ended", function() {
+        if (typeof self.done == "function") {
+            self.done();
+        }
+    });
+};
+/**
+ * Play the noise, and cross fingers that the noise will play.
+ */
+Sound.prototype.play = function() {
+    // The currentTime property seems to be read only.
+    // This seems to be the only way to play audio repeatedly.
+    this._audio.src = this.src;
+    this._audio.play();
+};
+/**
+ * Should we do anything when this audio is done?
+ * @type {Function}
+ */
+Sound.prototype.done = null;
+
+
+
+exports.Sound = Sound;
+
+
+
+// Assume and enforce either attachment to the Game object or this.
+// (Global/exports style of export allows easier testing.)
+})(typeof window != "undefined" && window.$g ? window.$g : this);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
 
@@ -7307,7 +7609,7 @@ exports.Crosshair = Crosshair;
 
 
 
-})($g.local.entities);
+})($g.local);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
 
@@ -7420,7 +7722,7 @@ exports.Flak = Flak;
 
 
 
-})($g.local.entities);
+})($g.local);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
 
@@ -7563,7 +7865,7 @@ Target.prototype.collisionNotRect = function(/*target*/) {
  * @param target {Object} What we collided with.
  */
 Target.prototype.collisionRect = function(target) {
-    if (target instanceof $g.local.entities.Flak) {
+    if (target instanceof $g.local.Flak) {
         // We are dead.
         this.state = "exploding";
     }
@@ -7575,15 +7877,6 @@ exports.Target = Target;
 
 
 
-})($g.local.entities);
-;/* jshint unused:true, undef:true */
-/* global $g:false */
-
-(function(exports) {
-
-    // Attach stages here.
-    exports.Stages = {};
-
 })($g.local);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
@@ -7592,7 +7885,7 @@ exports.Target = Target;
 
 
 // Welcome screen. Assumes a transition to the game.
-exports.load = {
+exports.stageLoad = {
     id: "load",
     enter: function() {
         var pigImgSrc = "img/confetti_pig.png";
@@ -7651,7 +7944,7 @@ exports.load = {
 
 
 
-})($g.local.Stages);
+})($g.local);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
 
@@ -7659,7 +7952,7 @@ exports.load = {
 
 
 // Welcome screen. Assumes a transition to the game.
-exports.start = {
+exports.stageStart = {
     id: "start",
     enter: function() {
         var game = this.game;
@@ -7705,7 +7998,7 @@ exports.start = {
 
 
 
-})($g.local.Stages);
+})($g.local);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
 
@@ -7732,7 +8025,7 @@ var targetFactory = function() {
     // What are the display dimensions?
     var displayDims = $g.display.getSize();
 
-    var Target = $g.local.entities.Target;
+    var Target = $g.local.Target;
 
     switch (side) {
         case 0:
@@ -7787,124 +8080,6 @@ var targetFactory = function() {
 
 
 /**
- * @class Display of the points.
- */
-var ScoreView = function() {};
-/**
- * Shared reference to our $g object.
- * @type {$g}
- */
-ScoreView.prototype.game = $g;
-ScoreView.prototype.update = function() {
-    return true;
-};
-/**
- * Called during the draw stage.
- * @param target {Surface} Where we draw ourselves onto.
- */
-ScoreView.prototype.draw = function(target) {
-    var local = this.game.local;
-    new this.game.TextOverlay({
-        alignx: "left",
-        paddingx: 10,
-        aligny: "top",
-        paddingy: 10,
-        // At time of writing, we need some non-falsey value.
-        // Don't pass a simple 0 into text.
-        text: "Score: " + local.score.sum(),
-        font: local.defaultFont,
-    }).draw(target);
-};
-
-
-
-/**
- * @class How long the game will last.
- * @param ms {Number} How many milliseconds will the countdown last?
- */
-var Countdown = function(ms) {
-    /**
-     * The time when this countdown was started (ms since the epoch).
-     * @param {Number}
-     */
-    this._start = null;
-    /**
-     * The time when this countdown will be done (ms since the epoch).
-     * @param {Number}
-     */
-    this._end = null;
-    /**
-     * The total duration of the countdown in milliseconds.
-     * @param {Number}
-     */
-    this.duration = ms;
-};
-/**
- * Call when you wish to begin/reset the countdown timer.
- * @return {Countdown} Our self reference.
- */
-Countdown.prototype.reset = function() {
-    this._start = Date.now();
-    this._end = this._start + this.duration;
-
-    return this;
-};
-/**
- * How much time is remaining relative to real time?
- * @return {Number} of milliseconds remaining. This number will normalize
- * at zero and will never return less than zero (where zero indicates the
- * time is over).
- */
-Countdown.prototype.remaining = function() {
-    var remaining = this._end - Date.now();
-    return remaining > 0 ? remaining : 0;
-};
-
-
-
-/**
- * @class Display of the game timer.
- * @param countdown {Countdown} The countdown managing this view.
- */
-var CountdownView = function(countdown) {
-    /**
-     * The countdown managing this view.
-     * @type {Countdown}
-     */
-    this.countdown = countdown;
-};
-/**
- * Shared reference to our $g object.
- * @type {$g}
- */
-CountdownView.prototype.game = $g;
-/**
- * We always run, never remove.
- */
-CountdownView.prototype.update = function() {
-    return true;
-};
-/**
- * Called during the draw stage.
- * @param target {Surface} Where we draw ourselves onto.
- */
-CountdownView.prototype.draw = function(target) {
-    var secondsRemaining = Math.floor(this.countdown.remaining()/1000);
-    new this.game.TextOverlay({
-        alignx: "right",
-        paddingx: 10,
-        aligny: "top",
-        paddingy: 10,
-        // At time of writing, we need some non-falsey value.
-        // Don't pass a simple 0 into text.
-        text: "Time remaining: " + secondsRemaining,
-        font: this.game.local.defaultFont,
-    }).draw(target);
-};
-
-
-
-/**
  * Generates debris for the exploded targets.
  * @param x {Number} x pixel where to generate the debris.
  * @param y {Number} y pixel where to generate the debris.
@@ -7933,25 +8108,23 @@ var targetDebrisFactory = function(x, y) {
 
 
 // Manages the game until the game is over.
-exports.thegame = {
+exports.stageTheGame = {
     id: "thegame",
     enter: function() {
-        var game = this.game;
-
         // Initialize our crosshair.
-        this.crosshair = new game.local.entities.Crosshair(game);
+        this.crosshair = new $g.local.Crosshair();
         this.stageObjects.push(this.crosshair);
 
         // In case this is the nth time playing, reset the scores.
-        game.local.score.fromJSON({});
+        $g.local.score.fromJSON({});
         // Initialize the score of the game.
-        this.scoreView = new ScoreView();
-        this.stageObjects.push(this.scoreView);
+        this.scoreKeeperView = new $g.local.ScoreKeeperView();
+        this.stageObjects.push(this.scoreKeeperView);
 
         // The countdown timer. (not an object directly managed by the game).
-        this.countdown = new Countdown(this.gameDuration).reset();
+        this.countdown = new $g.local.Countdown(this.gameDuration).reset();
         // The view is managed as a game object.
-        this.countdownView = new CountdownView(this.countdown);
+        this.countdownView = new $g.local.CountdownView(this.countdown);
         this.stageObjects.push(this.countdownView);
     },
     heartbeat: function(msDuration) {
@@ -7995,7 +8168,7 @@ exports.thegame = {
             }
             else if (e.type === MOUSE_DOWN) {
                 // Mouse down triggers a flak launch and lowers score.
-                flakObjects.push(new $g.local.entities.Flak(e.pos[0], e.pos[1]));
+                flakObjects.push(new $g.local.Flak(e.pos[0], e.pos[1]));
                 game.local.score.mod("shotsFired", -1);
                 // Flak has a regular sound.
                 $g.local.flaksound.play();
@@ -8013,7 +8186,7 @@ exports.thegame = {
             }
 
             // Additional tests for targets, as they need additional help.
-            if (obj instanceof $g.local.entities.Target) {
+            if (obj instanceof $g.local.Target) {
 
                 // In bounds or out of bounds? If out, the target will mark
                 // itself as "outofbounds" and it will be removed next frame.
@@ -8034,7 +8207,7 @@ exports.thegame = {
                         // Increase score.
                         game.local.score.mod("targetsDestroyed", 3);
                         // And launch another, free explosion.
-                        flakObjects.push(new $g.local.entities.Flak(obj.x, obj.y));
+                        flakObjects.push(new $g.local.Flak(obj.x, obj.y));
                         // Explosions sound different and varied.
                         $g.local.explosions.playRandom();
                         // With accompanying confeti.
@@ -8076,7 +8249,7 @@ exports.thegame = {
         this.flakObjects = [];
         this.particles = [];
         this.crosshair = null;
-        this.scoreView = null;
+        this.scoreKeeperView = null;
         this.countdown = null;
         this.numTargets = 0;
 
@@ -8090,7 +8263,7 @@ exports.thegame = {
     // These more important objects created during initialization and
     // referenced here.
     crosshair: null,
-    scoreView: null,
+    scoreKeeperView: null,
     countdown: null,
     // Total number of targets on screen now, and the max allowed.
     numTargets: 0,
@@ -8101,7 +8274,7 @@ exports.thegame = {
 
 
 
-})($g.local.Stages);
+})($g.local);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
 
@@ -8110,7 +8283,7 @@ exports.thegame = {
 
 
 // The end.
-exports.end = {
+exports.stageEnd = {
     id: "end",
     enter: function() {
         var game = this.game;
@@ -8174,41 +8347,35 @@ exports.end = {
 
 
 
-})($g.local.Stages);
+})($g.local);
 ;/* jshint unused:true, undef:true */
 /* global $g:false */
 
 $g.ready(function() {
-    // Points to the dasspiel $g object.
-    var game = this;
-    var Sound = game.Sound;
-
     // Game specific settings.
-    game.local("defaultFont", new game.gamejs.font.Font('22px monospace'));
-    game.local("score", new game.ScoreKeeper());
+    $g.local("defaultFont", new $g.gamejs.font.Font('22px monospace'));
+    $g.local("score", new $g.local.ScoreKeeper());
 
-    // What flak and explosions sound like in this game.
-    game.local("explosions", [
-        new Sound("audio/explosion1.wav"),
-        new Sound("audio/explosion2.wav"),
-        new Sound("audio/explosion3.wav"),
-        new Sound("audio/explosion4.wav"),
+    $g.local("explosions", [
+        new $g.Sound("audio/explosion1.wav"),
+        new $g.Sound("audio/explosion2.wav"),
+        new $g.Sound("audio/explosion3.wav"),
+        new $g.Sound("audio/explosion4.wav"),
     ]);
-    game.local.explosions.playRandom = function() {
-        this[Math.floor(Math.random()*this.length)].play();
+    $g.local.explosions.playRandom = function() {
+        this[Math.floor(Math.random() * this.length)].play();
     };
-    game.local("flaksound", new Sound("audio/flak.wav"));
-
+    $g.local("flaksound", new $g.Sound("audio/flak.wav"));
     // For testing for collisions within the game boundaries.
-    game.collisionRectBoundaries = function() {
+    $g.collisionRectBoundaries = function() {
         return [0, 0].concat(this.display.getSize());
     };
 
-    game.displayCreate(600, 600)
-        .stageAdd(game.local.Stages.load)
-        .stageAdd(game.local.Stages.start)
-        .stageAdd(game.local.Stages.thegame)
-        .stageAdd(game.local.Stages.end)
+    $g.displayCreate(600, 600)
+        .stageAdd($g.local.stageLoad)
+        .stageAdd($g.local.stageStart)
+        .stageAdd($g.local.stageTheGame)
+        .stageAdd($g.local.stageEnd)
         .stageActivate("load")
         .run();
 

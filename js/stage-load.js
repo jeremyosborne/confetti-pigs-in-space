@@ -5,7 +5,7 @@
 
 
 // Welcome screen. Assumes a transition to the game.
-exports.load = {
+exports.stageLoad = {
     id: "load",
     enter: function() {
         var pigImgSrc = "img/confetti_pig.png";
@@ -64,4 +64,4 @@ exports.load = {
 
 
 
-})($g.local.Stages);
+})($g.local);

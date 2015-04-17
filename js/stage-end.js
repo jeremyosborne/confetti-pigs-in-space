@@ -6,7 +6,7 @@
 
 
 // The end.
-exports.end = {
+exports.stageEnd = {
     id: "end",
     enter: function() {
         var game = this.game;
@@ -70,4 +70,4 @@ exports.end = {
 
 
 
-})($g.local.Stages);
+})($g.local);

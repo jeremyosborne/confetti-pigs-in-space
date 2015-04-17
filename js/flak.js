@@ -110,4 +110,4 @@ exports.Flak = Flak;
 
 
 
-})($g.local.entities);
+})($g.local);

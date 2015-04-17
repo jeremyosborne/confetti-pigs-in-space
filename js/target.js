@@ -140,7 +140,7 @@ Target.prototype.collisionNotRect = function(/*target*/) {
  * @param target {Object} What we collided with.
  */
 Target.prototype.collisionRect = function(target) {
-    if (target instanceof $g.local.entities.Flak) {
+    if (target instanceof $g.local.Flak) {
         // We are dead.
         this.state = "exploding";
     }
@@ -152,4 +152,4 @@ exports.Target = Target;
 
 
 
-})($g.local.entities);
+})($g.local);

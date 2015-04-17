@@ -15,6 +15,6 @@
         }
     }
     catch(err) {
-        alert("This game will likely not work on your browser. Please consider upgrading to a newer browser like Google Chrome or Mozilla Firefox.");
+        alert("This game will likely not work on your browser. Please consider upgrading to a newer browser.");
     }
 })();

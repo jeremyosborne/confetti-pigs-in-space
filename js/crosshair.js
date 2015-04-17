@@ -66,4 +66,4 @@ exports.Crosshair = Crosshair;
 
 
 
-})($g.local.entities);
+})($g.local);

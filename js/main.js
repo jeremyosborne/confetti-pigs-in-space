@@ -2,36 +2,34 @@
 /* global $g:false */
 
 $g.ready(function() {
-    // Points to the dasspiel $g object.
-    var game = this;
-    var Sound = game.Sound;
-
     // Game specific settings.
-    game.local("defaultFont", new game.gamejs.font.Font('22px monospace'));
-    game.local("score", new game.ScoreKeeper());
+    $g.local("defaultFont", new $g.gamejs.font.Font('22px monospace'));
+    $g.local("score", new $g.local.ScoreKeeper());
 
-    // What flak and explosions sound like in this game.
-    game.local("explosions", [
-        new Sound("audio/explosion1.wav"),
-        new Sound("audio/explosion2.wav"),
-        new Sound("audio/explosion3.wav"),
-        new Sound("audio/explosion4.wav"),
+    $g.local("explosions", [
+        new $g.Sound("audio/explosion1.wav"),
+        new $g.Sound("audio/explosion2.wav"),
+        new $g.Sound("audio/explosion3.wav"),
+        new $g.Sound("audio/explosion4.wav"),
     ]);
-    game.local.explosions.playRandom = function() {
-        this[Math.floor(Math.random()*this.length)].play();
+    $g.local.explosions.playRandom = function() {
+        this[Math.floor(Math.random() * this.length)].play();
     };
-    game.local("flaksound", new Sound("audio/flak.wav"));
+    $g.local("flaksound", new $g.Sound("audio/flak.wav"));
+
 
     // For testing for collisions within the game boundaries.
-    game.collisionRectBoundaries = function() {
+    $g.collisionRectBoundaries = function() {
         return [0, 0].concat(this.display.getSize());
     };
 
-    game.displayCreate(600, 600)
-        .stageAdd(game.local.Stages.load)
-        .stageAdd(game.local.Stages.start)
-        .stageAdd(game.local.Stages.thegame)
-        .stageAdd(game.local.Stages.end)
+
+
+    $g.displayCreate(600, 600)
+        .stageAdd($g.local.stageLoad)
+        .stageAdd($g.local.stageStart)
+        .stageAdd($g.local.stageTheGame)
+        .stageAdd($g.local.stageEnd)
         .stageActivate("load")
         .run();
 
