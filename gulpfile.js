@@ -149,7 +149,7 @@ gulp.task("js-dev", ["lint"], function() {
         .pipe(concat("shootdown.js"))
         //.pipe(uglify())
         .pipe(header(bannerMaker()))
-        .pipe(gulp.dest("dist/"));
+        .pipe(gulp.dest("./"));
 });
 
 
