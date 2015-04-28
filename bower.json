@@ -1,0 +1,27 @@
+{
+  "name": "shootdown",
+  "version": "0.0.2",
+  "homepage": "https://github.com/jeremyosborne/shootdown",
+  "private": true,
+  "authors": [
+    "Jeremy Osborne <jeremywosborne@gmail.com>"
+  ],
+  "description": "hacking on video games. This file exists to mark the phaser version we're using and allow for version control of it and other JS libraries.",
+  "keywords": [
+    "phaser",
+    "shootdown",
+    "fun",
+    "hack"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "phaser": "~2.3.0"
+  }
+}

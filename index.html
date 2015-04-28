@@ -1,12 +1,24 @@
 <!DOCTYPE html>
-<html>
-<head lang="en-US">
-    <title>shootdown</title>
-    <link href="css/grayscale.css" rel="stylesheet"/>
-</head>
-<body>
-    <div id="gjs-loader"><h1 id="gjs-loader-message">Loading...</h1></div>
-    <canvas id="gjs-canvas" width="600" height="600"></canvas>
-    <script src="shootdown.js"></script>
-</body>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>shootdown</title>
+        <meta name="viewport" value="width=device-width"/>
+        <style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.game-container {
+    height: 100%;
+}
+        </style>
+    </head>
+    <body>
+        <div class="game-container"></div>
+        <script src="js/phaser.min.js"></script>
+        <script src="js/app.js"></script>
+    </body>
 </html>

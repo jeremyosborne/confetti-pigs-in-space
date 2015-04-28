@@ -7,7 +7,8 @@ Click and blow stuff up. Current version of code should be hosted on this projec
 ## Build the Game
 
 * Get [Node.js](http://nodejs.org/download/).
-* Get [Gulp](http://gruntjs.com/getting-started):
+
+* Optional: Get [Gulp](http://gruntjs.com/getting-started):
 
         npm install -g gulp
 
@@ -15,13 +16,15 @@ Click and blow stuff up. Current version of code should be hosted on this projec
 
         npm install
 
-* Build code, auto-rebuild code when changed, and start dev server:
+* Run dev server:
 
-        gulp
+        npm start
+        # or `gulp` if you have installed gulp globally
 
 * Run game in modern browser
     * go to: http://localhost:4242
-    * or just open `index.html` with a double click
+
+* The `bower.json` file can be ignored as a copy of third party libs are kept in the source repo.
 
 
 
@@ -31,13 +34,7 @@ Click to shoot things. Such high scores. Much wow.
 
 
 
-## Acknowledgements...
+## Acknowledgements
 
-...to authors whose code I am using here:
-
-* [Chris McCormick](http://mccormickit.com/) and [jsGameSoup](http://jsgamesoup.net/). Code I am using from jsGameSoup:
-    * collisions.js
-* [Simon Oberhammer](https://github.com/oberhamsi) and [gamejs](https://github.com/oberhamsi/gamejs). I am using a lot of gamejs, in particular the Surface object which is a nice wrapper for canvas overlays.
+* [Phaser](http://phaser.io) game engine.
 * [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for some simple, easy to generate sound effects.
-
-The licenses from these libraries are included in the LICENSE.txt file if a license was available. If I have incorrectly attributed anyone, please let me know and I'll correct it.

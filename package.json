@@ -1,30 +1,20 @@
 {
   "name": "shootdown",
-  "version": "0.0.1",
-  "description": "A simple video game.",
+  "version": "0.0.2",
+  "description": "Video game hacking.",
   "author": {
     "name": "Jeremy Osborne",
     "email": "jeremywosborne@gmail.com",
     "url": "http://jeremyosborne.com"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/jeremyosborne/shootdown/blob/master/LICENSE.txt"
-    }
-  ],
+  "license": "MIT",
+  "scripts": {
+      "start": "node node_modules/.bin/gulp"
+  },
   "dependencies": {},
   "devDependencies": {
-    "fs-extra": "^0.18.2",
     "gulp": "^3.8.11",
-    "gulp-concat": "^2.5.2",
-    "gulp-connect": "^2.2.0",
-    "gulp-header": "^1.2.2",
-    "gulp-insert": "^0.4.0",
-    "gulp-jshint": "^1.10.0",
-    "gulp-uglify": "^1.2.0",
-    "run-sequence": "^1.0.2",
-    "semver": "^4.3.3"
+    "gulp-connect": "^2.2.0"
   },
   "engine": "node >= 0.8.x",
   "private": true
