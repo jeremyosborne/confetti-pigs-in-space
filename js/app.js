@@ -75,6 +75,18 @@ Pig.prototype.randomCorner = function() {
 };
 // Set during init, reference to game.
 Pig.prototype.game = null;
+Pig.prototype.update = function() {
+    var g = this.game;
+
+    this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
+
+    if (g.physics.arcade.distanceToPointer(this, g.input.activePointer) > 8) {
+        // Make the object seek to the active pointer (mouse or touch).
+        g.physics.arcade.moveToPointer(this, 150);
+    } else {
+        this.body.velocity.set(0);
+    }
+};
 Pig.init = function(game) {
     // WebGL doesn't like file:// protocol, need a server.
     game.load.image('pig', 'assets/sprites/pig.png');
@@ -181,9 +193,10 @@ var Title = function() {};
 Title.prototype = Object.create(Phaser.State);
 Title.prototype.create = function() {
     this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
-        "Pig In Space", {
+        "shootdown\n(pigs in space)", {
         fill: "#ffffff",
 		font: "bold 42px Arial",
+        align: "center",
 	});
     this.titleText.anchor.set(0.5);
 
@@ -230,14 +243,6 @@ Play.prototype.create = function() {
     }.bind(this));
 };
 Play.prototype.update = function() {
-    // If the sprite is > 8px away from the pointer then let's move to it
-    if (this.game.physics.arcade.distanceToPointer(this.pig, this.game.input.activePointer) > 8) {
-        // Make the object seek to the active pointer (mouse or touch).
-        this.game.physics.arcade.moveToPointer(this.pig, 150);
-    } else {
-        this.pig.body.velocity.set(0);
-    }
-
     // We don't need to exchange any velocities or motion we can the 'overlap'
     // check instead of 'collide'.
     game.physics.arcade.overlap(this.flak, this.pig, function(pig) {
