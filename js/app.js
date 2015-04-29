@@ -74,14 +74,22 @@ Pig.prototype.randomCorner = function() {
 };
 // Set during init, reference to game.
 Pig.prototype.game = null;
+// What are these pigs chasing?
+Pig.prototype.target = null;
 Pig.prototype.update = function() {
     var g = this.game;
 
-    this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
+    //if (g.physics.arcade.distanceToPointer(this, g.input.activePointer) > 5) {
+    if (this.target && g.physics.arcade.distanceBetween(this, this.target) > 5) {
+        // Head toward pointer.
+        //this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
+        // Head toward dino.
+        this.rotation = Phaser.Math.angleBetween(this.x, this.y, this.target.x, this.target.y);
 
-    if (g.physics.arcade.distanceToPointer(this, g.input.activePointer) > 8) {
         // Make the object seek to the active pointer (mouse or touch).
-        g.physics.arcade.moveToPointer(this, 150);
+        //g.physics.arcade.moveToPointer(this, 150);
+        // Seek the dino.
+        g.physics.arcade.moveToObject(this, this.target, 150);
     } else {
         this.body.velocity.set(0);
     }
@@ -90,6 +98,10 @@ Pig.init = function(game) {
     // WebGL doesn't like file:// protocol, need a server.
     game.load.image('pig', 'assets/sprites/pig.png');
     this.prototype.game = game;
+};
+// Sets the target for all the pigs.
+Pig.targetForAll = function(target) {
+    this.prototype.target = target;
 };
 
 
@@ -282,6 +294,7 @@ Play.prototype.create = function() {
     this.purpleDinoFlaktulenceTimer.start();
 
     this.pig = new Pig();
+    Pig.targetForAll(this.purpleDino);
 
     this.pigSplosion = new PigSplosion();
 
