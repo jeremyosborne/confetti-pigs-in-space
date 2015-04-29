@@ -3,9 +3,9 @@
 
 
 
-var Flak = function(position) {
+var Flak = function(x, y) {
     // Trying out cache.
-    Phaser.Sprite.call(this, this.game, position.x, position.y, this.game.cache.getBitmapData("flak"));
+    Phaser.Sprite.call(this, this.game, x, y, this.game.cache.getBitmapData("flak"));
 
     // Center flak over pointer.
     this.anchor.setTo(0.5, 0.5);
@@ -59,7 +59,6 @@ Flak.init = function(game) {
 var Pig = function(position) {
     position = position || {};
     Phaser.Sprite.call(this, this.game, position.x || 0, position.y || 0, 'pig');
-    // Center flak over pointer.
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
@@ -127,6 +126,33 @@ PigSplosion.init = function(game) {
 
 
 
+var PurpleDino = function(x, y) {
+    Phaser.Sprite.call(this, this.game, x || 0, y || 0, 'purple-dino');
+    this.anchor.setTo(0.5, 0.5);
+    // For collisions.
+    this.game.physics.arcade.enable(this);
+    this.game.add.existing(this);
+};
+PurpleDino.prototype = Object.create(Phaser.Sprite.prototype);
+PurpleDino.prototype.game = null;
+PurpleDino.prototype.update = function() {
+    var g = this.game;
+    this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
+    if (g.physics.arcade.distanceToPointer(this, g.input.activePointer) > 8) {
+        // Dino wants to follow the mouse or finger.
+        g.physics.arcade.moveToPointer(this, 150);
+    } else {
+        this.body.velocity.set(0);
+    }
+};
+PurpleDino.init = function(game) {
+    game.load.image('purple-dino', 'assets/sprites/purple-dino.png');
+
+    this.prototype.game = game;
+};
+
+
+
 var Countdown = function(x, y) {
     Phaser.Text.call(this, this.game, x, y, "", {
         fill: "#ffffff",
@@ -186,6 +212,7 @@ ScoreKeeper.init = function(game) {
 };
 
 
+
 // Excuse to have more than one screen.
 var Title = function() {};
 Title.prototype = Object.create(Phaser.State);
@@ -225,31 +252,46 @@ Play.prototype.preload = function() {
     PigSplosion.init(this.game);
     Countdown.init(this.game);
     ScoreKeeper.init(this.game);
+    PurpleDino.init(this.game);
 };
 Play.prototype.create = function() {
+    var g = this.game;
 
     // Start background music.
-    game.sound.stopAll();
-    game.sound.play("bgmusic", 0.25, true);
+    g.sound.stopAll();
+    g.sound.play("bgmusic", 0.25, true);
 
     // To make the sprite move we need to enable Arcade Physics
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    g.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.countdown = new Countdown(32, this.game.height - 32);
 
     this.scoreKeeper = new ScoreKeeper(32, 32);
 
+    this.purpleDino = new PurpleDino(this.game.world.centerX, this.game.world.centerY);
+
+    this.purpleDinoFlaktulenceTimer = this.game.time.create();
+    // This seems to clear itself after the state is over.
+    this.purpleDinoFlaktulenceTimer.loop(600, function() {
+        // Can have multiple flak on the screen, keep track of them
+        // for colliding with the pigs.
+        this.flak.add(new Flak(this.purpleDino.x, this.purpleDino.y));
+        // Play a sound along with the flak.
+        this.game.sound.play("flak-explosion");
+    }.bind(this));
+    this.purpleDinoFlaktulenceTimer.start();
+
     this.pig = new Pig();
 
     this.pigSplosion = new PigSplosion();
 
-    this.game.input.onDown.add(function(pointer) {
-        // Can have multiple flak on the screen, keep track of them
-        // for colliding with the pigs.
-        this.flak.add(new Flak(pointer));
-        // Play a sound along with the flak.
-        this.game.sound.play("flak-explosion");
-    }.bind(this));
+    // g.input.onDown.add(function(pointer) {
+    //     // Can have multiple flak on the screen, keep track of them
+    //     // for colliding with the pigs.
+    //     this.flak.add(new Flak(pointer.x, pointer.y));
+    //     // Play a sound along with the flak.
+    //     this.game.sound.play("flak-explosion");
+    // }.bind(this));
 };
 Play.prototype.update = function() {
     // We don't need to exchange any velocities or motion we can the 'overlap'
