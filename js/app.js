@@ -119,8 +119,6 @@ PigSplosion.prototype.boom = function(x, y) {
 PigSplosion.prototype.game = null;
 // This pattern is okay, I'm sticking with it because I tried it out earlier.
 PigSplosion.init = function(game) {
-    game.load.audio('explosion', 'assets/sounds/explosion.wav');
-
     var confetti = game.add.bitmapData(10, 10, "confetti", true);
     confetti.fill(255, 255, 255, 1);
 
@@ -212,6 +210,9 @@ Title.prototype.create = function() {
 var Play = function() {};
 Play.prototype = Object.create(Phaser.State);
 Play.prototype.preload = function() {
+    game.load.audio("flak-explosion", "assets/sounds/laser-shot.wav");
+    game.load.audio("pig-splosion", "assets/sounds/explosion.wav");
+
     // Groups for watching flak.
     this.flak = this.game.add.group();
     // Some things need initialization. This isn't Phaser's fault, just something
@@ -239,7 +240,7 @@ Play.prototype.create = function() {
         // for colliding with the pigs.
         this.flak.add(new Flak(pointer));
         // Play a sound along with the flak.
-        this.game.sound.play("explosion", true);
+        this.game.sound.play("flak-explosion", true);
     }.bind(this));
 };
 Play.prototype.update = function() {
@@ -249,6 +250,7 @@ Play.prototype.update = function() {
         // Remove and reset the pig to another location.
         this.pigSplosion.boom(pig.x, pig.y);
         pig.randomCorner();
+        this.game.sound.play("pig-splosion", true);
 
         // And get a point.
         this.scoreKeeper.add(1);
