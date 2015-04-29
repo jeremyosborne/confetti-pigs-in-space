@@ -34,7 +34,8 @@ Click to shoot things. Such high scores. Much wow.
 
 
 
-## Acknowledgements
+## Acknowledgements and Credits
 
 * [Phaser](http://phaser.io) game engine.
-* [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for some simple, easy to generate sound effects.
+* [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for sound effects.
+* [Borderline (Fantastic Vamps : 8-Bit Mix)](http://dig.ccmixter.org/files/vamps/8749) by Fantastic Vamps for background music.

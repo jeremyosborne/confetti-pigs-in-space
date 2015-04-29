@@ -189,6 +189,9 @@ ScoreKeeper.init = function(game) {
 // Excuse to have more than one screen.
 var Title = function() {};
 Title.prototype = Object.create(Phaser.State);
+Title.prototype.preload = function() {
+    game.load.audio("bgmusic", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
+};
 Title.prototype.create = function() {
     this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
         "shootdown\n(pigs in space)", {
@@ -224,6 +227,11 @@ Play.prototype.preload = function() {
     ScoreKeeper.init(this.game);
 };
 Play.prototype.create = function() {
+
+    // Start background music.
+    game.sound.stopAll();
+    game.sound.play("bgmusic", 0.25, true);
+
     // To make the sprite move we need to enable Arcade Physics
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -240,7 +248,7 @@ Play.prototype.create = function() {
         // for colliding with the pigs.
         this.flak.add(new Flak(pointer));
         // Play a sound along with the flak.
-        this.game.sound.play("flak-explosion", true);
+        this.game.sound.play("flak-explosion");
     }.bind(this));
 };
 Play.prototype.update = function() {
