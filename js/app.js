@@ -16,7 +16,7 @@ Flak.prototype = Object.create(Phaser.Sprite.prototype);
 // Expanding outward unless this is true.
 Flak.prototype.imploding = false;
 // Pixels per frame.
-Flak.prototype.sizeChangeVelocity = 5;
+Flak.prototype.sizeChangeVelocity = 1;
 // How many pixels big before we implode.
 Flak.prototype.maxSize = 60;
 Flak.prototype.update = function() {
@@ -71,6 +71,8 @@ Pig.prototype.randomCorner = function() {
     // Put the pig in one of the corners of the game and start again.
     this.x = Phaser.Utils.chanceRoll() ? 0 : this.game.world.width;
     this.y = Phaser.Utils.chanceRoll() ? 0 : this.game.world.height;
+    // Don't think this is needed.
+    //this.body.reset(this.x, this.y);
 };
 // Set during init, reference to game.
 Pig.prototype.game = null;
@@ -89,7 +91,7 @@ Pig.prototype.update = function() {
         // Make the object seek to the active pointer (mouse or touch).
         //g.physics.arcade.moveToPointer(this, 150);
         // Seek the dino.
-        g.physics.arcade.moveToObject(this, this.target, 150);
+        g.physics.arcade.moveToObject(this, this.target, 125);
     } else {
         this.body.velocity.set(0);
     }
@@ -106,17 +108,13 @@ Pig.targetForAll = function(target) {
 
 
 
-var PigSplosion = function() {
+var ConfettiEmitter = function() {
     Phaser.Particles.Arcade.Emitter.call(this, this.game, 0, 0, 100);
     this.makeParticles(this.game.cache.getBitmapData("confetti"));
-    this.forEach(function(p) {
-        // Give each piece of confetti a random tint.
-        p.tint = Phaser.Color.getRandomColor();
-    });
     this.gravity = 200;
 };
-PigSplosion.prototype = Object.create(Phaser.Particles.Arcade.Emitter.prototype);
-PigSplosion.prototype.boom = function(x, y) {
+ConfettiEmitter.prototype = Object.create(Phaser.Particles.Arcade.Emitter.prototype);
+ConfettiEmitter.prototype.boom = function(x, y) {
     // Position emitter to distribute particles.
     this.x = x;
     this.y = y;
@@ -126,10 +124,17 @@ PigSplosion.prototype.boom = function(x, y) {
     // The final parameter (10) is how many particles will be emitted in this single burst
     this.start(true, 2000, null, 10);
 };
+// Provide a set color or a random color.
+ConfettiEmitter.prototype.colorize = function(color) {
+    this.forEach(function(p) {
+        // Give each piece of confetti a random tint.
+        p.tint = color || Phaser.Color.getRandomColor();
+    });
+};
 // Set during init, reference to game.
-PigSplosion.prototype.game = null;
+ConfettiEmitter.prototype.game = null;
 // This pattern is okay, I'm sticking with it because I tried it out earlier.
-PigSplosion.init = function(game) {
+ConfettiEmitter.init = function(game) {
     var confetti = game.add.bitmapData(10, 10, "confetti", true);
     confetti.fill(255, 255, 255, 1);
 
@@ -139,7 +144,10 @@ PigSplosion.init = function(game) {
 
 
 var PurpleDino = function(x, y) {
-    Phaser.Sprite.call(this, this.game, x || 0, y || 0, 'purple-dino');
+    this.startX = x || 0;
+    this.startY = y || 0;
+
+    Phaser.Sprite.call(this, this.game, this.startX, this.startY, "purple-dino");
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
@@ -147,6 +155,12 @@ var PurpleDino = function(x, y) {
 };
 PurpleDino.prototype = Object.create(Phaser.Sprite.prototype);
 PurpleDino.prototype.game = null;
+PurpleDino.prototype.toStartLocation = function() {
+    this.x = this.startX;
+    this.y = this.startY;
+    // Don't think this is needed.
+    //this.body.reset(this.x, this.y);
+};
 PurpleDino.prototype.update = function() {
     var g = this.game;
     this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
@@ -261,7 +275,7 @@ Play.prototype.preload = function() {
     // I'm trying out.
     Flak.init(this.game);
     Pig.init(this.game);
-    PigSplosion.init(this.game);
+    ConfettiEmitter.init(this.game);
     Countdown.init(this.game);
     ScoreKeeper.init(this.game);
     PurpleDino.init(this.game);
@@ -282,9 +296,12 @@ Play.prototype.create = function() {
 
     this.purpleDino = new PurpleDino(this.game.world.centerX, this.game.world.centerY);
 
+    this.purpleDinoSplosion = new ConfettiEmitter();
+    this.purpleDinoSplosion.colorize(0x942fcd);
+
     this.purpleDinoFlaktulenceTimer = this.game.time.create();
     // This seems to clear itself after the state is over.
-    this.purpleDinoFlaktulenceTimer.loop(600, function() {
+    this.purpleDinoFlaktulenceTimer.loop(750, function() {
         // Can have multiple flak on the screen, keep track of them
         // for colliding with the pigs.
         this.flak.add(new Flak(this.purpleDino.x, this.purpleDino.y));
@@ -296,28 +313,38 @@ Play.prototype.create = function() {
     this.pig = new Pig();
     Pig.targetForAll(this.purpleDino);
 
-    this.pigSplosion = new PigSplosion();
-
-    // g.input.onDown.add(function(pointer) {
-    //     // Can have multiple flak on the screen, keep track of them
-    //     // for colliding with the pigs.
-    //     this.flak.add(new Flak(pointer.x, pointer.y));
-    //     // Play a sound along with the flak.
-    //     this.game.sound.play("flak-explosion");
-    // }.bind(this));
+    this.pigSplosion = new ConfettiEmitter();
+    // Random colors by default.
+    this.pigSplosion.colorize();
 };
 Play.prototype.update = function() {
     // We don't need to exchange any velocities or motion we can the 'overlap'
     // check instead of 'collide'.
-    game.physics.arcade.overlap(this.flak, this.pig, function(pig) {
+    game.physics.arcade.overlap(this.pig, this.flak, function(pig) {
         // Remove and reset the pig to another location.
         this.pigSplosion.boom(pig.x, pig.y);
         pig.randomCorner();
         this.game.sound.play("pig-splosion", true);
-
         // And get a point.
         this.scoreKeeper.add(1);
     }.bind(this));
+
+    //this.purpleDinoSplosion.boom(pig.x, pig.y);
+    game.physics.arcade.overlap(this.purpleDino, this.pig, function(purpleDino, pig) {
+        // Allow for greater overlap to compensate for simple collision checking.
+        if (Math.abs(purpleDino.body.overlapX) > 5 || Math.abs(purpleDino.body.overlapY) > 5) {
+            // Remove and reset all to other locations.
+            this.pigSplosion.boom(pig.x, pig.y);
+            this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
+            pig.randomCorner();
+            purpleDino.toStartLocation();
+
+            // TODO: Different sound for dinosaur.
+            this.game.sound.play("pig-splosion", true);
+            // TODO: Lose a life.
+        }
+    }.bind(this));
+
 
     if (this.countdown.isDone) {
         // It's done, we're done.
@@ -325,7 +352,19 @@ Play.prototype.update = function() {
         this.scoreKeeper.save();
     }
 };
-
+Play.prototype.render = function() {
+    // Info about input params are positioning offset.
+	//this.game.debug.inputInfo(32, 32);
+    //this.game.debug.pointer();
+    // Info about sprites.
+    //game.debug.bodyInfo(this.purpleDino, 32, 32);
+    //game.debug.body(this.purpleDino);
+    //game.debug.body(this.pig);
+    // Other debug helpers.
+    //-----
+    // Num entities registered in the game.
+    //console.log(game.world.children.length);
+};
 
 
 
