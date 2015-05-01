@@ -256,21 +256,42 @@ ScoreKeeper.init = function(game) {
 var Title = function() {};
 Title.prototype = Object.create(Phaser.State);
 Title.prototype.preload = function() {
+    // Treating this as the asset loading screen.
     game.load.audio("bgmusic", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
+    game.load.audio("flak-explosion", "assets/sounds/laser-shot.wav");
+    game.load.audio("pig-splosion", "assets/sounds/explosion.wav");
 };
 Title.prototype.create = function() {
     this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
-        "shootdown\n(pigs in space)", {
+        "shootdown\n(the pigs in space)", {
         fill: "#ffffff",
 		font: "bold 42px Arial",
         align: "center",
 	});
     this.titleText.anchor.set(0.5);
 
+    // Every game needs an (inane) story.
+    // Scroll from right to left.
+    this.marqueeText = this.game.add.text(this.game.world.width + 20, this.game.world.height - 48,
+        [
+            "What a night. Trapped in the mascot costume.",
+            "Too much junk food.",
+            "Today the flatulence might save your life.",
+            "Escape the confetti filled pigs of death.",
+            "Don't get caught in your own gas.",
+            "Survive long enough and you might unstick the mascot zipper."
+        ].join(" "), {
+        fill: "#ffffff",
+		font: "bold 28px Arial",
+	});
+
     this.game.input.onDown.add(function() {
         // This event listener gets purged when we transition to "play" state.
         this.game.state.start("play");
     }.bind(this));
+};
+Title.prototype.update = function() {
+    this.marqueeText.x -= 3;
 };
 
 
@@ -279,9 +300,6 @@ Title.prototype.create = function() {
 var Play = function() {};
 Play.prototype = Object.create(Phaser.State);
 Play.prototype.preload = function() {
-    game.load.audio("flak-explosion", "assets/sounds/laser-shot.wav");
-    game.load.audio("pig-splosion", "assets/sounds/explosion.wav");
-
     // Groups for watching flak.
     this.flak = this.game.add.group();
     // Some things need initialization. This isn't Phaser's fault, just something
