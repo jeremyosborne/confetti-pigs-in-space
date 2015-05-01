@@ -62,6 +62,8 @@ var Pig = function(position) {
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
+    // Make collisions a bit more forgiving.
+    this.body.setSize(this.width - 8, this.height - 8, 1, 1);
     this.game.add.existing(this);
 
     this.randomCorner();
@@ -151,6 +153,8 @@ var PurpleDino = function(x, y) {
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
+    // Shrink the body size.
+    this.body.setSize(this.width - 6, this.height - 6, 1, 1);
     this.game.add.existing(this);
 };
 PurpleDino.prototype = Object.create(Phaser.Sprite.prototype);
@@ -341,20 +345,39 @@ Play.prototype.update = function() {
     //this.purpleDinoSplosion.boom(pig.x, pig.y);
     game.physics.arcade.overlap(this.purpleDino, this.pig, function(purpleDino, pig) {
         // Allow for greater overlap to compensate for simple collision checking.
-        if (Math.abs(purpleDino.body.overlapX) > 5 || Math.abs(purpleDino.body.overlapY) > 5) {
-            // Remove and reset all to other locations.
-            this.pigSplosion.boom(pig.x, pig.y);
-            this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
-            pig.randomCorner();
-            purpleDino.toStartLocation();
+        // Was trying overlapX and overlapY for awhile, but it seems inconsistent.
+        // I'd sometimes get an overlap, but then othertimes just get 0. Looking into
+        // the code, I think a better thing to do is to modify the size of the physics
+        // body to decrease the collision area (and require pigs and dinos to have more
+        // overlap.)
+        // if (Math.abs(purpleDino.body.overlapX) > 5 || Math.abs(purpleDino.body.overlapY) > 5) {
+        //     // Remove and reset all to other locations.
+        //     this.pigSplosion.boom(pig.x, pig.y);
+        //     this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
+        //     pig.randomCorner();
+        //     purpleDino.toStartLocation();
+        //
+        //     // TODO: Different sound for dinosaur.
+        //     this.game.sound.play("pig-splosion", true);
+        //     this.scoreKeeper.decreaseLives();
+        //     if (this.scoreKeeper.lives <= 0) {
+        //         this.scoreKeeper.save();
+        //         game.state.start("end");
+        //     }
+        // }
 
-            // TODO: Different sound for dinosaur.
-            this.game.sound.play("pig-splosion", true);
-            this.scoreKeeper.decreaseLives();
-            if (this.scoreKeeper.lives <= 0) {
-                this.scoreKeeper.save();
-                game.state.start("end");
-            }
+        // Remove and reset all to other locations.
+        this.pigSplosion.boom(pig.x, pig.y);
+        this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
+        pig.randomCorner();
+        purpleDino.toStartLocation();
+
+        // TODO: Different sound for dinosaur.
+        this.game.sound.play("pig-splosion", true);
+        this.scoreKeeper.decreaseLives();
+        if (this.scoreKeeper.lives <= 0) {
+            this.scoreKeeper.save();
+            game.state.start("end");
         }
     }.bind(this));
 
@@ -370,9 +393,9 @@ Play.prototype.render = function() {
 	//this.game.debug.inputInfo(32, 32);
     //this.game.debug.pointer();
     // Info about sprites.
-    //game.debug.bodyInfo(this.purpleDino, 32, 32);
-    //game.debug.body(this.purpleDino);
-    //game.debug.body(this.pig);
+    // this.game.debug.bodyInfo(this.purpleDino, 32, this.game.world.height - 100);
+    // this.game.debug.body(this.purpleDino);
+    // game.debug.body(this.pig);
     // Other debug helpers.
     //-----
     // Num entities registered in the game.
