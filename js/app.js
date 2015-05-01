@@ -179,34 +179,35 @@ PurpleDino.init = function(game) {
 
 
 
-var Countdown = function(x, y) {
-    Phaser.Text.call(this, this.game, x, y, "", {
-        fill: "#ffffff",
-		font: "bold 16px Arial",
-	});
-    this.game.add.existing(this);
-    this.timer = this.game.time.create();
-    this.timer.add(this.timeLimit, function() {
-        this.isDone = true;
-    }.bind(this));
-    this.timer.start();
-};
-Countdown.prototype = Object.create(Phaser.Text.prototype);
-// Milliseconds.
-Countdown.prototype.timeLimit = 15000;
-Countdown.prototype.isDone = false;
-// Generated once live.
-Countdown.prototype.prefix = "Time Left: ";
-Countdown.prototype.update = function() {
-    this.text = this.prefix + Math.ceil(this.timer.duration / 1000);
-};
-Countdown.prototype.game = null;
-Countdown.init = function(game) {
-    this.prototype.game = game;
-};
+// var Countdown = function(x, y) {
+//     Phaser.Text.call(this, this.game, x, y, "", {
+//         fill: "#ffffff",
+// 		font: "bold 16px Arial",
+// 	});
+//     this.game.add.existing(this);
+//     this.timer = this.game.time.create();
+//     this.timer.add(this.timeLimit, function() {
+//         this.isDone = true;
+//     }.bind(this));
+//     this.timer.start();
+// };
+// Countdown.prototype = Object.create(Phaser.Text.prototype);
+// // Milliseconds.
+// Countdown.prototype.timeLimit = 15000;
+// Countdown.prototype.isDone = false;
+// // Generated once live.
+// Countdown.prototype.prefix = "Time Left: ";
+// Countdown.prototype.update = function() {
+//     this.text = this.prefix + Math.ceil(this.timer.duration / 1000);
+// };
+// Countdown.prototype.game = null;
+// Countdown.init = function(game) {
+//     this.prototype.game = game;
+// };
 
 
 
+// Also tracks lives.
 var ScoreKeeper = function(x, y) {
     Phaser.Text.call(this, this.game, x, y, "", {
         fill: "#ffffff",
@@ -221,17 +222,25 @@ var ScoreKeeper = function(x, y) {
 };
 ScoreKeeper.prototype = Object.create(Phaser.Text.prototype);
 ScoreKeeper.prototype.game = null;
+ScoreKeeper.prototype.lives = 3;
 ScoreKeeper.prototype.score = 0;
 ScoreKeeper.prototype.highScore = 0;
 ScoreKeeper.prototype.add = function(n) {
     this.score += n;
 };
-ScoreKeeper.prototype.update = function() {
-    this.text = "Score: " + this.score + "\nHigh Score: " + this.highScore;
+ScoreKeeper.prototype.decreaseLives = function() {
+    this.lives -= 1;
 };
 ScoreKeeper.prototype.save = function() {
     localStorage.score = this.score;
-    localStorage.highScore = this.highScore;
+    localStorage.highScore = Math.max(this.score, this.highScore);
+};
+// Checks localstorage, useful across states.
+ScoreKeeper.savedScoreIsHigh = function() {
+    return localStorage.score >= localStorage.highScore;
+};
+ScoreKeeper.prototype.update = function() {
+    this.text = "Lives: " + this.lives + "\nScore: " + this.score + "\nHigh Score: " + this.highScore;
 };
 ScoreKeeper.init = function(game) {
     this.prototype.game = game;
@@ -276,7 +285,7 @@ Play.prototype.preload = function() {
     Flak.init(this.game);
     Pig.init(this.game);
     ConfettiEmitter.init(this.game);
-    Countdown.init(this.game);
+    //Countdown.init(this.game);
     ScoreKeeper.init(this.game);
     PurpleDino.init(this.game);
 };
@@ -290,7 +299,7 @@ Play.prototype.create = function() {
     // To make the sprite move we need to enable Arcade Physics
     g.physics.startSystem(Phaser.Physics.ARCADE);
 
-    this.countdown = new Countdown(32, this.game.height - 32);
+    //this.countdown = new Countdown(32, this.game.height - 32);
 
     this.scoreKeeper = new ScoreKeeper(32, 32);
 
@@ -341,16 +350,20 @@ Play.prototype.update = function() {
 
             // TODO: Different sound for dinosaur.
             this.game.sound.play("pig-splosion", true);
-            // TODO: Lose a life.
+            this.scoreKeeper.decreaseLives();
+            if (this.scoreKeeper.lives <= 0) {
+                this.scoreKeeper.save();
+                game.state.start("end");
+            }
         }
     }.bind(this));
 
 
-    if (this.countdown.isDone) {
-        // It's done, we're done.
-        game.state.start("end");
-        this.scoreKeeper.save();
-    }
+    // if (this.countdown.isDone) {
+    //     // It's done, we're done.
+    //     game.state.start("end");
+    //     this.scoreKeeper.save();
+    // }
 };
 Play.prototype.render = function() {
     // Info about input params are positioning offset.
@@ -372,9 +385,8 @@ var End = function() {};
 End.prototype = Object.create(Phaser.State);
 End.prototype.create = function() {
     var text = "The End.\nClick to play again";
-    if (localStorage.score > localStorage.highScore) {
+    if (ScoreKeeper.savedScoreIsHigh()) {
         text = "You got the high score!\n" + text;
-        localStorage.highScore = localStorage.score;
     }
     this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
         text, {
