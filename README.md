@@ -39,3 +39,4 @@ Click to shoot things. Such high scores. Much wow.
 * [Phaser](http://phaser.io) game engine.
 * [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for sound effects.
 * [Borderline (Fantastic Vamps : 8-Bit Mix)](http://dig.ccmixter.org/files/vamps/8749) by Fantastic Vamps for background music.
+* Image titled [Hubble Unmasks Ghost Galaxies](http://hubblesite.org/newscenter/archive/releases/2012/26/image/b/)

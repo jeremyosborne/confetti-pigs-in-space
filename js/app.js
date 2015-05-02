@@ -257,11 +257,15 @@ var Title = function() {};
 Title.prototype = Object.create(Phaser.State);
 Title.prototype.preload = function() {
     // Treating this as the asset loading screen.
-    game.load.audio("bgmusic", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
-    game.load.audio("flak-explosion", "assets/sounds/laser-shot.wav");
-    game.load.audio("pig-splosion", "assets/sounds/explosion.wav");
+    this.game.load.audio("bgmusic", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
+    this.game.load.audio("flak-explosion", "assets/sounds/laser-shot.wav");
+    this.game.load.audio("pig-splosion", "assets/sounds/explosion.wav");
+    this.game.load.image('bg-space', 'assets/images/starfield.png');
 };
 Title.prototype.create = function() {
+    // The background isn't meant to be tiled, but good enough for this.
+    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
+
     this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
         "shootdown\n(the pigs in space)", {
         fill: "#ffffff",
@@ -274,12 +278,14 @@ Title.prototype.create = function() {
     // Scroll from right to left.
     this.marqueeText = this.game.add.text(this.game.world.width + 20, this.game.world.height - 48,
         [
-            "What a night. Trapped in the mascot costume.",
+            "What a night.",
+            "Trapped in the mascot costume.",
             "Too much junk food.",
-            "Today the flatulence might save your life.",
-            "Escape the confetti filled pigs of death.",
+            "Jettisoned out the airlock into space.",
+            "Confetti filled pigs in pursuit.",
+            "Today your flatulence might save your life.",
             "Don't get caught in your own gas.",
-            "Survive long enough and you might unstick the mascot zipper."
+            "Yes this is the plot.",
         ].join(" "), {
         fill: "#ffffff",
 		font: "bold 28px Arial",
@@ -300,8 +306,6 @@ Title.prototype.update = function() {
 var Play = function() {};
 Play.prototype = Object.create(Phaser.State);
 Play.prototype.preload = function() {
-    // Groups for watching flak.
-    this.flak = this.game.add.group();
     // Some things need initialization. This isn't Phaser's fault, just something
     // I'm trying out.
     Flak.init(this.game);
@@ -314,6 +318,9 @@ Play.prototype.preload = function() {
 Play.prototype.create = function() {
     var g = this.game;
 
+    // The background isn't meant to be tiled, but good enough for this.
+    g.add.tileSprite(0, 0, g.width, g.height, 'bg-space');
+
     // Start background music.
     g.sound.stopAll();
     g.sound.play("bgmusic", 0.25, true);
@@ -322,6 +329,11 @@ Play.prototype.create = function() {
     g.physics.startSystem(Phaser.Physics.ARCADE);
 
     //this.countdown = new Countdown(32, this.game.height - 32);
+
+    // Groups for watching flak.
+    // Ordering of adding affects the z-level. When this was in preload, the
+    // tilesprite was hiding the flak.
+    this.flak = this.game.add.group();
 
     this.scoreKeeper = new ScoreKeeper(32, 32);
 
@@ -425,6 +437,9 @@ Play.prototype.render = function() {
 var End = function() {};
 End.prototype = Object.create(Phaser.State);
 End.prototype.create = function() {
+    // The background isn't meant to be tiled, but good enough for this.
+    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
+
     var text = "The End.\nClick to play again";
     if (ScoreKeeper.savedScoreIsHigh()) {
         text = "You got the high score!\n" + text;
