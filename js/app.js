@@ -26,9 +26,6 @@ Flak.prototype.launch = function(x, y) {
     this.reset(x, y);
 };
 Flak.prototype.update = function() {
-
-    // TODO: Start here and fix this using the lifespan.
-
     // Increase the size of the sprite.
     var sizeRatio;
     // Whether we are imploding or exploding.
@@ -41,14 +38,6 @@ Flak.prototype.update = function() {
     }
     this.width = sizeRatio * this.maxSize;
     this.height = sizeRatio * this.maxSize;
-
-    // Now handled by lifespan.
-    // if (this.width < 0) {
-    //     // Kill doesn't opt for gc, just rmeoves it from render and update.
-    //     this.kill();
-    //     // Destroy removes the object from the game.
-    //     //this.destroy();
-    // }
 };
 // Reference to game instance using flak. Initialized during init.
 Flak.prototype.game = null;
@@ -76,8 +65,6 @@ var Pig = function(position) {
     this.body.setSize(this.width - 8, this.height - 8, 1, 1);
     this.game.add.existing(this);
 
-    //this.randomCorner();
-
     // Managed by the group, starts off dead.
     this.kill();
 };
@@ -86,8 +73,6 @@ Pig.prototype.randomCorner = function() {
     // Put the pig in one of the corners of the game and start again.
     this.x = Phaser.Utils.chanceRoll() ? 0 : this.game.world.width;
     this.y = Phaser.Utils.chanceRoll() ? 0 : this.game.world.height;
-    // Don't think this is needed.
-    //this.body.reset(this.x, this.y);
 };
 // Set during init, reference to game.
 Pig.prototype.game = null;
@@ -96,15 +81,10 @@ Pig.prototype.target = null;
 Pig.prototype.update = function() {
     var g = this.game;
 
-    //if (g.physics.arcade.distanceToPointer(this, g.input.activePointer) > 5) {
     if (this.target && g.physics.arcade.distanceBetween(this, this.target) > 5) {
-        // Head toward pointer.
-        //this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
         // Head toward dino.
         this.rotation = Phaser.Math.angleBetween(this.x, this.y, this.target.x, this.target.y);
 
-        // Make the object seek to the active pointer (mouse or touch).
-        //g.physics.arcade.moveToPointer(this, 150);
         // Seek the dino.
         g.physics.arcade.moveToObject(this, this.target, 125);
     } else {
@@ -175,8 +155,6 @@ PurpleDino.prototype.game = null;
 PurpleDino.prototype.toStartLocation = function() {
     this.x = this.startX;
     this.y = this.startY;
-    // Don't think this is needed.
-    //this.body.reset(this.x, this.y);
 };
 PurpleDino.prototype.update = function() {
     var g = this.game;
@@ -193,34 +171,6 @@ PurpleDino.init = function(game) {
 
     this.prototype.game = game;
 };
-
-
-
-// var Countdown = function(x, y) {
-//     Phaser.Text.call(this, this.game, x, y, "", {
-//         fill: "#ffffff",
-// 		font: "bold 16px Arial",
-// 	});
-//     this.game.add.existing(this);
-//     this.timer = this.game.time.create();
-//     this.timer.add(this.timeLimit, function() {
-//         this.isDone = true;
-//     }.bind(this));
-//     this.timer.start();
-// };
-// Countdown.prototype = Object.create(Phaser.Text.prototype);
-// // Milliseconds.
-// Countdown.prototype.timeLimit = 15000;
-// Countdown.prototype.isDone = false;
-// // Generated once live.
-// Countdown.prototype.prefix = "Time Left: ";
-// Countdown.prototype.update = function() {
-//     this.text = this.prefix + Math.ceil(this.timer.duration / 1000);
-// };
-// Countdown.prototype.game = null;
-// Countdown.init = function(game) {
-//     this.prototype.game = game;
-// };
 
 
 
@@ -362,10 +312,8 @@ Play.prototype.create = function() {
     this.purpleDinoFlaktulenceTimer.loop(750, function() {
         // Can have multiple flak on the screen, keep track of them
         // for colliding with the pigs.
-        //this.flak.add(new Flak(this.purpleDino.x, this.purpleDino.y));
         var flak = this.flak.getFirstExists(false);
         flak.launch(this.purpleDino.x, this.purpleDino.y);
-        // Play a sound along with the flak.
         this.game.sound.play("flak-explosion");
     }.bind(this));
     this.purpleDinoFlaktulenceTimer.start();
@@ -378,7 +326,6 @@ Play.prototype.create = function() {
     var nextPig = this.pigs.getFirstExists(false);
     nextPig.revive(0, 0);
     nextPig.randomCorner();
-    //this.pig = new Pig();
 
     this.pigSplosion = new ConfettiEmitter();
     // Random colors by default.
@@ -404,30 +351,7 @@ Play.prototype.update = function() {
         this.scoreKeeper.add(1);
     }.bind(this));
 
-    //this.purpleDinoSplosion.boom(pig.x, pig.y);
     game.physics.arcade.overlap(this.purpleDino, this.pigs, function(purpleDino, pig) {
-        // Allow for greater overlap to compensate for simple collision checking.
-        // Was trying overlapX and overlapY for awhile, but it seems inconsistent.
-        // I'd sometimes get an overlap, but then othertimes just get 0. Looking into
-        // the code, I think a better thing to do is to modify the size of the physics
-        // body to decrease the collision area (and require pigs and dinos to have more
-        // overlap.)
-        // if (Math.abs(purpleDino.body.overlapX) > 5 || Math.abs(purpleDino.body.overlapY) > 5) {
-        //     // Remove and reset all to other locations.
-        //     this.pigSplosion.boom(pig.x, pig.y);
-        //     this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
-        //     pig.randomCorner();
-        //     purpleDino.toStartLocation();
-        //
-        //     // TODO: Different sound for dinosaur.
-        //     this.game.sound.play("pig-splosion", true);
-        //     this.scoreKeeper.decreaseLives();
-        //     if (this.scoreKeeper.lives <= 0) {
-        //         this.scoreKeeper.save();
-        //         game.state.start("end");
-        //     }
-        // }
-
         // Remove and reset all to other locations.
         this.pigSplosion.boom(pig.x, pig.y);
         this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
@@ -442,13 +366,6 @@ Play.prototype.update = function() {
             game.state.start("end");
         }
     }.bind(this));
-
-
-    // if (this.countdown.isDone) {
-    //     // It's done, we're done.
-    //     game.state.start("end");
-    //     this.scoreKeeper.save();
-    // }
 };
 Play.prototype.render = function() {
     // Info about input params are positioning offset.
