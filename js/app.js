@@ -5,41 +5,51 @@
 
 var Flak = function(x, y) {
     // Trying out cache.
-    Phaser.Sprite.call(this, this.game, x, y, this.game.cache.getBitmapData("flak"));
+    Phaser.Sprite.call(this, this.game, x || 0, y || 0, this.game.cache.getBitmapData("flak"));
 
     // Center flak over pointer.
     this.anchor.setTo(0.5, 0.5);
     this.game.physics.arcade.enable(this);
     this.game.add.existing(this);
+    // Start off dead, expect to be added to a group.
+    this.kill();
 };
 Flak.prototype = Object.create(Phaser.Sprite.prototype);
-// Expanding outward unless this is true.
-Flak.prototype.imploding = false;
-// Pixels per frame.
-Flak.prototype.sizeChangeVelocity = 1;
+// What's our max lifespan?
+Flak.prototype.maxLifespan = 2000;
+Flak.prototype.halflife = Flak.prototype.maxLifespan / 2;
+Flak.prototype.lifespan = Flak.prototype.maxLifespan;
 // How many pixels big before we implode.
 Flak.prototype.maxSize = 60;
-Flak.prototype.update = function() {
-    // Increase the size of the sprite.
-    if (!this.imploding) {
-        this.width += this.sizeChangeVelocity;
-        this.height += this.sizeChangeVelocity;
-        if (this.width > this.maxSize) {
-            this.imploding = true;
-        }
-    } else {
-        this.width -= this.sizeChangeVelocity;
-        this.height -= this.sizeChangeVelocity;
-        if (this.width <= 0) {
-            // Kill doesn't opt for gc, just rmeoves it from render and update.
-            //this.kill();
-            // Destroy removes the object from the game.
-            this.destroy();
-        }
-    }
+Flak.prototype.launch = function(x, y) {
+    this.lifespan = this.maxLifespan;
+    this.reset(x, y);
 };
-// Reference to sprite shared by all Flak instances. Initialized during init.
-Flak.prototype.spriteImage = null;
+Flak.prototype.update = function() {
+
+    // TODO: Start here and fix this using the lifespan.
+
+    // Increase the size of the sprite.
+    var sizeRatio;
+    // Whether we are imploding or exploding.
+    if (this.lifespan > this.halflife) {
+        // Exploding.
+        sizeRatio = 1 - ((this.lifespan - this.halflife) / this.halflife);
+    } else {
+        // Imploding.
+        sizeRatio = this.lifespan / this.halflife;
+    }
+    this.width = sizeRatio * this.maxSize;
+    this.height = sizeRatio * this.maxSize;
+
+    // Now handled by lifespan.
+    // if (this.width < 0) {
+    //     // Kill doesn't opt for gc, just rmeoves it from render and update.
+    //     this.kill();
+    //     // Destroy removes the object from the game.
+    //     //this.destroy();
+    // }
+};
 // Reference to game instance using flak. Initialized during init.
 Flak.prototype.game = null;
 // Call before using flak instances.
@@ -66,7 +76,10 @@ var Pig = function(position) {
     this.body.setSize(this.width - 8, this.height - 8, 1, 1);
     this.game.add.existing(this);
 
-    this.randomCorner();
+    //this.randomCorner();
+
+    // Managed by the group, starts off dead.
+    this.kill();
 };
 Pig.prototype = Object.create(Phaser.Sprite.prototype);
 Pig.prototype.randomCorner = function() {
@@ -334,8 +347,10 @@ Play.prototype.create = function() {
     // Ordering of adding affects the z-level. When this was in preload, the
     // tilesprite was hiding the flak.
     this.flak = this.game.add.group();
-
-    this.scoreKeeper = new ScoreKeeper(32, 32);
+    // This enforces a maximum on flatulence on the screen.
+    for (var i = 0; i < 10; i++) {
+        this.flak.add(new Flak());
+    }
 
     this.purpleDino = new PurpleDino(this.game.world.centerX, this.game.world.centerY);
 
@@ -347,33 +362,50 @@ Play.prototype.create = function() {
     this.purpleDinoFlaktulenceTimer.loop(750, function() {
         // Can have multiple flak on the screen, keep track of them
         // for colliding with the pigs.
-        this.flak.add(new Flak(this.purpleDino.x, this.purpleDino.y));
+        //this.flak.add(new Flak(this.purpleDino.x, this.purpleDino.y));
+        var flak = this.flak.getFirstExists(false);
+        flak.launch(this.purpleDino.x, this.purpleDino.y);
         // Play a sound along with the flak.
         this.game.sound.play("flak-explosion");
     }.bind(this));
     this.purpleDinoFlaktulenceTimer.start();
 
-    this.pig = new Pig();
     Pig.targetForAll(this.purpleDino);
+    this.pigs = this.game.add.group();
+    for (i = 0; i < 10; i++) {
+        this.pigs.add(new Pig());
+    }
+    var nextPig = this.pigs.getFirstExists(false);
+    nextPig.revive(0, 0);
+    nextPig.randomCorner();
+    //this.pig = new Pig();
 
     this.pigSplosion = new ConfettiEmitter();
     // Random colors by default.
     this.pigSplosion.colorize();
+
+    this.scoreKeeper = new ScoreKeeper(32, 32);
 };
 Play.prototype.update = function() {
     // We don't need to exchange any velocities or motion we can the 'overlap'
     // check instead of 'collide'.
-    game.physics.arcade.overlap(this.pig, this.flak, function(pig) {
-        // Remove and reset the pig to another location.
+    game.physics.arcade.overlap(this.pigs, this.flak, function(pig) {
+        // Bring in the replacement pig.
+        var nextPig = this.pigs.getFirstExists(false);
+        nextPig.revive(0, 0);
+        nextPig.randomCorner();
+
+        // Remove the dead pig.
         this.pigSplosion.boom(pig.x, pig.y);
-        pig.randomCorner();
+        pig.kill();
         this.game.sound.play("pig-splosion", true);
+
         // And get a point.
         this.scoreKeeper.add(1);
     }.bind(this));
 
     //this.purpleDinoSplosion.boom(pig.x, pig.y);
-    game.physics.arcade.overlap(this.purpleDino, this.pig, function(purpleDino, pig) {
+    game.physics.arcade.overlap(this.purpleDino, this.pigs, function(purpleDino, pig) {
         // Allow for greater overlap to compensate for simple collision checking.
         // Was trying overlapX and overlapY for awhile, but it seems inconsistent.
         // I'd sometimes get an overlap, but then othertimes just get 0. Looking into
@@ -424,8 +456,8 @@ Play.prototype.render = function() {
     //this.game.debug.pointer();
     // Info about sprites.
     // this.game.debug.bodyInfo(this.purpleDino, 32, this.game.world.height - 100);
-    // this.game.debug.body(this.purpleDino);
-    // game.debug.body(this.pig);
+    //this.game.debug.body(this.purpleDino);
+    //this.game.debug.body(this.pigs.getFirstExists());
     // Other debug helpers.
     //-----
     // Num entities registered in the game.
