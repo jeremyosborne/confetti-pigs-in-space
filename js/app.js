@@ -1,6 +1,11 @@
 /* jshint unused:true, undef:true, browser:true */
 /* global Phaser:false */
 
+// Look for TODO items in the code.
+// General TODO items
+// * Create levels, max ten pigs, increasing number of pigs 1 per level.
+// * Have the level number appear and disappear at the start of each level.
+
 
 
 var Flaktulence = function(x, y) {
@@ -224,9 +229,10 @@ Title.prototype = Object.create(Phaser.State);
 Title.prototype.preload = function() {
     // Treating this as the asset loading screen.
     this.game.load.audio("bgmusic", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
-    this.game.load.audio("flak-explosion", "assets/sounds/laser-shot.wav");
-    this.game.load.audio("pig-splosion", "assets/sounds/explosion.wav");
-    this.game.load.image('bg-space', 'assets/images/starfield.png');
+    this.game.load.audio("explosion-flaktulence", "assets/sounds/flaktulence.wav");
+    this.game.load.audio("explosion-pig", "assets/sounds/explosion.wav");
+    this.game.load.audio("explosion-dino", "assets/sounds/explosion2.wav");
+    this.game.load.image("bg-space", "assets/images/starfield.png");
 };
 Title.prototype.create = function() {
     // The background isn't meant to be tiled, but good enough for this.
@@ -294,7 +300,19 @@ Play.prototype.create = function() {
     // To make the sprite move we need to enable Arcade Physics
     g.physics.startSystem(Phaser.Physics.ARCADE);
 
-    //this.countdown = new Countdown(32, this.game.height - 32);
+    this.levelText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
+        "Level 1", {
+        fill: "#ffffff",
+		font: "bold 36px Arial",
+        align: "center",
+	});
+    this.levelText.anchor.set(0.5);
+    // propertiesToTween, durationInMs, easing, autostart, delay, repeat, yoyo
+    game.add.tween(this.levelText).to({
+        width: 0,
+        height: 0,
+        rotation: 2 * Math.PI,
+    }, 2400, Phaser.Easing.Linear.None, true);
 
     // Groups for watching flak.
     // Ordering of adding affects the z-level. When this was in preload, the
@@ -323,8 +341,8 @@ Play.prototype.create = function() {
             // Can have multiple flak on the screen, keep track of them
             // for colliding with the pigs.
             var flaktulence = this.flaktulence.getFirstExists(false);
-            flaktulence.launch(this.purpleDino.x - (direction.x * 20), this.purpleDino.y - (direction.y * 20));
-            this.game.sound.play("flak-explosion");
+            flaktulence.launch(this.purpleDino.x - (direction.x * 40), this.purpleDino.y - (direction.y * 40));
+            this.game.sound.play("explosion-flaktulence");
         }
     }.bind(this));
     this.purpleDinoFlaktulenceTimer.start();
@@ -354,8 +372,8 @@ Play.prototype.update = function() {
 
         // Remove the dead pig.
         this.pigSplosion.boom(pig.x, pig.y);
+        this.game.sound.play("explosion-pig", true);
         pig.kill();
-        this.game.sound.play("pig-splosion", true);
 
         // And get a point.
         this.scoreKeeper.add(1);
@@ -364,10 +382,9 @@ Play.prototype.update = function() {
     // Flaktulence blows up dino.
     game.physics.arcade.overlap(this.purpleDino, this.flaktulence, function(purpleDino) {
         this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
+        this.game.sound.play("explosion-dino", true);
         purpleDino.toStartLocation();
 
-        // TODO: Different sound for dinosaur.
-        this.game.sound.play("pig-splosion", true);
         this.scoreKeeper.decreaseLives();
         if (this.scoreKeeper.lives <= 0) {
             this.scoreKeeper.save();
@@ -383,13 +400,13 @@ Play.prototype.update = function() {
 
         // Remove and reset all to other locations.
         this.pigSplosion.boom(pig.x, pig.y);
+        this.game.sound.play("explosion-pig", true);
         pig.kill();
 
         this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
+        this.game.sound.play("explosion-dino", true);
         purpleDino.toStartLocation();
 
-        // TODO: Different sound for dinosaur.
-        this.game.sound.play("pig-splosion", true);
         this.scoreKeeper.decreaseLives();
         if (this.scoreKeeper.lives <= 0) {
             this.scoreKeeper.save();
@@ -405,15 +422,15 @@ Play.prototype.render = function() {
     //-----
     // Info about sprites.
     //this.game.debug.bodyInfo(this.purpleDino, 32, this.game.world.height - 100);
-    this.game.debug.body(this.purpleDino);
-    var p = this.pigs.getFirstExists();
-    if (p) {
-        this.game.debug.body(p);
-    }
-    var f = this.flaktulence.getFirstExists();
-    if (f) {
-        this.game.debug.body(f);
-    }
+    // this.game.debug.body(this.purpleDino);
+    // var p = this.pigs.getFirstExists();
+    // if (p) {
+    //     this.game.debug.body(p);
+    // }
+    // var f = this.flaktulence.getFirstExists();
+    // if (f) {
+    //     this.game.debug.body(f);
+    // }
     // Other debug helpers.
     //-----
     // Num entities registered in the game.
