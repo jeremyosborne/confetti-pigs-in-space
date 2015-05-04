@@ -2,6 +2,8 @@
 
 Click and blow stuff up. Current version of code should be hosted on this project's github pages at http://jeremyosborne.github.io/shootdown.
 
+This is more of my rubber duck hacking with [Phaser](http://phaser.io) and video game ideas than anything serious.
+
 
 
 ## Build the Game
@@ -24,7 +26,7 @@ Click and blow stuff up. Current version of code should be hosted on this projec
 * Run game in modern browser
     * go to: http://localhost:4242
 
-* The `bower.json` file can be ignored as a copy of third party libs are kept in the source repo.
+* The `bower.json` can be ignored unless you wish to update the third party libraries used.
 
 
 
