@@ -300,7 +300,8 @@ Play.prototype.create = function() {
     // To make the sprite move we need to enable Arcade Physics
     g.physics.startSystem(Phaser.Physics.ARCADE);
 
-    this.levelText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
+    //this.levelText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
+    this.levelText = this.game.add.text(this.game.world.centerX, -50,
         "Level 1", {
         fill: "#ffffff",
 		font: "bold 36px Arial",
@@ -308,11 +309,23 @@ Play.prototype.create = function() {
 	});
     this.levelText.anchor.set(0.5);
     // propertiesToTween, durationInMs, easing, autostart, delay, repeat, yoyo
-    game.add.tween(this.levelText).to({
-        width: 0,
-        height: 0,
-        rotation: 2 * Math.PI,
-    }, 2400, Phaser.Easing.Linear.None, true);
+    // game.add.tween(this.levelText).to({
+    //     width: 0,
+    //     height: 0,
+    //     rotation: 2 * Math.PI,
+    // }, 1000, Phaser.Easing.Linear.None, true);
+    // This seems the proper way to chain tweens together (don't pass autostart
+    // when chaining).
+    game.add.tween(this.levelText)
+        .to({
+            y: this.game.world.centerY
+        }, 1000, Phaser.Easing.Linear.None)
+        .to({
+            width: 0,
+            height: 0,
+            rotation: 2 * Math.PI,
+        }, 2000, Phaser.Easing.Linear.None)
+        .start();
 
     // Groups for watching flak.
     // Ordering of adding affects the z-level. When this was in preload, the
