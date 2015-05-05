@@ -8,6 +8,41 @@
 
 
 
+var ConfettiEmitter = function() {
+    Phaser.Particles.Arcade.Emitter.call(this, this.game, 0, 0, 100);
+    this.makeParticles(this.game.cache.getBitmapData("confetti"));
+    this.gravity = 200;
+};
+ConfettiEmitter.prototype = Object.create(Phaser.Particles.Arcade.Emitter.prototype);
+ConfettiEmitter.prototype.boom = function(x, y) {
+    // Position emitter to distribute particles.
+    this.x = x;
+    this.y = y;
+    // The first parameter sets the effect to "explode" which means all particles are emitted at once
+    // The second gives each particle a 2000ms lifespan
+    // The third is ignored when using burst/explode mode
+    // The final parameter (10) is how many particles will be emitted in this single burst
+    this.start(true, 2000, null, 10);
+};
+// Provide a set color or a random color.
+ConfettiEmitter.prototype.colorize = function(color) {
+    this.forEach(function(p) {
+        // Give each piece of confetti a random tint.
+        p.tint = color || Phaser.Color.getRandomColor();
+    });
+};
+// Set during init, reference to game.
+ConfettiEmitter.prototype.game = null;
+// This pattern is okay, I'm sticking with it because I tried it out earlier.
+ConfettiEmitter.init = function(game) {
+    var confetti = game.add.bitmapData(10, 10, "confetti", true);
+    confetti.fill(255, 255, 255, 1);
+
+    this.prototype.game = game;
+};
+
+
+
 var Flaktulence = function(x, y) {
     // Trying out cache.
     Phaser.Sprite.call(this, this.game, x || 0, y || 0, this.game.cache.getBitmapData("flak"));
@@ -111,41 +146,6 @@ Pig.targetForAll = function(target) {
 
 
 
-var ConfettiEmitter = function() {
-    Phaser.Particles.Arcade.Emitter.call(this, this.game, 0, 0, 100);
-    this.makeParticles(this.game.cache.getBitmapData("confetti"));
-    this.gravity = 200;
-};
-ConfettiEmitter.prototype = Object.create(Phaser.Particles.Arcade.Emitter.prototype);
-ConfettiEmitter.prototype.boom = function(x, y) {
-    // Position emitter to distribute particles.
-    this.x = x;
-    this.y = y;
-    // The first parameter sets the effect to "explode" which means all particles are emitted at once
-    // The second gives each particle a 2000ms lifespan
-    // The third is ignored when using burst/explode mode
-    // The final parameter (10) is how many particles will be emitted in this single burst
-    this.start(true, 2000, null, 10);
-};
-// Provide a set color or a random color.
-ConfettiEmitter.prototype.colorize = function(color) {
-    this.forEach(function(p) {
-        // Give each piece of confetti a random tint.
-        p.tint = color || Phaser.Color.getRandomColor();
-    });
-};
-// Set during init, reference to game.
-ConfettiEmitter.prototype.game = null;
-// This pattern is okay, I'm sticking with it because I tried it out earlier.
-ConfettiEmitter.init = function(game) {
-    var confetti = game.add.bitmapData(10, 10, "confetti", true);
-    confetti.fill(255, 255, 255, 1);
-
-    this.prototype.game = game;
-};
-
-
-
 var PurpleDino = function(x, y) {
     this.startX = x || 0;
     this.startY = y || 0;
@@ -182,7 +182,7 @@ PurpleDino.init = function(game) {
 
 
 
-// Also tracks lives.
+// Keeps score, tracks lives, and handles what level we're on.
 var ScoreKeeper = function(x, y) {
     Phaser.Text.call(this, this.game, x, y, "", {
         fill: "#ffffff",
@@ -196,10 +196,16 @@ var ScoreKeeper = function(x, y) {
     }
 };
 ScoreKeeper.prototype = Object.create(Phaser.Text.prototype);
-ScoreKeeper.prototype.game = null;
+// Default number of lives.
 ScoreKeeper.prototype.lives = 3;
 ScoreKeeper.prototype.score = 0;
+// Default high score.
 ScoreKeeper.prototype.highScore = 0;
+// What increment in score is needed to progress through the levels.
+ScoreKeeper.prototype.scorePerLevel = 4;
+ScoreKeeper.prototype.currentLevel = function() {
+    return Math.floor(this.score / this.scorePerLevel) + 1;
+};
 ScoreKeeper.prototype.add = function(n) {
     this.score += n;
 };
@@ -217,6 +223,8 @@ ScoreKeeper.savedScoreIsHigh = function() {
 ScoreKeeper.prototype.update = function() {
     this.text = "Lives: " + this.lives + "\nScore: " + this.score + "\nHigh Score: " + this.highScore;
 };
+// Reference to game set during init.
+ScoreKeeper.prototype.game = null;
 ScoreKeeper.init = function(game) {
     this.prototype.game = game;
 };
@@ -287,11 +295,41 @@ Play.prototype.preload = function() {
     ScoreKeeper.init(this.game);
     PurpleDino.init(this.game);
 };
+// Handle the exploding purple dino.
+// There's only one purple dino.
+// Causes a transition to the end state if we've run out of lives.
+Play.prototype.explodePurpleDino = function(purpleDino) {
+    this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
+    this.game.sound.play("explosion-dino", true);
+    purpleDino.toStartLocation();
+
+    this.scoreKeeper.decreaseLives();
+    if (this.scoreKeeper.lives <= 0) {
+        this.scoreKeeper.save();
+        game.state.start("end");
+    }
+};
+Play.prototype.explodePig = function(pig) {
+    // Bring in the replacement pig.
+    var nextPig = this.pigs.getFirstExists(false);
+    nextPig.revive(0, 0);
+    nextPig.randomCorner();
+
+    // Remove the dead pig.
+    this.pigSplosion.boom(pig.x, pig.y);
+    this.game.sound.play("explosion-pig", true);
+    pig.kill();
+
+    // And get a point.
+    this.scoreKeeper.add(1);
+};
 Play.prototype.create = function() {
     var g = this.game;
 
     // The background isn't meant to be tiled, but good enough for this.
     g.add.tileSprite(0, 0, g.width, g.height, 'bg-space');
+
+    this.scoreKeeper = new ScoreKeeper(32, 32);
 
     // Start background music.
     g.sound.stopAll();
@@ -302,7 +340,7 @@ Play.prototype.create = function() {
 
     //this.levelText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
     this.levelText = this.game.add.text(this.game.world.centerX, -50,
-        "Level 1", {
+        "Level " + this.scoreKeeper.currentLevel(), {
         fill: "#ffffff",
 		font: "bold 36px Arial",
         align: "center",
@@ -342,11 +380,6 @@ Play.prototype.create = function() {
     this.purpleDinoSplosion.colorize(0x942fcd);
 
     this.purpleDinoFlaktulenceTimer = this.game.time.create();
-    // TODO: If flak blows up the purple dino, this can cause a usability
-    // bug. Rotate the dino in place. That will give a velocity to the
-    // purpleDino, which will allow the timer to fire a flak which, if timed
-    // correctly, will end up effectively in front of the dino, blowing up
-    // the character. Not fun, needs to be improved.
     this.purpleDinoFlaktulenceTimer.loop(750, function() {
         var direction = Phaser.Point.normalize(this.purpleDino.body.velocity);
         // One of them is not zero === we're moving.
@@ -354,6 +387,9 @@ Play.prototype.create = function() {
             // Can have multiple flak on the screen, keep track of them
             // for colliding with the pigs.
             var flaktulence = this.flaktulence.getFirstExists(false);
+            // Usability fix: Place flak far enough away from the dinosaur
+            // so that the flax isn't placed in front of the dinosaur while
+            // the dinosaur is spinning in place.
             flaktulence.launch(this.purpleDino.x - (direction.x * 40), this.purpleDino.y - (direction.y * 40));
             this.game.sound.play("explosion-flaktulence");
         }
@@ -372,59 +408,19 @@ Play.prototype.create = function() {
     this.pigSplosion = new ConfettiEmitter();
     // Random colors by default.
     this.pigSplosion.colorize();
-
-    this.scoreKeeper = new ScoreKeeper(32, 32);
 };
 Play.prototype.update = function() {
     // Flaktulence blows up pigs.
-    game.physics.arcade.overlap(this.pigs, this.flaktulence, function(pig) {
-        // Bring in the replacement pig.
-        var nextPig = this.pigs.getFirstExists(false);
-        nextPig.revive(0, 0);
-        nextPig.randomCorner();
-
-        // Remove the dead pig.
-        this.pigSplosion.boom(pig.x, pig.y);
-        this.game.sound.play("explosion-pig", true);
-        pig.kill();
-
-        // And get a point.
-        this.scoreKeeper.add(1);
-    }.bind(this));
+    game.physics.arcade.overlap(this.pigs, this.flaktulence, this.explodePig.bind(this));
 
     // Flaktulence blows up dino.
-    game.physics.arcade.overlap(this.purpleDino, this.flaktulence, function(purpleDino) {
-        this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
-        this.game.sound.play("explosion-dino", true);
-        purpleDino.toStartLocation();
-
-        this.scoreKeeper.decreaseLives();
-        if (this.scoreKeeper.lives <= 0) {
-            this.scoreKeeper.save();
-            game.state.start("end");
-        }
-    }.bind(this));
+    game.physics.arcade.overlap(this.purpleDino, this.flaktulence, this.explodePurpleDino.bind(this));
 
     // Pigs blow up dino.
     game.physics.arcade.overlap(this.purpleDino, this.pigs, function(purpleDino, pig) {
-        var nextPig = this.pigs.getFirstExists(false);
-        nextPig.revive(0, 0);
-        nextPig.randomCorner();
+        this.explodePig(pig);
 
-        // Remove and reset all to other locations.
-        this.pigSplosion.boom(pig.x, pig.y);
-        this.game.sound.play("explosion-pig", true);
-        pig.kill();
-
-        this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
-        this.game.sound.play("explosion-dino", true);
-        purpleDino.toStartLocation();
-
-        this.scoreKeeper.decreaseLives();
-        if (this.scoreKeeper.lives <= 0) {
-            this.scoreKeeper.save();
-            game.state.start("end");
-        }
+        this.explodePurpleDino(purpleDino);
     }.bind(this));
 
 };
