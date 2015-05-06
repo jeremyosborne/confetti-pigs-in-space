@@ -231,12 +231,57 @@ ScoreKeeper.init = function(game) {
 
 
 
+// Keeps score, tracks lives, and handles what level we're on.
+var LevelDisplay = function() {
+    Phaser.Text.call(this, this.game, this.game.world.centerX, -50,
+        "", {
+        fill: "#ffffff",
+		font: "bold 36px Arial",
+        align: "center",
+	});
+    this.anchor.set(0.5);
+
+    this.game.add.existing(this);
+};
+LevelDisplay.prototype = Object.create(Phaser.Text.prototype);
+LevelDisplay.prototype.display = function(level) {
+    level = level || 1;
+
+    if (this.currentTween && this.currentTween.isRunning) {
+        this.game.tweens.remove(this.currentTween);
+    }
+
+    this.text = "Level " + level;
+    // Reset the positioning.
+    this.x = this.game.world.centerX;
+    this.y = -50;
+
+    // Hold reference in case we need to cancel early.
+    this.currentTween = game.add.tween(this)
+        .to({
+            y: this.game.world.centerY
+        }, 1000, Phaser.Easing.Linear.None)
+        .to({
+            width: 0,
+            height: 0,
+            rotation: 2 * Math.PI,
+        }, 2000, Phaser.Easing.Linear.None)
+        .start();
+};
+// Reference to game set during init.
+LevelDisplay.prototype.game = null;
+LevelDisplay.init = function(game) {
+    this.prototype.game = game;
+};
+
+
+
 // Excuse to have more than one screen.
 var Title = function() {};
 Title.prototype = Object.create(Phaser.State);
 Title.prototype.preload = function() {
     // Treating this as the asset loading screen.
-    this.game.load.audio("bgmusic", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
+    this.game.load.audio("bg-music", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
     this.game.load.audio("explosion-flaktulence", "assets/sounds/flaktulence.wav");
     this.game.load.audio("explosion-pig", "assets/sounds/explosion.wav");
     this.game.load.audio("explosion-dino", "assets/sounds/explosion2.wav");
@@ -285,16 +330,6 @@ Title.prototype.update = function() {
 // Play state.
 var Play = function() {};
 Play.prototype = Object.create(Phaser.State);
-Play.prototype.preload = function() {
-    // Some things need initialization. This isn't Phaser's fault, just something
-    // I'm trying out.
-    Flaktulence.init(this.game);
-    Pig.init(this.game);
-    ConfettiEmitter.init(this.game);
-    //Countdown.init(this.game);
-    ScoreKeeper.init(this.game);
-    PurpleDino.init(this.game);
-};
 // Handle the exploding purple dino.
 // There's only one purple dino.
 // Causes a transition to the end state if we've run out of lives.
@@ -323,6 +358,17 @@ Play.prototype.explodePig = function(pig) {
     // And get a point.
     this.scoreKeeper.add(1);
 };
+Play.prototype.preload = function() {
+    // Some things need initialization. This isn't Phaser's fault, just something
+    // I'm trying out.
+    ConfettiEmitter.init(this.game);
+    //Countdown.init(this.game);
+    Flaktulence.init(this.game);
+    LevelDisplay.init(this.game);
+    Pig.init(this.game);
+    PurpleDino.init(this.game);
+    ScoreKeeper.init(this.game);
+};
 Play.prototype.create = function() {
     var g = this.game;
 
@@ -333,37 +379,13 @@ Play.prototype.create = function() {
 
     // Start background music.
     g.sound.stopAll();
-    g.sound.play("bgmusic", 0.25, true);
+    g.sound.play("bg-music", 0.25, true);
 
     // To make the sprite move we need to enable Arcade Physics
     g.physics.startSystem(Phaser.Physics.ARCADE);
 
-    //this.levelText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
-    this.levelText = this.game.add.text(this.game.world.centerX, -50,
-        "Level " + this.scoreKeeper.currentLevel(), {
-        fill: "#ffffff",
-		font: "bold 36px Arial",
-        align: "center",
-	});
-    this.levelText.anchor.set(0.5);
-    // propertiesToTween, durationInMs, easing, autostart, delay, repeat, yoyo
-    // game.add.tween(this.levelText).to({
-    //     width: 0,
-    //     height: 0,
-    //     rotation: 2 * Math.PI,
-    // }, 1000, Phaser.Easing.Linear.None, true);
-    // This seems the proper way to chain tweens together (don't pass autostart
-    // when chaining).
-    game.add.tween(this.levelText)
-        .to({
-            y: this.game.world.centerY
-        }, 1000, Phaser.Easing.Linear.None)
-        .to({
-            width: 0,
-            height: 0,
-            rotation: 2 * Math.PI,
-        }, 2000, Phaser.Easing.Linear.None)
-        .start();
+    this.levelDisplay = new LevelDisplay();
+    this.levelDisplay.display(1);
 
     // Groups for watching flak.
     // Ordering of adding affects the z-level. When this was in preload, the
