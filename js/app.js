@@ -4,7 +4,6 @@
 // Look for TODO items in the code.
 // General TODO items
 // * Create levels, max ten pigs, increasing number of pigs 1 per level.
-// * Have the level number appear and disappear at the start of each level.
 
 
 
@@ -255,18 +254,25 @@ LevelDisplay.prototype.display = function(level) {
     // Reset the positioning.
     this.x = this.game.world.centerX;
     this.y = -50;
+    this.rotation = 0;
+    this.scale.x = 1;
+    this.scale.y = 1;
+
 
     // Hold reference in case we need to cancel early.
-    this.currentTween = game.add.tween(this)
-        .to({
-            y: this.game.world.centerY
-        }, 1000, Phaser.Easing.Linear.None)
-        .to({
-            width: 0,
-            height: 0,
+    // Scale is easier to manage than height and width given the
+    // text size changes with different numbers/font. Tweening scale
+    // requires two tweens chained together.
+    this.currentTween = game.add.tween(this).to({
+            y: this.game.world.centerY,
             rotation: 2 * Math.PI,
-        }, 2000, Phaser.Easing.Linear.None)
-        .start();
+        }, 1000, Phaser.Easing.Linear.None);
+    var shrink = game.add.tween(this.scale).to({
+            x: 0,
+            y: 0,
+        }, 2000, Phaser.Easing.Linear.None);
+    this.currentTween.chain(shrink);
+    this.currentTween.start();
 };
 // Reference to game set during init.
 LevelDisplay.prototype.game = null;
@@ -285,6 +291,7 @@ Title.prototype.preload = function() {
     this.game.load.audio("explosion-flaktulence", "assets/sounds/flaktulence.wav");
     this.game.load.audio("explosion-pig", "assets/sounds/explosion.wav");
     this.game.load.audio("explosion-dino", "assets/sounds/explosion2.wav");
+
     this.game.load.image("bg-space", "assets/images/starfield.png");
 };
 Title.prototype.create = function() {
@@ -330,6 +337,11 @@ Title.prototype.update = function() {
 // Play state.
 var Play = function() {};
 Play.prototype = Object.create(Phaser.State);
+// What is our current level?
+// Start at zero, it will be incremented correctly to the first level.
+Play.prototype.level = 0;
+// What score increments do we increase the level?
+Play.prototype.levelScoreIncrement = 6;
 // Handle the exploding purple dino.
 // There's only one purple dino.
 // Causes a transition to the end state if we've run out of lives.
@@ -385,7 +397,6 @@ Play.prototype.create = function() {
     g.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.levelDisplay = new LevelDisplay();
-    this.levelDisplay.display(1);
 
     // Groups for watching flak.
     // Ordering of adding affects the z-level. When this was in preload, the
@@ -432,6 +443,16 @@ Play.prototype.create = function() {
     this.pigSplosion.colorize();
 };
 Play.prototype.update = function() {
+    var currentLevel = Math.floor(this.scoreKeeper.score / this.levelScoreIncrement) + 1;
+    if (!this.level) {
+        // First display
+        this.level = 1;
+        this.levelDisplay.display(this.level);
+    } else if (currentLevel > this.level) {
+        this.level = currentLevel;
+        this.levelDisplay.display(this.level);
+    }
+
     // Flaktulence blows up pigs.
     game.physics.arcade.overlap(this.pigs, this.flaktulence, this.explodePig.bind(this));
 
