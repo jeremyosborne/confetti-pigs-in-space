@@ -351,17 +351,14 @@ Play.prototype.explodePurpleDino = function(purpleDino) {
     purpleDino.toStartLocation();
 
     this.scoreKeeper.decreaseLives();
+
+    // TODO: Move this to an update check.
     if (this.scoreKeeper.lives <= 0) {
         this.scoreKeeper.save();
         game.state.start("end");
     }
 };
 Play.prototype.explodePig = function(pig) {
-    // Bring in the replacement pig.
-    var nextPig = this.pigs.getFirstExists(false);
-    nextPig.revive(0, 0);
-    nextPig.randomCorner();
-
     // Remove the dead pig.
     this.pigSplosion.boom(pig.x, pig.y);
     this.game.sound.play("explosion-pig", true);
@@ -369,6 +366,14 @@ Play.prototype.explodePig = function(pig) {
 
     // And get a point.
     this.scoreKeeper.add(1);
+};
+Play.prototype.addPig = function() {
+    // Bring in the replacement pig.
+    var nextPig = this.pigs.getFirstExists(false);
+    if (nextPig) {
+        nextPig.revive(0, 0);
+        nextPig.randomCorner();
+    }
 };
 Play.prototype.preload = function() {
     // Some things need initialization. This isn't Phaser's fault, just something
@@ -434,9 +439,6 @@ Play.prototype.create = function() {
     for (i = 0; i < 10; i++) {
         this.pigs.add(new Pig());
     }
-    var nextPig = this.pigs.getFirstExists(false);
-    nextPig.revive(0, 0);
-    nextPig.randomCorner();
 
     this.pigSplosion = new ConfettiEmitter();
     // Random colors by default.
@@ -451,6 +453,12 @@ Play.prototype.update = function() {
     } else if (currentLevel > this.level) {
         this.level = currentLevel;
         this.levelDisplay.display(this.level);
+    }
+
+    // The counting here doesn't work for some reason. Maybe it's something
+    // different between living and dead?
+    if (Math.min(this.pigs.countLiving(), 10) < this.level) {
+        this.addPig();
     }
 
     // Flaktulence blows up pigs.
