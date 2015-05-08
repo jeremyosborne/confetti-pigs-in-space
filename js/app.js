@@ -3,7 +3,7 @@
 
 // Look for TODO items in the code.
 // General TODO items
-// * Create levels, max ten pigs, increasing number of pigs 1 per level.
+// * Delay the addition of pigs so they don't get piled on.
 
 
 
@@ -359,20 +359,24 @@ Play.prototype.explodePurpleDino = function(purpleDino) {
     }
 };
 Play.prototype.explodePig = function(pig) {
-    // Remove the dead pig.
-    this.pigSplosion.boom(pig.x, pig.y);
-    this.game.sound.play("explosion-pig", true);
-    pig.kill();
+    // Remove only living pigs.
+    if (pig && pig.alive && pig.exists) {
+        this.pigSplosion.boom(pig.x, pig.y);
+        this.game.sound.play("explosion-pig", true);
+        pig.kill();
+        pig.exists = false;
 
-    // And get a point.
-    this.scoreKeeper.add(1);
+        // And get a point.
+        this.scoreKeeper.add(1);
+    }
 };
 Play.prototype.addPig = function() {
     // Bring in the replacement pig.
-    var nextPig = this.pigs.getFirstExists(false);
+    var nextPig = this.pigs.getFirstDead();
     if (nextPig) {
         nextPig.revive(0, 0);
         nextPig.randomCorner();
+        nextPig.alive = true;
     }
 };
 Play.prototype.preload = function() {
@@ -455,12 +459,6 @@ Play.prototype.update = function() {
         this.levelDisplay.display(this.level);
     }
 
-    // The counting here doesn't work for some reason. Maybe it's something
-    // different between living and dead?
-    if (Math.min(this.pigs.countLiving(), 10) < this.level) {
-        this.addPig();
-    }
-
     // Flaktulence blows up pigs.
     game.physics.arcade.overlap(this.pigs, this.flaktulence, this.explodePig.bind(this));
 
@@ -474,6 +472,12 @@ Play.prototype.update = function() {
         this.explodePurpleDino(purpleDino);
     }.bind(this));
 
+    // Note: This check caused some bizarre condition when placed before the
+    // collision/overlap.
+    if (Math.min(this.pigs.countLiving(), 10) < this.level) {
+        this.addPig();
+    }
+
 };
 Play.prototype.render = function() {
     // Info about input params are positioning offset.
@@ -483,10 +487,10 @@ Play.prototype.render = function() {
     // Info about sprites.
     //this.game.debug.bodyInfo(this.purpleDino, 32, this.game.world.height - 100);
     // this.game.debug.body(this.purpleDino);
-    // var p = this.pigs.getFirstExists();
-    // if (p) {
-    //     this.game.debug.body(p);
-    // }
+    var p = this.pigs.getFirstExists();
+    if (p) {
+        this.game.debug.body(p);
+    }
     // var f = this.flaktulence.getFirstExists();
     // if (f) {
     //     this.game.debug.body(f);
