@@ -296,7 +296,7 @@ Title.prototype.preload = function() {
 };
 Title.prototype.create = function() {
     // The background isn't meant to be tiled, but good enough for this.
-    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
+    this.background = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
 
     this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
         "shootdown\n(the pigs in space)", {
@@ -330,6 +330,8 @@ Title.prototype.create = function() {
 };
 Title.prototype.update = function() {
     this.marqueeText.x -= 3;
+
+    this.background.tilePosition.y += 0.5;
 };
 
 
@@ -394,7 +396,7 @@ Play.prototype.create = function() {
     var g = this.game;
 
     // The background isn't meant to be tiled, but good enough for this.
-    g.add.tileSprite(0, 0, g.width, g.height, 'bg-space');
+    this.background = g.add.tileSprite(0, 0, g.width, g.height, 'bg-space');
 
     this.scoreKeeper = new ScoreKeeper(32, 32);
 
@@ -459,6 +461,10 @@ Play.prototype.update = function() {
         this.levelDisplay.display(this.level);
     }
 
+    var backgroundScroll = Phaser.Point.normalize(this.purpleDino.body.velocity);
+    this.background.tilePosition.x += backgroundScroll.x / 3;
+    this.background.tilePosition.y += backgroundScroll.y / 3;
+
     // Flaktulence blows up pigs.
     game.physics.arcade.overlap(this.pigs, this.flaktulence, this.explodePig.bind(this));
 
@@ -487,10 +493,10 @@ Play.prototype.render = function() {
     // Info about sprites.
     //this.game.debug.bodyInfo(this.purpleDino, 32, this.game.world.height - 100);
     // this.game.debug.body(this.purpleDino);
-    var p = this.pigs.getFirstExists();
-    if (p) {
-        this.game.debug.body(p);
-    }
+    // var p = this.pigs.getFirstExists();
+    // if (p) {
+    //     this.game.debug.body(p);
+    // }
     // var f = this.flaktulence.getFirstExists();
     // if (f) {
     //     this.game.debug.body(f);
