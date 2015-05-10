@@ -2,8 +2,6 @@
 /* global Phaser:false */
 
 // Look for TODO items in the code.
-// General TODO items
-// * Delay the addition of pigs so they don't get piled on.
 
 
 
@@ -449,6 +447,9 @@ Play.prototype.create = function() {
     this.pigSplosion = new ConfettiEmitter();
     // Random colors by default.
     this.pigSplosion.colorize();
+
+    // First pig can be placed 1/2 second from now.
+    this.pigSpawnDelay = this.game.time.now + 500;
 };
 Play.prototype.update = function() {
     var currentLevel = Math.floor(this.scoreKeeper.score / this.levelScoreIncrement) + 1;
@@ -480,8 +481,10 @@ Play.prototype.update = function() {
 
     // Note: This check caused some bizarre condition when placed before the
     // collision/overlap.
-    if (Math.min(this.pigs.countLiving(), 10) < this.level) {
+    if (this.pigSpawnDelay < this.game.time.now && Math.min(this.pigs.countLiving(), 10) < this.level) {
         this.addPig();
+        // Each additional pig is added 750ms in the future.
+        this.pigSpawnDelay = this.game.time.now + 800;
     }
 
 };
