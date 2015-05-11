@@ -5,12 +5,17 @@
 
 
 
+// Used for exploding dinos and exploding pigs.
+// Extenders Phaser.Emitter.
 var ConfettiEmitter = function() {
+    // game, initialX, initialY, maxParticles
     Phaser.Particles.Arcade.Emitter.call(this, this.game, 0, 0, 100);
     this.makeParticles(this.game.cache.getBitmapData("confetti"));
     this.gravity = 200;
 };
 ConfettiEmitter.prototype = Object.create(Phaser.Particles.Arcade.Emitter.prototype);
+// Explode paricles at a point.
+// {Number} x, {Number} y -> Point in world to emit particles.
 ConfettiEmitter.prototype.boom = function(x, y) {
     // Position emitter to distribute particles.
     this.x = x;
@@ -21,18 +26,27 @@ ConfettiEmitter.prototype.boom = function(x, y) {
     // The final parameter (10) is how many particles will be emitted in this single burst
     this.start(true, 2000, null, 10);
 };
-// Provide a set color or a random color.
+// {Color} -> A phaser supported color expression. Turns all phaser particles
+// this color, otherwise randomizes the color for each particle emitted.
 ConfettiEmitter.prototype.colorize = function(color) {
     this.forEach(function(p) {
         // Give each piece of confetti a random tint.
         p.tint = color || Phaser.Color.getRandomColor();
     });
 };
-// Set during init, reference to game.
+// Refence to game, set during init.
 ConfettiEmitter.prototype.game = null;
-// This pattern is okay, I'm sticking with it because I tried it out earlier.
+// This is a pattern I tried out here as an experiment. Since Phaser has
+// a lot of hierarchical relationships, the main enforced being references
+// to the game that the objects are a part of, I require initialization of
+// the datatype object before it is ready. Next time, I think I'll keep
+// the game as a global object and just assume it's there.
+// This comment won't be repeated throughout the document and is here for
+// historical reference.
 ConfettiEmitter.init = function(game) {
+    // width, height, name, true means add to cache (later retrieval by name).
     var confetti = game.add.bitmapData(10, 10, "confetti", true);
+    // r, g, b, a
     confetti.fill(255, 255, 255, 1);
 
     this.prototype.game = game;
@@ -40,14 +54,17 @@ ConfettiEmitter.init = function(game) {
 
 
 
+// As this game is a bit crude, this is the "flak" let off by the gaseous
+// purple dinosaur.
 var Flaktulence = function(x, y) {
-    // Trying out cache.
-    Phaser.Sprite.call(this, this.game, x || 0, y || 0, this.game.cache.getBitmapData("flak"));
+    
+    Phaser.Sprite.call(this, this.game, x || 0, y || 0, this.game.cache.getBitmapData("flaktulence"));
 
-    // Center flak over pointer.
+    // Center drawing of flak over x, y of sprite.
     this.anchor.setTo(0.5, 0.5);
     this.game.physics.arcade.enable(this);
     this.game.add.existing(this);
+
     // Start off dead, expect to be added to a group.
     this.kill();
 };
@@ -79,16 +96,13 @@ Flaktulence.prototype.update = function() {
     this.width = sizeRatio * this.maxSize;
     this.height = sizeRatio * this.maxSize;
 };
-// Reference to game instance using Flaktulence. Initialized during init.
+// Refence to game, set during init.
 Flaktulence.prototype.game = null;
 // Call before using flak instances.
 Flaktulence.init = function(game) {
-    // width, height, key
-    var spriteImage = game.add.bitmapData(14, 14);
+    // width, height, name, add to cache.
+    var spriteImage = game.add.bitmapData(14, 14, "flaktulence", true);
     spriteImage.circle(7, 7, 7, "#ff0000");
-
-    // try out cache for bit map data.
-    game.cache.addBitmapData("flak", spriteImage);
 
     this.prototype.game = game;
 };
