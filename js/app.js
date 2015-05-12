@@ -1,8 +1,6 @@
 /* jshint unused:true, undef:true, browser:true */
 /* global Phaser:false */
 
-// Look for TODO items in the code.
-
 
 
 // Used for exploding dinos and exploding pigs.
@@ -57,7 +55,6 @@ ConfettiEmitter.init = function(game) {
 // As this game is a bit crude, this is the "flak" let off by the gaseous
 // purple dinosaur.
 var Flaktulence = function(x, y) {
-    
     Phaser.Sprite.call(this, this.game, x || 0, y || 0, this.game.cache.getBitmapData("flaktulence"));
 
     // Center drawing of flak over x, y of sprite.
@@ -69,20 +66,21 @@ var Flaktulence = function(x, y) {
     this.kill();
 };
 Flaktulence.prototype = Object.create(Phaser.Sprite.prototype);
-// What's our max lifespan?
+// Our maximum lifepan in milliseconds.
 Flaktulence.prototype.maxLifespan = 2000;
 Flaktulence.prototype.halflife = Flaktulence.prototype.maxLifespan / 2;
-Flaktulence.prototype.lifespan = Flaktulence.prototype.maxLifespan;
+// Set when launched from the dinosaur. Let's Phaser control the lifespan
+// of this entity.
+Flaktulence.prototype.lifespan = null;
 // How many pixels big before we implode.
 Flaktulence.prototype.maxSize = 60;
+// Call when reusing flak to reset the lifespan.
 Flaktulence.prototype.launch = function(x, y) {
     this.lifespan = this.maxLifespan;
     this.reset(x, y);
 };
+// Make the flak expand and contract.
 Flaktulence.prototype.update = function() {
-    // TODO: Make the collision box at most the radius of the circle.
-    // TODO: Try tweens instead of the math below.
-
     // Increase the size of the sprite.
     var sizeRatio;
     // Whether we are imploding or exploding.
@@ -95,6 +93,12 @@ Flaktulence.prototype.update = function() {
     }
     this.width = sizeRatio * this.maxSize;
     this.height = sizeRatio * this.maxSize;
+    // NOTE:
+    // My feeble attempts to change the phsyics body size to be smaller than
+    // the circular explosion are buggy. For example, the following, while
+    // inexact makes a physics body that is bigger than the explosion, which
+    // makes very little sense.
+    //this.body.setSize(this.width * 0.8, this.height * 0.8);
 };
 // Refence to game, set during init.
 Flaktulence.prototype.game = null;
