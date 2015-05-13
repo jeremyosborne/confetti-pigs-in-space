@@ -369,12 +369,6 @@ Play.prototype.explodePurpleDino = function(purpleDino) {
     purpleDino.toStartLocation();
 
     this.scoreKeeper.decreaseLives();
-
-    // TODO: Move this to an update check.
-    if (this.scoreKeeper.lives <= 0) {
-        this.scoreKeeper.save();
-        game.state.start("end");
-    }
 };
 Play.prototype.explodePig = function(pig) {
     // Remove only living pigs.
@@ -470,6 +464,12 @@ Play.prototype.create = function() {
     this.pigSpawnDelay = this.game.time.now + 500;
 };
 Play.prototype.update = function() {
+    // Before anything else, is the game still going?
+    if (this.scoreKeeper.lives <= 0) {
+        this.scoreKeeper.save();
+        game.state.start("end");
+    }
+
     var currentLevel = Math.floor(this.scoreKeeper.score / this.levelScoreIncrement) + 1;
     if (!this.level) {
         // First display
@@ -534,7 +534,7 @@ var End = function() {};
 End.prototype = Object.create(Phaser.State);
 End.prototype.create = function() {
     // The background isn't meant to be tiled, but good enough for this.
-    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
+    this.background = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
 
     var text = "The End.\nClick to play again";
     if (ScoreKeeper.savedScoreIsHigh()) {
@@ -552,7 +552,9 @@ End.prototype.create = function() {
         this.game.state.start("play", true);
     }.bind(this));
 };
-
+End.prototype.update = function() {
+    this.background.tilePosition.y += 0.5;
+};
 
 
 var game = new Phaser.Game(
