@@ -53,7 +53,7 @@ ConfettiEmitter.init = function(game) {
 
 
 // As this game is a bit crude, this is the "flak" let off by the gaseous
-// purple dinosaur.
+// purple dinosaur. Use it to kill the pigs.
 var Flaktulence = function(x, y) {
     Phaser.Sprite.call(this, this.game, x || 0, y || 0, this.game.cache.getBitmapData("flaktulence"));
 
@@ -113,9 +113,9 @@ Flaktulence.init = function(game) {
 
 
 
-var Pig = function(position) {
-    position = position || {};
-    Phaser.Sprite.call(this, this.game, position.x || 0, position.y || 0, 'pig');
+// The main antagonists. They chase the purple dino.
+var Pig = function(x, y) {
+    Phaser.Sprite.call(this, this.game, x || 0, y || 0, 'pig');
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
@@ -127,28 +127,30 @@ var Pig = function(position) {
     this.kill();
 };
 Pig.prototype = Object.create(Phaser.Sprite.prototype);
+// Pigs arrive from random corners. This is the main way pigs enter the game
+// and we assume pigs will be revived.
 Pig.prototype.randomCorner = function() {
     // Put the pig in one of the corners of the game and start again.
-    this.x = Phaser.Utils.chanceRoll() ? 0 : this.game.world.width;
-    this.y = Phaser.Utils.chanceRoll() ? 0 : this.game.world.height;
+    this.revive(Phaser.Utils.chanceRoll() ? 0 : this.game.world.width,
+        Phaser.Utils.chanceRoll() ? 0 : this.game.world.height);
+    this.alive = true;
+};
+Pig.prototype.update = function() {
+    var g = this.game;
+
+    // Pigs follow the purple dino.
+    if (this.target && g.physics.arcade.distanceBetween(this, this.target) > 5) {
+        // Conveniently returns the angle between the pig and the dino so
+        // we can face the pig towards the dino.
+        this.rotation = g.physics.arcade.moveToObject(this, this.target, 125);
+    } else {
+        this.body.velocity.set(0);
+    }
 };
 // Set during init, reference to game.
 Pig.prototype.game = null;
 // What are these pigs chasing?
 Pig.prototype.target = null;
-Pig.prototype.update = function() {
-    var g = this.game;
-
-    if (this.target && g.physics.arcade.distanceBetween(this, this.target) > 5) {
-        // Head toward dino.
-        this.rotation = Phaser.Math.angleBetween(this.x, this.y, this.target.x, this.target.y);
-
-        // Seek the dino.
-        g.physics.arcade.moveToObject(this, this.target, 125);
-    } else {
-        this.body.velocity.set(0);
-    }
-};
 Pig.init = function(game) {
     // WebGL doesn't like file:// protocol, need a server.
     game.load.image('pig', 'assets/sprites/pig.png');
@@ -161,7 +163,10 @@ Pig.targetForAll = function(target) {
 
 
 
+// Our protagonist. Follows the pointer around, let's out gas, tries to
+// blow up pigs for big points and big prizes.
 var PurpleDino = function(x, y) {
+    // Where we are reset when we die.
     this.startX = x || 0;
     this.startY = y || 0;
 
@@ -169,26 +174,30 @@ var PurpleDino = function(x, y) {
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
-    // Shrink the body size.
+    // Shrink the body size to make collisions a bit more forgiving.
     this.body.setSize(this.width - 6, this.height - 6);
     this.game.add.existing(this);
 };
 PurpleDino.prototype = Object.create(Phaser.Sprite.prototype);
-PurpleDino.prototype.game = null;
+// The dino isn't directly .kill()ed in the game, only moved around.
+// This acts to teleport the dino back to the start when the dino dies.
 PurpleDino.prototype.toStartLocation = function() {
     this.x = this.startX;
     this.y = this.startY;
 };
 PurpleDino.prototype.update = function() {
     var g = this.game;
-    this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
     if (g.physics.arcade.distanceToPointer(this, g.input.activePointer) > 8) {
         // Dino wants to follow the mouse or finger.
-        g.physics.arcade.moveToPointer(this, 150);
+        this.rotation = g.physics.arcade.moveToPointer(this, 150);
     } else {
+        // Still face the dino to the pointer.
+        this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
         this.body.velocity.set(0);
     }
 };
+// Set during init.
+PurpleDino.prototype.game = null;
 PurpleDino.init = function(game) {
     game.load.image('purple-dino', 'assets/sprites/purple-dino.png');
 
@@ -246,7 +255,8 @@ ScoreKeeper.init = function(game) {
 
 
 
-// Keeps score, tracks lives, and handles what level we're on.
+// The score keeper records the level we are on, and this performs the
+// display of the level we are on when the level changes.
 var LevelDisplay = function() {
     Phaser.Text.call(this, this.game, this.game.world.centerX, -50,
         "", {
@@ -298,7 +308,7 @@ LevelDisplay.init = function(game) {
 
 
 
-// Excuse to have more than one screen.
+// Opening screen of the game.
 var Title = function() {};
 Title.prototype = Object.create(Phaser.State);
 Title.prototype.preload = function() {
@@ -386,9 +396,7 @@ Play.prototype.addPig = function() {
     // Bring in the replacement pig.
     var nextPig = this.pigs.getFirstDead();
     if (nextPig) {
-        nextPig.revive(0, 0);
         nextPig.randomCorner();
-        nextPig.alive = true;
     }
 };
 Play.prototype.preload = function() {
@@ -530,6 +538,8 @@ Play.prototype.render = function() {
 
 
 
+// The final screen, allowing us a chance to stop the game for a bit and
+// then restart the game.
 var End = function() {};
 End.prototype = Object.create(Phaser.State);
 End.prototype.create = function() {
@@ -557,6 +567,8 @@ End.prototype.update = function() {
 };
 
 
+
+// Global game object.
 var game = new Phaser.Game(
     // String dimensions are considered percentages of parent container.
     "100", "100",
@@ -568,7 +580,9 @@ var game = new Phaser.Game(
 
 
 
+// Set up the levels of our game.
 game.state.add("title", Title);
 game.state.add("play", Play);
 game.state.add("end", End);
+// Start the game on the title screen.
 game.state.start("title");
