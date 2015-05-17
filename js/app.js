@@ -131,7 +131,7 @@ Pig.prototype = Object.create(Phaser.Sprite.prototype);
 // and we assume pigs will be revived.
 Pig.prototype.randomCorner = function() {
     // Put the pig in one of the corners of the game and start again.
-    this.revive(Phaser.Utils.chanceRoll() ? 0 : this.game.world.width,
+    this.reset(Phaser.Utils.chanceRoll() ? 0 : this.game.world.width,
         Phaser.Utils.chanceRoll() ? 0 : this.game.world.height);
     this.alive = true;
 };
