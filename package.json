@@ -1,7 +1,7 @@
 {
     "name": "shootdown",
     "version": "0.0.2",
-    "description": "An experiment with using Phaser to make an in browser game.",
+    "description": "An experiment with Phaser.",
     "author": {
         "name": "Jeremy Osborne",
         "email": "jeremywosborne@gmail.com",
