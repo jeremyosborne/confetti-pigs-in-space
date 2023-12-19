@@ -1,39 +1,23 @@
 # shootdown
 
+WIP... upgrading to modern phaser ...WIP
+
 Click and blow stuff up. Current version of code should be hosted on this project's github pages at http://jeremyosborne.github.io/shootdown.
 
 This is more of my rubber duck hacking with [Phaser](http://phaser.io) and video game ideas than anything serious.
 
 
-
 ## Build the Game
 
 * Get [Node.js](http://nodejs.org/download/).
-
-* Optional: Get [Gulp](http://gruntjs.com/getting-started):
-
-        npm install -g gulp
-
-* Install other build tools:
-
-        npm install
-
-* Run dev server:
-
-        npm start
-        # or `gulp` if you have installed gulp globally
-
-* Run game in modern browser
-    * go to: http://localhost:4242
-
-* The `bower.json` can be ignored unless you wish to update the third party libraries used.
-
+* `npm install`
+* Run dev server: `npm start`
+* go to: http://localhost:4242
 
 
 ## Playing the game
 
 Click to shoot things. Such high scores. Much wow.
-
 
 
 ## Acknowledgements and Credits

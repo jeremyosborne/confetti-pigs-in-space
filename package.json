@@ -1,21 +1,28 @@
 {
-  "name": "shootdown",
-  "version": "0.0.2",
-  "description": "Video game hacking.",
-  "author": {
-    "name": "Jeremy Osborne",
-    "email": "jeremywosborne@gmail.com",
-    "url": "http://jeremyosborne.com"
-  },
-  "license": "MIT",
-  "scripts": {
-      "start": "node node_modules/.bin/gulp"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "gulp": "^3.8.11",
-    "gulp-connect": "^2.2.0"
-  },
-  "engine": "node >= 0.8.x",
-  "private": true
+    "name": "shootdown",
+    "version": "0.0.2",
+    "description": "An experiment with using Phaser to make an in browser game.",
+    "author": {
+        "name": "Jeremy Osborne",
+        "email": "jeremywosborne@gmail.com",
+        "url": "http://jeremyosborne.com"
+    },
+    "license": "UNLICENSED",
+    "scripts": {
+        "start": "gulp"
+    },
+    "dependencies": {
+        "phaser": "~2.3.0"
+    },
+    "devDependencies": {
+        "gulp": "^3.8.11",
+        "gulp-connect": "^2.2.0"
+    },
+    "overrides": {
+        "graceful-fs": "^4.2.11"
+    },
+    "engines": {
+        "node": "=18.17.1"
+    },
+    "private": true
 }
