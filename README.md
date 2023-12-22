@@ -9,10 +9,24 @@ A video game for my son, which I played more than he did.
 
 ## Development
 
+### One time
+
 * [nvm with shell integration](https://github.com/nvm-sh/nvm?tab=readme-ov-file#deeper-shell-integration).
 * `npm install`
-* WIP... update with new dev tools...
 
+### Modifying code
+
+WIP...
+
+* `npm run build`
+* `npm start`
+
+## Choices
+
+* [TypeScript](https://www.typescriptlang.org/) as programming language.
+* [Phaser](https://phaser.io/) as game engine.
+* [Webpack](https://webpack.js.org/) as code bundle-orchestration.
+  * Note on choice of webpack: had trouble using rollup or plain tsc with phaser output, so picked out a simple webpack config and things seem to "just work."
 
 ## Acknowledgements and Credits
 

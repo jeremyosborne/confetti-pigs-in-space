@@ -9,21 +9,20 @@
     },
     "license": "UNLICENSED",
     "scripts": {
-        "build": "tsc && rollup -c",
+        "build": "webpack",
         "start": "http-server -a localhost -p 4242 `# Host the development versions of our game.`"
     },
-    "type": "module",
     "dependencies": {
         "phaser": "3.70.0"
     },
     "devDependencies": {
-        "@rollup/plugin-node-resolve": "^15.2.3",
         "@tsconfig/node18": "^18.2.1",
         "http-server": "^14.1.1",
         "prettier": "^3.1.0",
-        "rollup": "^4.9.1",
-        "rollup-plugin-typescript2": "^0.36.0",
-        "typescript": "^5.3.3"
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.3.3",
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4"
     },
     "engines": {
         "node": "=18.17.1"

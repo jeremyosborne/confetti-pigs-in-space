@@ -1,3 +1,8 @@
+//
+// Code making use of Phase 3.70.0
+// This code must be transpiled before being run.
+//
+
 import { Game } from "phaser";
 
 var game = new Game({

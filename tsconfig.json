@@ -6,7 +6,7 @@
         "emitDecoratorMetadata": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
-        "lib": ["es5", "dom", "scripthost"],
+        "lib": ["es5", "es2015", "dom", "scripthost"],
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "outDir": "./dist",
@@ -15,7 +15,7 @@
         },
         "resolveJsonModule": true,
         "sourceMap": true,
-        "target": "ES2022",
+        "target": "es5",
         "useUnknownInCatchVariables": false
     },
 
