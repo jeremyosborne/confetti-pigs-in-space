@@ -1,20 +1,23 @@
-/* jshint unused:true, undef:true, browser:true */
-/* global Phaser:false */
-
-
+//
+// Written with Phaser v2.3.0
+// Historically, this is both source code and runnable application code, there is no build step.
+// Include this source code in a script tag following an include of the phase 2.3.0 library script tag.
+//
 
 // Used for exploding dinos and exploding pigs.
 // Extenders Phaser.Emitter.
-var ConfettiEmitter = function() {
+var ConfettiEmitter = function () {
     // game, initialX, initialY, maxParticles
     Phaser.Particles.Arcade.Emitter.call(this, this.game, 0, 0, 100);
     this.makeParticles(this.game.cache.getBitmapData("confetti"));
     this.gravity = 200;
 };
-ConfettiEmitter.prototype = Object.create(Phaser.Particles.Arcade.Emitter.prototype);
+ConfettiEmitter.prototype = Object.create(
+    Phaser.Particles.Arcade.Emitter.prototype,
+);
 // Explode paricles at a point.
 // {Number} x, {Number} y -> Point in world to emit particles.
-ConfettiEmitter.prototype.boom = function(x, y) {
+ConfettiEmitter.prototype.boom = function (x, y) {
     // Position emitter to distribute particles.
     this.x = x;
     this.y = y;
@@ -26,8 +29,8 @@ ConfettiEmitter.prototype.boom = function(x, y) {
 };
 // {Color} -> A phaser supported color expression. Turns all phaser particles
 // this color, otherwise randomizes the color for each particle emitted.
-ConfettiEmitter.prototype.colorize = function(color) {
-    this.forEach(function(p) {
+ConfettiEmitter.prototype.colorize = function (color) {
+    this.forEach(function (p) {
         // Give each piece of confetti a random tint.
         p.tint = color || Phaser.Color.getRandomColor();
     });
@@ -41,7 +44,7 @@ ConfettiEmitter.prototype.game = null;
 // the game as a global object and just assume it's there.
 // This comment won't be repeated throughout the document and is here for
 // historical reference.
-ConfettiEmitter.init = function(game) {
+ConfettiEmitter.init = function (game) {
     // width, height, name, true means add to cache (later retrieval by name).
     var confetti = game.add.bitmapData(10, 10, "confetti", true);
     // r, g, b, a
@@ -50,12 +53,16 @@ ConfettiEmitter.init = function(game) {
     this.prototype.game = game;
 };
 
-
-
 // As this game is a bit crude, this is the "flak" let off by the gaseous
 // purple dinosaur. Use it to kill the pigs.
-var Flaktulence = function(x, y) {
-    Phaser.Sprite.call(this, this.game, x || 0, y || 0, this.game.cache.getBitmapData("flaktulence"));
+var Flaktulence = function (x, y) {
+    Phaser.Sprite.call(
+        this,
+        this.game,
+        x || 0,
+        y || 0,
+        this.game.cache.getBitmapData("flaktulence"),
+    );
 
     // Center drawing of flak over x, y of sprite.
     this.anchor.setTo(0.5, 0.5);
@@ -75,18 +82,18 @@ Flaktulence.prototype.lifespan = null;
 // How many pixels big before we implode.
 Flaktulence.prototype.maxSize = 60;
 // Call when reusing flak to reset the lifespan.
-Flaktulence.prototype.launch = function(x, y) {
+Flaktulence.prototype.launch = function (x, y) {
     this.lifespan = this.maxLifespan;
     this.reset(x, y);
 };
 // Make the flak expand and contract.
-Flaktulence.prototype.update = function() {
+Flaktulence.prototype.update = function () {
     // Increase the size of the sprite.
     var sizeRatio;
     // Whether we are imploding or exploding.
     if (this.lifespan > this.halflife) {
         // Exploding.
-        sizeRatio = 1 - ((this.lifespan - this.halflife) / this.halflife);
+        sizeRatio = 1 - (this.lifespan - this.halflife) / this.halflife;
     } else {
         // Imploding.
         sizeRatio = this.lifespan / this.halflife;
@@ -103,7 +110,7 @@ Flaktulence.prototype.update = function() {
 // Refence to game, set during init.
 Flaktulence.prototype.game = null;
 // Call before using flak instances.
-Flaktulence.init = function(game) {
+Flaktulence.init = function (game) {
     // width, height, name, add to cache.
     var spriteImage = game.add.bitmapData(14, 14, "flaktulence", true);
     spriteImage.circle(7, 7, 7, "#ff0000");
@@ -111,11 +118,9 @@ Flaktulence.init = function(game) {
     this.prototype.game = game;
 };
 
-
-
 // The main antagonists. They chase the purple dino.
-var Pig = function(x, y) {
-    Phaser.Sprite.call(this, this.game, x || 0, y || 0, 'pig');
+var Pig = function (x, y) {
+    Phaser.Sprite.call(this, this.game, x || 0, y || 0, "pig");
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
@@ -129,17 +134,22 @@ var Pig = function(x, y) {
 Pig.prototype = Object.create(Phaser.Sprite.prototype);
 // Pigs arrive from random corners. This is the main way pigs enter the game
 // and we assume pigs will be revived.
-Pig.prototype.randomCorner = function() {
+Pig.prototype.randomCorner = function () {
     // Put the pig in one of the corners of the game and start again.
-    this.reset(Phaser.Utils.chanceRoll() ? 0 : this.game.world.width,
-        Phaser.Utils.chanceRoll() ? 0 : this.game.world.height);
+    this.reset(
+        Phaser.Utils.chanceRoll() ? 0 : this.game.world.width,
+        Phaser.Utils.chanceRoll() ? 0 : this.game.world.height,
+    );
     this.alive = true;
 };
-Pig.prototype.update = function() {
+Pig.prototype.update = function () {
     var g = this.game;
 
     // Pigs follow the purple dino.
-    if (this.target && g.physics.arcade.distanceBetween(this, this.target) > 5) {
+    if (
+        this.target &&
+        g.physics.arcade.distanceBetween(this, this.target) > 5
+    ) {
         // Conveniently returns the angle between the pig and the dino so
         // we can face the pig towards the dino.
         this.rotation = g.physics.arcade.moveToObject(this, this.target, 125);
@@ -151,26 +161,30 @@ Pig.prototype.update = function() {
 Pig.prototype.game = null;
 // What are these pigs chasing?
 Pig.prototype.target = null;
-Pig.init = function(game) {
+Pig.init = function (game) {
     // WebGL doesn't like file:// protocol, need a server.
-    game.load.image('pig', 'assets/sprites/pig.png');
+    game.load.image("pig", "assets/sprites/pig.png");
     this.prototype.game = game;
 };
 // Sets the target for all the pigs.
-Pig.targetForAll = function(target) {
+Pig.targetForAll = function (target) {
     this.prototype.target = target;
 };
 
-
-
 // Our protagonist. Follows the pointer around, let's out gas, tries to
 // blow up pigs for big points and big prizes.
-var PurpleDino = function(x, y) {
+var PurpleDino = function (x, y) {
     // Where we are reset when we die.
     this.startX = x || 0;
     this.startY = y || 0;
 
-    Phaser.Sprite.call(this, this.game, this.startX, this.startY, "purple-dino");
+    Phaser.Sprite.call(
+        this,
+        this.game,
+        this.startX,
+        this.startY,
+        "purple-dino",
+    );
     this.anchor.setTo(0.5, 0.5);
     // For collisions.
     this.game.physics.arcade.enable(this);
@@ -181,37 +195,40 @@ var PurpleDino = function(x, y) {
 PurpleDino.prototype = Object.create(Phaser.Sprite.prototype);
 // The dino isn't directly .kill()ed in the game, only moved around.
 // This acts to teleport the dino back to the start when the dino dies.
-PurpleDino.prototype.toStartLocation = function() {
+PurpleDino.prototype.toStartLocation = function () {
     this.x = this.startX;
     this.y = this.startY;
 };
-PurpleDino.prototype.update = function() {
+PurpleDino.prototype.update = function () {
     var g = this.game;
     if (g.physics.arcade.distanceToPointer(this, g.input.activePointer) > 8) {
         // Dino wants to follow the mouse or finger.
         this.rotation = g.physics.arcade.moveToPointer(this, 150);
     } else {
         // Still face the dino to the pointer.
-        this.rotation = Phaser.Math.angleBetween(this.x, this.y, g.input.activePointer.x, g.input.activePointer.y);
+        this.rotation = Phaser.Math.angleBetween(
+            this.x,
+            this.y,
+            g.input.activePointer.x,
+            g.input.activePointer.y,
+        );
         this.body.velocity.set(0);
     }
 };
 // Set during init.
 PurpleDino.prototype.game = null;
-PurpleDino.init = function(game) {
-    game.load.image('purple-dino', 'assets/sprites/purple-dino.png');
+PurpleDino.init = function (game) {
+    game.load.image("purple-dino", "assets/sprites/purple-dino.png");
 
     this.prototype.game = game;
 };
 
-
-
 // Keeps score, tracks lives, and handles what level we're on.
-var ScoreKeeper = function(x, y) {
+var ScoreKeeper = function (x, y) {
     Phaser.Text.call(this, this.game, x, y, "", {
         fill: "#ffffff",
-		font: "bold 16px Arial",
-	});
+        font: "bold 16px Arial",
+    });
 
     this.game.add.existing(this);
 
@@ -227,49 +244,52 @@ ScoreKeeper.prototype.score = 0;
 ScoreKeeper.prototype.highScore = 0;
 // What increment in score is needed to progress through the levels.
 ScoreKeeper.prototype.scorePerLevel = 4;
-ScoreKeeper.prototype.currentLevel = function() {
+ScoreKeeper.prototype.currentLevel = function () {
     return Math.floor(this.score / this.scorePerLevel) + 1;
 };
-ScoreKeeper.prototype.add = function(n) {
+ScoreKeeper.prototype.add = function (n) {
     this.score += n;
 };
-ScoreKeeper.prototype.decreaseLives = function() {
+ScoreKeeper.prototype.decreaseLives = function () {
     this.lives -= 1;
 };
-ScoreKeeper.prototype.save = function() {
+ScoreKeeper.prototype.save = function () {
     localStorage.score = this.score;
     localStorage.highScore = Math.max(this.score, this.highScore);
 };
 // Checks localstorage, useful across states.
-ScoreKeeper.savedScoreIsHigh = function() {
+ScoreKeeper.savedScoreIsHigh = function () {
     return localStorage.score >= localStorage.highScore;
 };
-ScoreKeeper.prototype.update = function() {
-    this.text = "Lives: " + this.lives + "\nScore: " + this.score + "\nHigh Score: " + this.highScore;
+ScoreKeeper.prototype.update = function () {
+    this.text =
+        "Lives: " +
+        this.lives +
+        "\nScore: " +
+        this.score +
+        "\nHigh Score: " +
+        this.highScore;
 };
 // Reference to game set during init.
 ScoreKeeper.prototype.game = null;
-ScoreKeeper.init = function(game) {
+ScoreKeeper.init = function (game) {
     this.prototype.game = game;
 };
 
-
-
 // The score keeper records the level we are on, and this performs the
 // display of the level we are on when the level changes.
-var LevelDisplay = function() {
-    Phaser.Text.call(this, this.game, this.game.world.centerX, -50,
-        "", {
+var LevelDisplay = function () {
+    Phaser.Text.call(this, this.game, this.game.world.centerX, -50, "", {
         fill: "#ffffff",
-		font: "bold 36px Arial",
+        font: "bold 36px Arial",
         align: "center",
-	});
+    });
     this.anchor.set(0.5);
 
     this.game.add.existing(this);
 };
 LevelDisplay.prototype = Object.create(Phaser.Text.prototype);
-LevelDisplay.prototype.display = function(level) {
+LevelDisplay.prototype.display = function (level) {
     level = level || 1;
 
     if (this.currentTween && this.currentTween.isRunning) {
@@ -284,57 +304,80 @@ LevelDisplay.prototype.display = function(level) {
     this.scale.x = 1;
     this.scale.y = 1;
 
-
     // Hold reference in case we need to cancel early.
     // Scale is easier to manage than height and width given the
     // text size changes with different numbers/font. Tweening scale
     // requires two tweens chained together.
-    this.currentTween = game.add.tween(this).to({
+    this.currentTween = game.add.tween(this).to(
+        {
             y: this.game.world.centerY,
             rotation: 2 * Math.PI,
-        }, 1000, Phaser.Easing.Linear.None);
-    var shrink = game.add.tween(this.scale).to({
+        },
+        1000,
+        Phaser.Easing.Linear.None,
+    );
+    var shrink = game.add.tween(this.scale).to(
+        {
             x: 0,
             y: 0,
-        }, 2000, Phaser.Easing.Linear.None);
+        },
+        2000,
+        Phaser.Easing.Linear.None,
+    );
     this.currentTween.chain(shrink);
     this.currentTween.start();
 };
 // Reference to game set during init.
 LevelDisplay.prototype.game = null;
-LevelDisplay.init = function(game) {
+LevelDisplay.init = function (game) {
     this.prototype.game = game;
 };
 
-
-
 // Opening screen of the game.
-var Title = function() {};
+var Title = function () {};
 Title.prototype = Object.create(Phaser.State);
-Title.prototype.preload = function() {
+Title.prototype.preload = function () {
     // Treating this as the asset loading screen.
-    this.game.load.audio("bg-music", "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3");
-    this.game.load.audio("explosion-flaktulence", "assets/sounds/flaktulence.wav");
+    this.game.load.audio(
+        "bg-music",
+        "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3",
+    );
+    this.game.load.audio(
+        "explosion-flaktulence",
+        "assets/sounds/flaktulence.wav",
+    );
     this.game.load.audio("explosion-pig", "assets/sounds/explosion.wav");
     this.game.load.audio("explosion-dino", "assets/sounds/explosion2.wav");
 
     this.game.load.image("bg-space", "assets/images/starfield.png");
 };
-Title.prototype.create = function() {
+Title.prototype.create = function () {
     // The background isn't meant to be tiled, but good enough for this.
-    this.background = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
+    this.background = this.game.add.tileSprite(
+        0,
+        0,
+        this.game.width,
+        this.game.height,
+        "bg-space",
+    );
 
-    this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
-        "shootdown\n(the pigs in space)", {
-        fill: "#ffffff",
-		font: "bold 42px Arial",
-        align: "center",
-	});
+    this.titleText = this.game.add.text(
+        this.game.world.centerX,
+        this.game.world.centerY,
+        "shootdown\n(the pigs in space)",
+        {
+            fill: "#ffffff",
+            font: "bold 42px Arial",
+            align: "center",
+        },
+    );
     this.titleText.anchor.set(0.5);
 
     // Every game needs an (inane) story.
     // Scroll from right to left.
-    this.marqueeText = this.game.add.text(this.game.world.width + 20, this.game.world.height - 48,
+    this.marqueeText = this.game.add.text(
+        this.game.world.width + 20,
+        this.game.world.height - 48,
         [
             "What a night.",
             "Trapped in the mascot costume.",
@@ -344,26 +387,28 @@ Title.prototype.create = function() {
             "Today your flatulence might save your life.",
             "Don't get caught in your own gas.",
             "Yes this is the plot.",
-        ].join(" "), {
-        fill: "#ffffff",
-		font: "bold 28px Arial",
-	});
+        ].join(" "),
+        {
+            fill: "#ffffff",
+            font: "bold 28px Arial",
+        },
+    );
 
-    this.game.input.onDown.add(function() {
-        // This event listener gets purged when we transition to "play" state.
-        this.game.state.start("play");
-    }.bind(this));
+    this.game.input.onDown.add(
+        function () {
+            // This event listener gets purged when we transition to "play" state.
+            this.game.state.start("play");
+        }.bind(this),
+    );
 };
-Title.prototype.update = function() {
+Title.prototype.update = function () {
     this.marqueeText.x -= 3;
 
     this.background.tilePosition.y += 0.5;
 };
 
-
-
 // Play state.
-var Play = function() {};
+var Play = function () {};
 Play.prototype = Object.create(Phaser.State);
 // What is our current level?
 // Start at zero, it will be incremented correctly to the first level.
@@ -373,14 +418,14 @@ Play.prototype.levelScoreIncrement = 6;
 // Handle the exploding purple dino.
 // There's only one purple dino.
 // Causes a transition to the end state if we've run out of lives.
-Play.prototype.explodePurpleDino = function(purpleDino) {
+Play.prototype.explodePurpleDino = function (purpleDino) {
     this.purpleDinoSplosion.boom(purpleDino.x, purpleDino.y);
     this.game.sound.play("explosion-dino", true);
     purpleDino.toStartLocation();
 
     this.scoreKeeper.decreaseLives();
 };
-Play.prototype.explodePig = function(pig) {
+Play.prototype.explodePig = function (pig) {
     // Remove only living pigs.
     if (pig && pig.alive && pig.exists) {
         this.pigSplosion.boom(pig.x, pig.y);
@@ -392,14 +437,14 @@ Play.prototype.explodePig = function(pig) {
         this.scoreKeeper.add(1);
     }
 };
-Play.prototype.addPig = function() {
+Play.prototype.addPig = function () {
     // Bring in the replacement pig.
     var nextPig = this.pigs.getFirstDead();
     if (nextPig) {
         nextPig.randomCorner();
     }
 };
-Play.prototype.preload = function() {
+Play.prototype.preload = function () {
     // Some things need initialization. This isn't Phaser's fault, just something
     // I'm trying out.
     ConfettiEmitter.init(this.game);
@@ -410,11 +455,11 @@ Play.prototype.preload = function() {
     PurpleDino.init(this.game);
     ScoreKeeper.init(this.game);
 };
-Play.prototype.create = function() {
+Play.prototype.create = function () {
     var g = this.game;
 
     // The background isn't meant to be tiled, but good enough for this.
-    this.background = g.add.tileSprite(0, 0, g.width, g.height, 'bg-space');
+    this.background = g.add.tileSprite(0, 0, g.width, g.height, "bg-space");
 
     this.scoreKeeper = new ScoreKeeper(32, 32);
 
@@ -436,26 +481,37 @@ Play.prototype.create = function() {
         this.flaktulence.add(new Flaktulence());
     }
 
-    this.purpleDino = new PurpleDino(this.game.world.centerX, this.game.world.centerY);
+    this.purpleDino = new PurpleDino(
+        this.game.world.centerX,
+        this.game.world.centerY,
+    );
 
     this.purpleDinoSplosion = new ConfettiEmitter();
     this.purpleDinoSplosion.colorize(0x942fcd);
 
     this.purpleDinoFlaktulenceTimer = this.game.time.create();
-    this.purpleDinoFlaktulenceTimer.loop(750, function() {
-        var direction = Phaser.Point.normalize(this.purpleDino.body.velocity);
-        // One of them is not zero === we're moving.
-        if (direction.x || direction.y) {
-            // Can have multiple flak on the screen, keep track of them
-            // for colliding with the pigs.
-            var flaktulence = this.flaktulence.getFirstExists(false);
-            // Usability fix: Place flak far enough away from the dinosaur
-            // so that the flax isn't placed in front of the dinosaur while
-            // the dinosaur is spinning in place.
-            flaktulence.launch(this.purpleDino.x - (direction.x * 40), this.purpleDino.y - (direction.y * 40));
-            this.game.sound.play("explosion-flaktulence");
-        }
-    }.bind(this));
+    this.purpleDinoFlaktulenceTimer.loop(
+        750,
+        function () {
+            var direction = Phaser.Point.normalize(
+                this.purpleDino.body.velocity,
+            );
+            // One of them is not zero === we're moving.
+            if (direction.x || direction.y) {
+                // Can have multiple flak on the screen, keep track of them
+                // for colliding with the pigs.
+                var flaktulence = this.flaktulence.getFirstExists(false);
+                // Usability fix: Place flak far enough away from the dinosaur
+                // so that the flax isn't placed in front of the dinosaur while
+                // the dinosaur is spinning in place.
+                flaktulence.launch(
+                    this.purpleDino.x - direction.x * 40,
+                    this.purpleDino.y - direction.y * 40,
+                );
+                this.game.sound.play("explosion-flaktulence");
+            }
+        }.bind(this),
+    );
     this.purpleDinoFlaktulenceTimer.start();
 
     Pig.targetForAll(this.purpleDino);
@@ -471,14 +527,15 @@ Play.prototype.create = function() {
     // First pig can be placed 1/2 second from now.
     this.pigSpawnDelay = this.game.time.now + 500;
 };
-Play.prototype.update = function() {
+Play.prototype.update = function () {
     // Before anything else, is the game still going?
     if (this.scoreKeeper.lives <= 0) {
         this.scoreKeeper.save();
         game.state.start("end");
     }
 
-    var currentLevel = Math.floor(this.scoreKeeper.score / this.levelScoreIncrement) + 1;
+    var currentLevel =
+        Math.floor(this.scoreKeeper.score / this.levelScoreIncrement) + 1;
     if (!this.level) {
         // First display
         this.level = 1;
@@ -488,35 +545,51 @@ Play.prototype.update = function() {
         this.levelDisplay.display(this.level);
     }
 
-    var backgroundScroll = Phaser.Point.normalize(this.purpleDino.body.velocity);
+    var backgroundScroll = Phaser.Point.normalize(
+        this.purpleDino.body.velocity,
+    );
     this.background.tilePosition.x += backgroundScroll.x / 3;
     this.background.tilePosition.y += backgroundScroll.y / 3;
 
     // Flaktulence blows up pigs.
-    game.physics.arcade.overlap(this.pigs, this.flaktulence, this.explodePig.bind(this));
+    game.physics.arcade.overlap(
+        this.pigs,
+        this.flaktulence,
+        this.explodePig.bind(this),
+    );
 
     // Flaktulence blows up dino.
-    game.physics.arcade.overlap(this.purpleDino, this.flaktulence, this.explodePurpleDino.bind(this));
+    game.physics.arcade.overlap(
+        this.purpleDino,
+        this.flaktulence,
+        this.explodePurpleDino.bind(this),
+    );
 
     // Pigs blow up dino.
-    game.physics.arcade.overlap(this.purpleDino, this.pigs, function(purpleDino, pig) {
-        this.explodePig(pig);
+    game.physics.arcade.overlap(
+        this.purpleDino,
+        this.pigs,
+        function (purpleDino, pig) {
+            this.explodePig(pig);
 
-        this.explodePurpleDino(purpleDino);
-    }.bind(this));
+            this.explodePurpleDino(purpleDino);
+        }.bind(this),
+    );
 
     // Note: This check caused some bizarre condition when placed before the
     // collision/overlap.
-    if (this.pigSpawnDelay < this.game.time.now && Math.min(this.pigs.countLiving(), 10) < this.level) {
+    if (
+        this.pigSpawnDelay < this.game.time.now &&
+        Math.min(this.pigs.countLiving(), 10) < this.level
+    ) {
         this.addPig();
         // Each additional pig is added 750ms in the future.
         this.pigSpawnDelay = this.game.time.now + 800;
     }
-
 };
-Play.prototype.render = function() {
+Play.prototype.render = function () {
     // Info about input params are positioning offset.
-	//this.game.debug.inputInfo(32, 32);
+    //this.game.debug.inputInfo(32, 32);
     //this.game.debug.pointer();
     //-----
     // Info about sprites.
@@ -536,49 +609,56 @@ Play.prototype.render = function() {
     //console.log(game.world.children.length);
 };
 
-
-
 // The final screen, allowing us a chance to stop the game for a bit and
 // then restart the game.
-var End = function() {};
+var End = function () {};
 End.prototype = Object.create(Phaser.State);
-End.prototype.create = function() {
+End.prototype.create = function () {
     // The background isn't meant to be tiled, but good enough for this.
-    this.background = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg-space');
+    this.background = this.game.add.tileSprite(
+        0,
+        0,
+        this.game.width,
+        this.game.height,
+        "bg-space",
+    );
 
     var text = "The End.\nClick to play again";
     if (ScoreKeeper.savedScoreIsHigh()) {
         text = "You got the high score!\n" + text;
     }
-    this.titleText = this.game.add.text(this.game.world.centerX, this.game.world.centerY,
-        text, {
-        fill: "#ffffff",
-		font: "bold 42px Arial",
-        align: "center",
-	});
+    this.titleText = this.game.add.text(
+        this.game.world.centerX,
+        this.game.world.centerY,
+        text,
+        {
+            fill: "#ffffff",
+            font: "bold 42px Arial",
+            align: "center",
+        },
+    );
     this.titleText.anchor.set(0.5);
 
-    this.game.input.onDown.add(function() {
-        this.game.state.start("play", true);
-    }.bind(this));
+    this.game.input.onDown.add(
+        function () {
+            this.game.state.start("play", true);
+        }.bind(this),
+    );
 };
-End.prototype.update = function() {
+End.prototype.update = function () {
     this.background.tilePosition.y += 0.5;
 };
-
-
 
 // Global game object.
 var game = new Phaser.Game(
     // String dimensions are considered percentages of parent container.
-    "100", "100",
+    "100",
+    "100",
     // Let Phaser choose the renderer.
     Phaser.AUTO,
     // What element do we want to use as the parent.
-    document.querySelector(".game-container")
+    document.querySelector(".game-container"),
 );
-
-
 
 // Set up the levels of our game.
 game.state.add("title", Title);

@@ -9,8 +9,8 @@
     },
     "license": "UNLICENSED",
     "scripts": {
-        "build": "tsc && rollup dist/index.js --file build/app.js --format iife",
-        "start": "http-server -a localhost -p 4242"
+        "build": "tsc && rollup dist/index.js --file build/app.js --format umd",
+        "start": "http-server -a localhost -p 4242 `# Host the development versions of our game.`"
     },
     "dependencies": {
         "phaser": "3.70.0"
