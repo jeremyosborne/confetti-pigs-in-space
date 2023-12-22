@@ -1,6 +1,6 @@
-import Phaser from "phaser";
+import { Game } from "phaser";
 
-var game = new Phaser.Game({
+var game = new Game({
     // Let Phaser choose the renderer.
     type: Phaser.AUTO,
     // String dimensions are considered percentages of parent container.

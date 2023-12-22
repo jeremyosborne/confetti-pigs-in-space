@@ -7,15 +7,15 @@
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "lib": ["es5", "dom", "scripthost"],
-        "module": "AMD",
-        "moduleResolution": "node",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
         "outDir": "./dist",
         "paths": {
             "*": ["src/*"]
         },
         "resolveJsonModule": true,
         "sourceMap": true,
-        "target": "es5",
+        "target": "ES2022",
         "useUnknownInCatchVariables": false
     },
 
