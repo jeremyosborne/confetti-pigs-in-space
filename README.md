@@ -2,17 +2,17 @@
 
 WIP... upgrading to modern phaser ...WIP
 
-Click and blow stuff up. Current version of code should be hosted on this project's github pages at http://jeremyosborne.github.io/shootdown.
+Current version of code should be hosted on this project's github pages at http://jeremyosborne.github.io/shootdown.
 
-This is more of my rubber duck hacking with [Phaser](http://phaser.io) and video game ideas than anything serious.
+A video game for my son, which I played more than he did.
 
 
 ## Build the Game
 
-* Get [Node.js](http://nodejs.org/download/).
-* `npm install`
-* Run dev server: `npm start`
-* go to: http://localhost:4242
+* [nvm with shell integration](https://github.com/nvm-sh/nvm?tab=readme-ov-file#deeper-shell-integration).
+* `npm install`.
+* Run dev server with `npm start`.
+* Navigate your browser to http://localhost:4242
 
 
 ## Playing the game
