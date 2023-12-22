@@ -1,3 +1,7 @@
 node_modules
 .DS_Store
+
+# Contains browser "ready to run" code
+build
+# Contains JavaScript transpiled to TypeScript
 dist

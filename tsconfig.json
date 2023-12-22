@@ -6,10 +6,9 @@
         "emitDecoratorMetadata": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
-        "module": "CommonJS",
-        "moduleResolution": "node",
-        "lib": ["DOM"],
-        "outDir": "dist",
+        "module": "NodeNext",
+        "moduleResolution": "nodenext",
+        "outDir": "./dist",
         "paths": {
             "*": ["src/*"]
         },
