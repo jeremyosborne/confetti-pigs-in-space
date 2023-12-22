@@ -13,13 +13,13 @@
         "start": "http-server -a localhost -p 4242"
     },
     "dependencies": {
-        "phaser": "3.70.0",
-        "rollup": "^4.9.1"
+        "phaser": "3.70.0"
     },
     "devDependencies": {
         "@tsconfig/node18": "^18.2.1",
         "http-server": "^14.1.1",
         "prettier": "^3.1.0",
+        "rollup": "^4.9.1",
         "typescript": "^5.3.3"
     },
     "engines": {
