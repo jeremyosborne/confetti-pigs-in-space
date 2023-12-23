@@ -1,5 +1,6 @@
-import { GameObjects, Math as PhaserMath, Scene } from "phaser";
+import { Display, GameObjects, Math as PhaserMath, Scene } from "phaser";
 import {
+    ConfettiEmitter,
     Flaktulence,
     LevelDisplay,
     Pig,
@@ -23,6 +24,9 @@ export class Play extends Scene {
     pigs: GameObjects.Group;
     pigSpawnNext: number = 0;
     purpleDino: PurpleDino;
+    // Pushing this into it's own class seems not to work....
+    // purpleDinoSplosion: GameObjects.Particles.ParticleEmitter;
+    purpleDinoSplosion: ConfettiEmitter;
 
     scoreKeeper: ScoreKeeper;
 
@@ -53,6 +57,13 @@ export class Play extends Scene {
             .fillCircle(7, 7, 7)
             .generateTexture("flaktulence", 14, 14)
             .destroy();
+
+        // FIXME: this is not working in the ConfettiEmitter.
+        this.make
+            .graphics({ x: 0, y: 0 })
+            .fillStyle(0xffffff, 1)
+            .generateTexture("confetti", 10, 10)
+            .destroy();
     }
 
     create() {
@@ -74,6 +85,7 @@ export class Play extends Scene {
         this.sound.stopAll();
         this.sound.play("bg-music", { volume: 0.25, loop: true });
 
+        this.purpleDinoSplosion = new ConfettiEmitter(this);
         this.purpleDino = new PurpleDino(
             this,
             this.sys.game.canvas.width / 2,
@@ -95,12 +107,27 @@ export class Play extends Scene {
         this.flaktulence.runChildUpdate = true;
     }
 
+    // DEBUG
+    particleDebug = false;
+
     update(gameTime: number, delta: number) {
         // Before anything else, is the game still going?
         // if (this.scoreKeeper.lives <= 0) {
         //     this.scoreKeeper.save();
         //     this.scene.start(sceneNames.end);
         // }
+
+        // DEBUG
+        if (this.particleDebug === false) {
+            // this.purpleDinoSplosion.setPosition(
+            //     this.purpleDino.x,
+            //     this.purpleDino.y,
+            // );
+            // this.purpleDinoSplosion.setVisible(true);
+            // this.emitting = true;
+            this.purpleDinoSplosion.spawn(this.purpleDino.x, this.purpleDino.y);
+            this.particleDebug = true;
+        }
 
         this.purpleDino.update();
         this.pigs.preUpdate(gameTime, delta);
