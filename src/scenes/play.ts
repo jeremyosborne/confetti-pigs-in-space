@@ -1,7 +1,8 @@
 import { GameObjects, Math as PhaserMath, Scene, Time } from "phaser";
-import { PurpleDino } from "../sprites/purple-dino";
-import { Pig } from "../sprites/pig";
-import { Flaktulence } from "../sprites/flaktulence";
+import { LevelDisplay } from "../objects/level-display";
+import { Flaktulence } from "../objects/flaktulence";
+import { Pig } from "../objects/pig";
+import { PurpleDino } from "../objects/purple-dino";
 import { sceneNames } from "./scene-names";
 
 /**
@@ -9,12 +10,16 @@ import { sceneNames } from "./scene-names";
  */
 export class Play extends Scene {
     background: GameObjects.TileSprite;
+
     flaktulence: GameObjects.Group;
     flaktulenceSpawnNext: number = 0;
 
+    level: number = 0;
+    levelDisplay: LevelDisplay;
+
     pigs: GameObjects.Group;
     pigSpawnNext: number = 0;
-    purpleDino: GameObjects.Sprite;
+    purpleDino: PurpleDino;
 
     constructor() {
         super({ key: sceneNames.play });
@@ -57,6 +62,8 @@ export class Play extends Scene {
             // This works because normal origin is 0.5, not the upper left of the screen.
             .setOrigin(0, 0);
 
+        this.levelDisplay = new LevelDisplay(this);
+
         // Start background music.
         this.sound.stopAll();
         this.sound.play("bg-music", { volume: 0.25, loop: true });
@@ -95,6 +102,14 @@ export class Play extends Scene {
         this.background.tilePositionX += backgroundScroll.x / 3;
         this.background.tilePositionY += backgroundScroll.y / 3;
 
+        // TODO...
+        /// const currentLevel = Math.floor(this.scoreKeeper.score / this.levelScoreIncrement) + 1;
+        const currentLevel = 1;
+        if (currentLevel > this.level) {
+            this.level = currentLevel;
+            this.levelDisplay.spawn(this.level);
+        }
+
         if (this.pigSpawnNext === 0) {
             // Initialize on first update.
             this.pigSpawnNext = gameTime + 800;
@@ -105,7 +120,7 @@ export class Play extends Scene {
         ) {
             var nextPig: Pig = this.pigs.getFirstDead() as Pig;
             if (nextPig) {
-                nextPig.spawn(this, this.purpleDino);
+                nextPig.spawn(this.purpleDino);
             }
             this.pigSpawnNext = gameTime + 800;
         }
@@ -129,7 +144,6 @@ export class Play extends Scene {
                 if (flaktulence) {
                     // Spawn behind the dino.
                     flaktulence.spawn(
-                        this,
                         this.purpleDino.x - direction.x * 40,
                         this.purpleDino.y - direction.y * 40,
                     );

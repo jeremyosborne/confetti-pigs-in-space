@@ -28,8 +28,8 @@ export class Flaktulence extends GameObjects.Sprite {
         this.body.enable = false;
     }
 
-    spawn(scene: Scene, x: number, y: number) {
-        this.birth = scene.time.now;
+    spawn(x: number, y: number) {
+        this.birth = this.scene.time.now;
         this.setPosition(x, y);
         this.setActive(true);
         this.setVisible(true);

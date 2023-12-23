@@ -21,12 +21,12 @@ export class Pig extends GameObjects.Sprite {
         this.setVisible(false);
     }
 
-    spawn(scene: Scene, target: GameObjects.Sprite) {
+    spawn(target: GameObjects.Sprite) {
         this.target = target;
         // Put the pig in one of the corners of the game and start again.
         this.setPosition(
-            Math.random() > 0.5 ? 0 : scene.sys.game.canvas.width,
-            Math.random() > 0.5 ? 0 : scene.sys.game.canvas.height,
+            Math.random() > 0.5 ? 0 : this.scene.sys.game.canvas.width,
+            Math.random() > 0.5 ? 0 : this.scene.sys.game.canvas.height,
         );
         this.setActive(true);
         this.setVisible(true);
