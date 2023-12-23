@@ -1,4 +1,5 @@
 import { Scene, GameObjects } from "phaser";
+import { sceneNames } from "./scene-names";
 
 /**
  * The initial scene of the game.
@@ -9,7 +10,7 @@ export class Title extends Scene {
     background: GameObjects.TileSprite;
 
     constructor() {
-        super({ key: "Title" });
+        super({ key: sceneNames.title });
     }
 
     preload() {
@@ -65,7 +66,7 @@ export class Title extends Scene {
         this.input.once(
             "pointerdown",
             function (this: Phaser.Scene) {
-                this.scene.start("Play");
+                this.scene.start(sceneNames.play);
             },
             this,
         );

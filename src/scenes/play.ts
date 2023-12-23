@@ -1,10 +1,14 @@
 import { Scene, GameObjects } from "phaser";
+import { sceneNames } from "./scene-names";
 
+/**
+ * The main game.
+ */
 export class Play extends Scene {
     background: GameObjects.TileSprite;
 
     constructor() {
-        super({ key: "Play" });
+        super({ key: sceneNames.play });
     }
 
     preload() {
@@ -33,14 +37,6 @@ export class Play extends Scene {
             )
             // This works because normal origin is 0.5, not the upper left of the screen.
             .setOrigin(0, 0);
-
-        this.input.once(
-            "pointerdown",
-            function (this: Phaser.Scene) {
-                this.scene.start("Title");
-            },
-            this,
-        );
     }
 
     update() {
