@@ -1,5 +1,11 @@
-import { GameObjects, Math as PhaserMath, Scene, Time } from "phaser";
-import { Flaktulence, LevelDisplay, Pig, PurpleDino } from "../game-objects";
+import { GameObjects, Math as PhaserMath, Scene } from "phaser";
+import {
+    Flaktulence,
+    LevelDisplay,
+    Pig,
+    PurpleDino,
+    ScoreKeeper,
+} from "../game-objects";
 import { sceneNames } from "./scene-names";
 
 /**
@@ -17,6 +23,8 @@ export class Play extends Scene {
     pigs: GameObjects.Group;
     pigSpawnNext: number = 0;
     purpleDino: PurpleDino;
+
+    scoreKeeper: ScoreKeeper;
 
     constructor() {
         super({ key: sceneNames.play });
@@ -59,6 +67,7 @@ export class Play extends Scene {
             // This works because normal origin is 0.5, not the upper left of the screen.
             .setOrigin(0, 0);
 
+        this.scoreKeeper = new ScoreKeeper(this, 32, 32);
         this.levelDisplay = new LevelDisplay(this);
 
         // Start background music.
@@ -87,9 +96,16 @@ export class Play extends Scene {
     }
 
     update(gameTime: number, delta: number) {
+        // Before anything else, is the game still going?
+        // if (this.scoreKeeper.lives <= 0) {
+        //     this.scoreKeeper.save();
+        //     this.scene.start(sceneNames.end);
+        // }
+
         this.purpleDino.update();
         this.pigs.preUpdate(gameTime, delta);
         this.flaktulence.preUpdate(gameTime, delta);
+        this.scoreKeeper.update();
 
         let backgroundScroll = new PhaserMath.Vector2(
             this.purpleDino.body.velocity.x,
@@ -99,9 +115,10 @@ export class Play extends Scene {
         this.background.tilePositionX += backgroundScroll.x / 3;
         this.background.tilePositionY += backgroundScroll.y / 3;
 
-        // TODO...
-        /// const currentLevel = Math.floor(this.scoreKeeper.score / this.levelScoreIncrement) + 1;
-        const currentLevel = 1;
+        const currentLevel =
+            Math.floor(
+                this.scoreKeeper.score / this.scoreKeeper.scorePerLevel,
+            ) + 1;
         if (currentLevel > this.level) {
             this.level = currentLevel;
             this.levelDisplay.spawn(this.level);
