@@ -1,8 +1,5 @@
 import { GameObjects, Math as PhaserMath, Scene, Time } from "phaser";
-import { LevelDisplay } from "../objects/level-display";
-import { Flaktulence } from "../objects/flaktulence";
-import { Pig } from "../objects/pig";
-import { PurpleDino } from "../objects/purple-dino";
+import { Flaktulence, LevelDisplay, Pig, PurpleDino } from "../game-objects";
 import { sceneNames } from "./scene-names";
 
 /**

@@ -10,9 +10,6 @@
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "outDir": "./dist",
-        "paths": {
-            "*": ["src/*"]
-        },
         "resolveJsonModule": true,
         "sourceMap": true,
         "target": "es5",

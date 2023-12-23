@@ -4,10 +4,9 @@
 //
 
 import { Game } from "phaser";
-import { Title } from "./scenes/title";
-import { Play } from "./scenes/play";
+import { Play, Title } from "./scenes";
 
-const game = new Game({
+new Game({
     backgroundColor: "#000000",
 
     // Idiomatic "full browser" sizing in Phaser3.
