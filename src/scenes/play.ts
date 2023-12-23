@@ -1,5 +1,6 @@
 import { GameObjects, Math as PhaserMath, Scene } from "phaser";
 import { PurpleDino } from "../sprites/purple-dino";
+import { Pig } from "../sprites/pig";
 import { sceneNames } from "./scene-names";
 
 /**
@@ -7,10 +8,13 @@ import { sceneNames } from "./scene-names";
  */
 export class Play extends Scene {
     background: GameObjects.TileSprite;
+    pigs: GameObjects.Group;
+    pigSpawnNext: number;
     purpleDino: GameObjects.Sprite;
 
     constructor() {
         super({ key: sceneNames.play });
+        this.pigSpawnNext = 0;
     }
 
     preload() {
@@ -28,6 +32,7 @@ export class Play extends Scene {
         this.load.image("bg-space", "assets/images/starfield.png");
 
         this.load.image("purple-dino", "assets/sprites/purple-dino.png");
+        this.load.image("pig", "assets/sprites/pig.png");
     }
 
     create() {
@@ -47,10 +52,25 @@ export class Play extends Scene {
             this.sys.game.canvas.width / 2,
             this.sys.game.canvas.height / 2,
         );
+
+        this.pigs = this.add.group();
+        for (let i = 0; i < 10; i++) {
+            this.pigs.add(new Pig(this));
+        }
+        this.pigs.runChildUpdate = true;
     }
 
-    update() {
+    pigAdd() {
+        // Bring in the replacement pig.
+        var nextPig: Pig = this.pigs.getFirstDead() as Pig;
+        if (nextPig) {
+            nextPig.spawn(this, this.purpleDino);
+        }
+    }
+
+    update(gameTime: number, delta: number) {
         this.purpleDino.update();
+        this.pigs.preUpdate(gameTime, delta);
 
         let backgroundScroll = new PhaserMath.Vector2(
             this.purpleDino.body.velocity.x,
@@ -59,5 +79,19 @@ export class Play extends Scene {
 
         this.background.tilePositionX += backgroundScroll.x / 3;
         this.background.tilePositionY += backgroundScroll.y / 3;
+
+        // Note: This check caused some bizarre condition when placed before the
+        // collision/overlap.
+        if (this.pigSpawnNext === 0) {
+            // Initialize on first update.
+            this.pigSpawnNext = gameTime + 800;
+        } else if (
+            this.pigSpawnNext < gameTime &&
+            // Math.min(this.pigs.countLiving(), 10) < this.level
+            Math.min(this.pigs.countActive(), 10) < 1
+        ) {
+            this.pigAdd();
+            this.pigSpawnNext = gameTime + 800;
+        }
     }
 }

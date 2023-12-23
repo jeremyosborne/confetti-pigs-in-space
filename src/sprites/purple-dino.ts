@@ -1,14 +1,18 @@
-import { GameObjects, Scene } from "phaser";
+import { GameObjects, Scene, Physics } from "phaser";
 
 /**
  * The purple dino is the main player.
  */
 export class PurpleDino extends GameObjects.Sprite {
+    body: Physics.Arcade.Body;
+
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y, "purple-dino");
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        // Shrink the body size to make collisions a bit more forgiving.
+        this.body.setSize(this.width - 6, this.height - 6);
     }
 
     update() {
