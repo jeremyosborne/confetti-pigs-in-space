@@ -19,6 +19,7 @@ export class Pig extends GameObjects.Sprite {
         // Pigs start off dead and are managed by the group.
         this.setActive(false);
         this.setVisible(false);
+        this.body.enable = false;
     }
 
     spawn(target: GameObjects.Sprite) {
@@ -30,6 +31,7 @@ export class Pig extends GameObjects.Sprite {
         );
         this.setActive(true);
         this.setVisible(true);
+        this.body.enable = true;
     }
 
     update() {
