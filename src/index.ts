@@ -17,6 +17,9 @@ const game = new Game({
 
     // Selects by element `id`.
     parent: "game-container",
+    physics: {
+        default: "arcade",
+    },
     scene: [Title, Play],
     type: Phaser.AUTO,
 });
