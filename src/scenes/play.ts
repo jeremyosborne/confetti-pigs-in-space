@@ -110,18 +110,6 @@ export class Play extends Scene {
         //     this.scene.start(sceneNames.end);
         // }
 
-        // DEBUG
-        if (this.particleDebug === false) {
-            // this.purpleDinoSplosion.setPosition(
-            //     this.purpleDino.x,
-            //     this.purpleDino.y,
-            // );
-            // this.purpleDinoSplosion.setVisible(true);
-            // this.emitting = true;
-            this.purpleDinoSplosion.spawn(this.purpleDino.x, this.purpleDino.y);
-            this.particleDebug = true;
-        }
-
         this.purpleDino.update();
         this.pigs.preUpdate(gameTime, delta);
         this.flaktulence.preUpdate(gameTime, delta);
