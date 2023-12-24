@@ -1,4 +1,4 @@
-import { Display, GameObjects, Math as PhaserMath, Scene } from "phaser";
+import { GameObjects, Math as PhaserMath, Scene } from "phaser";
 import {
     ConfettiEmitter,
     Flaktulence,
@@ -47,22 +47,15 @@ export class Play extends Scene {
         this.load.audio("explosion-dino", "assets/sounds/explosion2.wav");
 
         this.load.image("bg-space", "assets/images/starfield.png");
-
-        this.load.image("purple-dino", "assets/images/purple-dino.png");
+        this.load.image("confetti", "assets/images/confetti.png");
         this.load.image("pig", "assets/images/pig.png");
+        this.load.image("purple-dino", "assets/images/purple-dino.png");
 
         this.make
             .graphics({ x: 0, y: 0 })
             .fillStyle(0xff0000, 1)
             .fillCircle(7, 7, 7)
             .generateTexture("flaktulence", 14, 14)
-            .destroy();
-
-        // FIXME: this is not working in the ConfettiEmitter.
-        this.make
-            .graphics({ x: 0, y: 0 })
-            .fillStyle(0xffffff, 1)
-            .generateTexture("confetti", 10, 10)
             .destroy();
     }
 
