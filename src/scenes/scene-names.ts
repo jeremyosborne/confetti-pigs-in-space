@@ -1,4 +1,5 @@
 export const sceneNames = {
-    title: "title",
+    end: "end",
     play: "play",
+    title: "title",
 } as const;

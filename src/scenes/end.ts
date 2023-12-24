@@ -1,16 +1,16 @@
+import { ScoreKeeper } from "../game-objects";
 import { Scene, GameObjects } from "phaser";
 import { sceneNames } from "./scene-names";
 
 /**
- * The initial scene of the game.
+ * The game over and high score scene.
  */
-export class Title extends Scene {
+export class End extends Scene {
     background: GameObjects.TileSprite;
-    marqueeText: GameObjects.Text;
     titleText: GameObjects.Text;
 
     constructor() {
-        super({ key: sceneNames.title });
+        super({ key: sceneNames.end });
     }
 
     preload() {
@@ -29,11 +29,15 @@ export class Title extends Scene {
             // This works because normal origin is 0.5, not the upper left of the screen.
             .setOrigin(0, 0);
 
+        let text = "The End.\nClick to play again";
+        if (ScoreKeeper.savedScoreIsHigh()) {
+            text = "You got the high score!\n" + text;
+        }
         this.titleText = this.add
             .text(
                 this.sys.game.canvas.width / 2,
                 this.sys.game.canvas.height / 2,
-                "shootdown\n(the pigs in space)",
+                text,
                 {
                     color: "#ffffff",
                     font: "bold 42px Arial",
@@ -41,27 +45,6 @@ export class Title extends Scene {
                 },
             )
             .setOrigin(0.5);
-
-        // Every game needs an (inane) story.
-        // Scroll from right to left.
-        this.marqueeText = this.add.text(
-            this.sys.game.canvas.width + 20,
-            this.sys.game.canvas.height - 48,
-            [
-                "What a night.",
-                "Trapped in the mascot costume.",
-                "Too much junk food.",
-                "Jettisoned out the airlock into space.",
-                "Confetti filled pigs in pursuit.",
-                "Today your flatulence might save your life.",
-                "Don't get caught in your own gas.",
-                "Yes this is the plot.",
-            ].join(" "),
-            {
-                color: "#ffffff",
-                font: "bold 28px Arial",
-            },
-        );
 
         this.input.once(
             "pointerdown",
@@ -73,8 +56,6 @@ export class Title extends Scene {
     }
 
     update() {
-        this.marqueeText.x -= 3;
-
         this.background.tilePositionY += 0.5;
     }
 }

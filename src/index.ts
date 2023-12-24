@@ -4,7 +4,7 @@
 //
 
 import { Game } from "phaser";
-import { Play, Title } from "./scenes";
+import { End, Play, Title } from "./scenes";
 
 new Game({
     backgroundColor: "#000000",
@@ -19,6 +19,6 @@ new Game({
     physics: {
         default: "arcade",
     },
-    scene: [Title, Play],
+    scene: [Title, Play, End],
     type: Phaser.AUTO,
 });
