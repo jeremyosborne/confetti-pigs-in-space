@@ -163,7 +163,7 @@ Pig.prototype.game = null;
 Pig.prototype.target = null;
 Pig.init = function (game) {
     // WebGL doesn't like file:// protocol, need a server.
-    game.load.image("pig", "assets/sprites/pig.png");
+    game.load.image("pig", "assets/images/pig.png");
     this.prototype.game = game;
 };
 // Sets the target for all the pigs.
@@ -218,7 +218,7 @@ PurpleDino.prototype.update = function () {
 // Set during init.
 PurpleDino.prototype.game = null;
 PurpleDino.init = function (game) {
-    game.load.image("purple-dino", "assets/sprites/purple-dino.png");
+    game.load.image("purple-dino", "assets/images/purple-dino.png");
 
     this.prototype.game = game;
 };

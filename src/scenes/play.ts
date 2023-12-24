@@ -48,8 +48,8 @@ export class Play extends Scene {
 
         this.load.image("bg-space", "assets/images/starfield.png");
 
-        this.load.image("purple-dino", "assets/sprites/purple-dino.png");
-        this.load.image("pig", "assets/sprites/pig.png");
+        this.load.image("purple-dino", "assets/images/purple-dino.png");
+        this.load.image("pig", "assets/images/pig.png");
 
         this.make
             .graphics({ x: 0, y: 0 })
