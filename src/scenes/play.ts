@@ -100,9 +100,6 @@ export class Play extends Scene {
         this.flaktulence.runChildUpdate = true;
     }
 
-    // DEBUG
-    particleDebug = false;
-
     update(gameTime: number, delta: number) {
         // Before anything else, is the game still going?
         // if (this.scoreKeeper.lives <= 0) {
