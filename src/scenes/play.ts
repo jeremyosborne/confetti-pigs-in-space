@@ -86,6 +86,7 @@ export class Play extends Scene {
         );
 
         this.pigs = this.add.group();
+        // Enforce a maximum of pigs on the screen.
         for (let i = 0; i < 10; i++) {
             this.pigs.add(new Pig(this));
         }
@@ -93,7 +94,7 @@ export class Play extends Scene {
 
         // Groups for watching flak.
         this.flaktulence = this.add.group();
-        // This enforces a maximum on flatulence on the screen.
+        // Enforce a maximum of flatulence on the screen.
         for (var i = 0; i < 10; i++) {
             this.flaktulence.add(new Flaktulence(this));
         }
