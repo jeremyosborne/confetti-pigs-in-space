@@ -21,6 +21,16 @@ export class Pig extends GameObjects.Sprite {
         // Shrink the body size to make collisions a bit more forgiving.
         this.body.setSize(this.width - 8, this.height - 8);
         // Start off "dead" and are managed by the group.
+        this.kill();
+    }
+
+    live() {
+        this.setActive(true);
+        this.setVisible(true);
+        this.body.enable = true;
+    }
+
+    kill() {
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
@@ -33,13 +43,12 @@ export class Pig extends GameObjects.Sprite {
             Math.random() > 0.5 ? 0 : this.scene.sys.game.canvas.width,
             Math.random() > 0.5 ? 0 : this.scene.sys.game.canvas.height,
         );
-        this.setActive(true);
-        this.setVisible(true);
-        this.body.enable = true;
+        this.live();
     }
 
     update() {
         if (this.target) {
+            // TODO: maybe try out this.body.setDirectControl() and then changing position...
             const distanceToTarget = Phaser.Math.Distance.Between(
                 this.x,
                 this.y,

@@ -27,6 +27,16 @@ export class Flaktulence extends GameObjects.Sprite {
         scene.physics.add.existing(this);
 
         // Start off "dead" and are managed by the group.
+        this.kill();
+    }
+
+    live() {
+        this.setActive(true);
+        this.setVisible(true);
+        this.body.enable = true;
+    }
+
+    kill() {
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
@@ -35,9 +45,7 @@ export class Flaktulence extends GameObjects.Sprite {
     spawn(x: number, y: number) {
         this.birth = this.scene.time.now;
         this.setPosition(x, y);
-        this.setActive(true);
-        this.setVisible(true);
-        this.body.enable = true;
+        this.live();
     }
 
     update(time: number) {
@@ -46,9 +54,7 @@ export class Flaktulence extends GameObjects.Sprite {
         let sizeRatio: number;
         // Whether we are imploding or exploding.
         if (lifespan > this.lifespanMax) {
-            this.setActive(false);
-            this.setVisible(false);
-            this.body.enable = false;
+            this.kill();
         } else if (lifespan > this.lifespanHalf) {
             // Exploding.
             sizeRatio = 1 - (lifespan - this.lifespanHalf) / this.lifespanHalf;

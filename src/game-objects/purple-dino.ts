@@ -20,6 +20,18 @@ export class PurpleDino extends GameObjects.Sprite {
         this.body.setSize(this.width - 6, this.height - 6);
     }
 
+    live() {
+        this.setActive(true);
+        this.setVisible(true);
+        this.body.enable = true;
+    }
+
+    kill() {
+        this.setActive(false);
+        this.setVisible(false);
+        this.body.enable = false;
+    }
+
     update() {
         const { activePointer } = this.scene.input;
         const spriteToPointerDistance = Phaser.Math.Distance.Between(

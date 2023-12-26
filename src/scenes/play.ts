@@ -136,33 +136,27 @@ export class Play extends Scene {
     }
 
     collidePurpleDinoAndPig(purpleDino: PurpleDino, pig: Pig) {
-        // Kill the pig when it runs into the player.
-        this.confettiEmitter.spawn(pig.x, pig.y);
-        this.sound.play("explosion-pig");
-        // XXX: This feels really awkward. I know they got rid of kill and such, but I feel this should
-        // be wrapped up in a method and not exposed outside of the sprite.
-        // FIXME: do I use destroy()? Is this the correct method for a sprite in the group?
-        pig.setActive(false);
-        pig.setVisible(false);
-        pig.body.enable = false;
-        // Destroyed pigs provide a point.
-        this.scoreKeeper.addScore(1);
-
-        // Kill the player and reset on death.
-        // TODO: provide moment of invincibility, or enemy detection, or some level of forgiveness to prevent a death chain.
-        this.scoreKeeper.decreaseLives();
-        this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
-        this.sound.play("explosion-dino");
-        purpleDino.setPosition(
-            this.sys.game.canvas.width / 2,
-            this.sys.game.canvas.height / 2,
-        );
+        this.killPig(pig);
+        this.killPurpleDino(purpleDino);
     }
 
     collidePurpleDinoAndFlaktulence(
         purpleDino: PurpleDino,
         flaktulence: Flaktulence,
     ) {
+        this.killPurpleDino(purpleDino);
+    }
+
+    /** Handle pigs running into flaktulence. */
+    collidePigAndFlaktulence(pig: Pig, flaktulence: Flaktulence) {
+        this.killPig(pig);
+    }
+
+    /**
+     * Handles the death of the player within the context of this stage, including
+     * sound effects, explosion effect, and scoring.
+     */
+    killPurpleDino(purpleDino: PurpleDino) {
         // Kill the player and reset on death.
         // TODO: provide moment of invincibility, or enemy detection, or some level of forgiveness to prevent a death chain.
         this.scoreKeeper.decreaseLives();
@@ -174,21 +168,16 @@ export class Play extends Scene {
         );
     }
 
-    /** Handle pigs running into flaktulence. */
-    collidePigAndFlaktulence(pig: Pig, flaktulence: Flaktulence) {
-        // Remove only living pigs.
-        if (pig && pig.active && pig.visible) {
-            this.confettiEmitter.spawn(pig.x, pig.y);
-            this.sound.play("explosion-pig");
-            // XXX: This feels really awkward. I know they got rid of kill and such, but I feel this should
-            // be wrapped up in a method and not exposed outside of the sprite.
-            // FIXME: do I use destroy()? Is this the correct method for a sprite in the group?
-            pig.setActive(false);
-            pig.setVisible(false);
-            pig.body.enable = false;
-            // Destroyed pigs provide a point.
-            this.scoreKeeper.addScore(1);
-        }
+    /**
+     * Handles the death of a pig within the context of this stage, including
+     * sound effects, sprite clean up, explosion effect, and scoring.
+     */
+    killPig(pig: Pig) {
+        this.confettiEmitter.spawn(pig.x, pig.y);
+        this.sound.play("explosion-pig");
+        pig.kill();
+        // Destroyed pigs provide a point.
+        this.scoreKeeper.addScore(1);
     }
 
     update(gameTime: number, delta: number) {
@@ -199,11 +188,11 @@ export class Play extends Scene {
             this.scene.start(sceneNames.end);
         }
 
-        // Perform normal sprite updates.
+        // Perform normal sprite updates, either directly or via group.
         this.purpleDino.update();
+        this.scoreKeeper.update();
         this.pigs.preUpdate(gameTime, delta);
         this.flaktulence.preUpdate(gameTime, delta);
-        this.scoreKeeper.update();
 
         // Move the background tiles relative to the player movement.
         let backgroundScroll = new PhaserMath.Vector2(
@@ -229,9 +218,9 @@ export class Play extends Scene {
             this.pigSpawnNext < gameTime &&
             Math.min(this.pigs.countActive(), 10) < this.level
         ) {
-            var nextPig: Pig = this.pigs.getFirstDead() as Pig;
-            if (nextPig) {
-                nextPig.spawn(this.purpleDino);
+            var pig: Pig = this.pigs.getFirstDead() as Pig;
+            if (pig) {
+                pig.spawn(this.purpleDino);
             }
             this.pigSpawnNext = gameTime + 800;
         }
