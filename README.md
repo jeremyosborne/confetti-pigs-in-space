@@ -26,7 +26,7 @@ and, point browser to:
 
 `http://localhost:4242/index.html`
 
-## Choices
+## Dev notes
 
 * [TypeScript](https://www.typescriptlang.org/) as programming language.
 * [Phaser](https://phaser.io/) as game engine.
@@ -39,3 +39,8 @@ and, point browser to:
 * [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for sound effects.
 * [Borderline (Fantastic Vamps : 8-Bit Mix)](http://dig.ccmixter.org/files/vamps/8749) for background music.
 * [Hubble Unmasks Ghost Galaxies](http://hubblesite.org/newscenter/archive/releases/2012/26/image/b/) as background image.
+
+## TODO
+
+* [ ] Update with better looking assets.
+* [ ] Rebuild and post when the game is visibly different.
