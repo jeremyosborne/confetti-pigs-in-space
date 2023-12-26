@@ -6,7 +6,7 @@ export class ConfettiEmitter extends GameObjects.Particles.ParticleEmitter {
         super(scene, 0, 0, "confetti", {
             blendMode: "ADD",
             emitting: true,
-            gravityY: 200,
+            gravityY: 0,
             lifespan: 2000,
             quantity,
             speed: 100,

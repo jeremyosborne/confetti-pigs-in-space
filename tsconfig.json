@@ -1,14 +1,15 @@
 {
     "compilerOptions": {
         "allowJs": true,
+        "allowSyntheticDefaultImports": true,
         "baseUrl": ".",
         "downlevelIteration": true,
         "emitDecoratorMetadata": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "lib": ["es5", "es2015", "dom", "scripthost"],
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
+        "module": "CommonJS",
+        "moduleResolution": "node",
         "outDir": "./dist",
         "resolveJsonModule": true,
         "sourceMap": true,

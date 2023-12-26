@@ -16,10 +16,14 @@ A video game for my son, which I played more than he did.
 
 ### Modifying code
 
-WIP...
+WIP tooling....
 
-* `npm run build`
-* `npm start`
+`npx webpack --watch --mode development`
+
+and
+
+`npm start`
+
 
 ## Choices
 
