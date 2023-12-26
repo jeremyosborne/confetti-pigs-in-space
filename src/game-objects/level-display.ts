@@ -8,9 +8,9 @@ export class LevelDisplay extends GameObjects.Text {
             font: "bold 36px Arial",
             align: "center",
         });
-        this.setOrigin(0.5);
         scene.add.existing(this);
 
+        this.setOrigin(0.5);
         this.setActive(false);
         this.setVisible(false);
     }

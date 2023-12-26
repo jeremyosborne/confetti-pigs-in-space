@@ -9,14 +9,18 @@ export class Pig extends GameObjects.Sprite {
     target?: GameObjects.Sprite;
 
     constructor(scene: Scene, x: number = 0, y: number = 0) {
+        // Inversion of control since the sprites and the scenes need each other,
+        // and so we isolate set some scene specific things within the sprite
+        // since the sprite also needs to be configured with the scene.
+        // Not sure whether I actually like this method or not, but time will tell.
         super(scene, x, y, "pig");
-
         scene.add.existing(this);
+        // For collision detection.
         scene.physics.add.existing(this);
+
         // Shrink the body size to make collisions a bit more forgiving.
         this.body.setSize(this.width - 8, this.height - 8);
-
-        // Pigs start off dead and are managed by the group.
+        // Start off "dead" and are managed by the group.
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;

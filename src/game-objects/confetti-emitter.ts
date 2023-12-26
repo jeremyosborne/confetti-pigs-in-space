@@ -1,7 +1,7 @@
 import { Display, GameObjects, Scene } from "phaser";
 
 /**
- * A reusable, general particle emitter we use for explosions.
+ * A reusable, general particle emitter we use for explosions the pigs and the dinos.
  */
 export class ConfettiEmitter extends GameObjects.Particles.ParticleEmitter {
     /** Default number of particles. */

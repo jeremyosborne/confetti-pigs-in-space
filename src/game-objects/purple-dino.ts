@@ -7,10 +7,15 @@ export class PurpleDino extends GameObjects.Sprite {
     body: Physics.Arcade.Body;
 
     constructor(scene: Scene, x: number, y: number) {
+        // Inversion of control since the sprites and the scenes need each other,
+        // and so we isolate set some scene specific things within the sprite
+        // since the sprite also needs to be configured with the scene.
+        // Not sure whether I actually like this method or not, but time will tell.
         super(scene, x, y, "purple-dino");
-
         scene.add.existing(this);
+        // For collision detection.
         scene.physics.add.existing(this);
+
         // Shrink the body size to make collisions a bit more forgiving.
         this.body.setSize(this.width - 6, this.height - 6);
     }

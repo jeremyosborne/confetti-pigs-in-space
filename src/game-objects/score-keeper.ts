@@ -1,9 +1,16 @@
 import { GameObjects, Scene } from "phaser";
 
+/**
+ * Manages the numbers of the game.
+ */
 export class ScoreKeeper extends GameObjects.Text {
-    lives: number;
-    score: number;
+    /** What is the current high score? */
     highScore: number;
+    /** How many live the player should have. */
+    lives: number;
+    /** Current score of the current game. */
+    score: number;
+    /** How many points are needed to progress to the next level. */
     scorePerLevel: number;
 
     constructor(scene: Scene, x: number, y: number) {
@@ -16,6 +23,7 @@ export class ScoreKeeper extends GameObjects.Text {
         this.scorePerLevel = 4;
     }
 
+    /** Compute the current level of the game. */
     currentLevel() {
         return Math.floor(this.score / this.scorePerLevel) + 1;
     }

@@ -1,8 +1,8 @@
 import { GameObjects, Scene, Physics } from "phaser";
 
 /**
- * The deadly flatulence emitted by the purple dino, used to
- * blow up the confetti pigs.
+ * The deadly flatulence emitted by the purple dino, used to blow up the confetti pigs,
+ * and careless dinos.
  */
 export class Flaktulence extends GameObjects.Sprite {
     body: Physics.Arcade.Body;
@@ -17,12 +17,16 @@ export class Flaktulence extends GameObjects.Sprite {
     maxSize = 60;
 
     constructor(scene: Scene, x: number = 0, y: number = 0) {
+        // Inversion of control since the sprites and the scenes need each other,
+        // and so we isolate set some scene specific things within the sprite
+        // since the sprite also needs to be configured with the scene.
+        // Not sure whether I actually like this method or not, but time will tell.
         super(scene, x, y, scene.textures.get("flaktulence"));
-
         scene.add.existing(this);
+        // For collision detection.
         scene.physics.add.existing(this);
 
-        // Starts off dead and are managed by the group.
+        // Start off "dead" and are managed by the group.
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
