@@ -22,6 +22,9 @@ and
 
 `npm start`
 
+and, point browser to:
+
+`http://localhost:4242/index.html`
 
 ## Choices
 
