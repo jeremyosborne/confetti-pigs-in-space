@@ -10,23 +10,25 @@ import {
 import { sceneNames } from "./scene-names";
 
 /**
- * The main game.
+ * The main, playable portion fo the game.
  */
 export class Play extends Scene {
+    /** Background moves with the player, need to hold a reference to it. */
     background: GameObjects.TileSprite;
+
+    /** Handle all of the explosions. */
+    confettiEmitter: ConfettiEmitter;
 
     flaktulence: GameObjects.Group;
     flaktulenceSpawnNext: number = 0;
 
+    /** XXX: We hold onto a local reference to the current level since the score keeper doesn't (yet) emit an event on level change. */
     level: number = 0;
     levelDisplay: LevelDisplay;
 
     pigs: GameObjects.Group;
     pigSpawnNext: number = 0;
     purpleDino: PurpleDino;
-    // Pushing this into it's own class seems not to work....
-    // purpleDinoSplosion: GameObjects.Particles.ParticleEmitter;
-    purpleDinoSplosion: ConfettiEmitter;
 
     scoreKeeper: ScoreKeeper;
 
@@ -78,7 +80,8 @@ export class Play extends Scene {
         this.sound.stopAll();
         this.sound.play("bg-music", { volume: 0.25, loop: true });
 
-        this.purpleDinoSplosion = new ConfettiEmitter(this);
+        this.confettiEmitter = new ConfettiEmitter(this);
+
         this.purpleDino = new PurpleDino(
             this,
             this.sys.game.canvas.width / 2,
@@ -99,44 +102,132 @@ export class Play extends Scene {
             this.flaktulence.add(new Flaktulence(this));
         }
         this.flaktulence.runChildUpdate = true;
+
+        //
+        // Collision detection (begin).
+        //
+        // Detect when pigs run into the the flaktulence.
+        this.physics.add.overlap(
+            this.pigs,
+            this.flaktulence,
+            this.collidePigAndFlaktulence,
+            null,
+            this,
+        );
+        // Detect when the pig hits a player.
+        this.physics.add.overlap(
+            this.purpleDino,
+            this.pigs,
+            this.collidePurpleDinoAndPig,
+            null,
+            this,
+        );
+        // Detect when a careless player runs into the the flaktulence.
+        this.physics.add.overlap(
+            this.purpleDino,
+            this.flaktulence,
+            this.collidePurpleDinoAndFlaktulence,
+            null,
+            this,
+        );
+        //
+        // Collision detection (end).
+        //
+    }
+
+    collidePurpleDinoAndPig(purpleDino: PurpleDino, pig: Pig) {
+        // Kill the pig when it runs into the player.
+        this.confettiEmitter.spawn(pig.x, pig.y);
+        this.sound.play("explosion-pig");
+        // XXX: This feels really awkward. I know they got rid of kill and such, but I feel this should
+        // be wrapped up in a method and not exposed outside of the sprite.
+        // FIXME: do I use destroy()? Is this the correct method for a sprite in the group?
+        pig.setActive(false);
+        pig.setVisible(false);
+        pig.body.enable = false;
+        // Destroyed pigs provide a point.
+        this.scoreKeeper.addScore(1);
+
+        // Kill the player and reset on death.
+        // TODO: provide moment of invincibility, or enemy detection, or some level of forgiveness to prevent a death chain.
+        this.scoreKeeper.decreaseLives();
+        this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
+        this.sound.play("explosion-dino");
+        purpleDino.setPosition(
+            this.sys.game.canvas.width / 2,
+            this.sys.game.canvas.height / 2,
+        );
+    }
+
+    collidePurpleDinoAndFlaktulence(
+        purpleDino: PurpleDino,
+        flaktulence: Flaktulence,
+    ) {
+        // Kill the player and reset on death.
+        // TODO: provide moment of invincibility, or enemy detection, or some level of forgiveness to prevent a death chain.
+        this.scoreKeeper.decreaseLives();
+        this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
+        this.sound.play("explosion-dino");
+        purpleDino.setPosition(
+            this.sys.game.canvas.width / 2,
+            this.sys.game.canvas.height / 2,
+        );
+    }
+
+    /** Handle pigs running into flaktulence. */
+    collidePigAndFlaktulence(pig: Pig, flaktulence: Flaktulence) {
+        // Remove only living pigs.
+        if (pig && pig.active && pig.visible) {
+            this.confettiEmitter.spawn(pig.x, pig.y);
+            this.sound.play("explosion-pig");
+            // XXX: This feels really awkward. I know they got rid of kill and such, but I feel this should
+            // be wrapped up in a method and not exposed outside of the sprite.
+            // FIXME: do I use destroy()? Is this the correct method for a sprite in the group?
+            pig.setActive(false);
+            pig.setVisible(false);
+            pig.body.enable = false;
+            // Destroyed pigs provide a point.
+            this.scoreKeeper.addScore(1);
+        }
     }
 
     update(gameTime: number, delta: number) {
-        // Before anything else, is the game still going?
-        // if (this.scoreKeeper.lives <= 0) {
-        //     this.scoreKeeper.save();
-        //     this.scene.start(sceneNames.end);
-        // }
+        // If the player has lost all of their lives, transition to the end state
+        // and prevent anything else from happening.
+        if (this.scoreKeeper.lives <= 0) {
+            this.scoreKeeper.save();
+            this.scene.start(sceneNames.end);
+        }
 
+        // Perform normal sprite updates.
         this.purpleDino.update();
         this.pigs.preUpdate(gameTime, delta);
         this.flaktulence.preUpdate(gameTime, delta);
         this.scoreKeeper.update();
 
+        // Move the background tiles relative to the player movement.
         let backgroundScroll = new PhaserMath.Vector2(
             this.purpleDino.body.velocity.x,
             this.purpleDino.body.velocity.y,
         ).normalize();
-
         this.background.tilePositionX += backgroundScroll.x / 3;
         this.background.tilePositionY += backgroundScroll.y / 3;
 
-        const currentLevel =
-            Math.floor(
-                this.scoreKeeper.score / this.scoreKeeper.scorePerLevel,
-            ) + 1;
+        // XXX: scorekeeper should probably emit the level change as an event.
+        const currentLevel = this.scoreKeeper.currentLevel();
         if (currentLevel > this.level) {
             this.level = currentLevel;
             this.levelDisplay.spawn(this.level);
         }
 
+        // Handle spawning of pigs relative to the level of the game
+        // and the total number of pigs we allow on screen.
         if (this.pigSpawnNext === 0) {
             // Initialize on first update.
             this.pigSpawnNext = gameTime + 800;
         } else if (
             this.pigSpawnNext < gameTime &&
-            // Math.min(this.pigs.countLiving(), 10) < this.level
-            Math.min(this.pigs.countActive(), 10) < 1
+            Math.min(this.pigs.countActive(), 10) < this.level
         ) {
             var nextPig: Pig = this.pigs.getFirstDead() as Pig;
             if (nextPig) {
@@ -145,6 +236,7 @@ export class Play extends Scene {
             this.pigSpawnNext = gameTime + 800;
         }
 
+        // Handle the spawning of flaktulence behind the dino.
         if (this.flaktulenceSpawnNext === 0) {
             // Initialize on first update.
             this.flaktulenceSpawnNext = gameTime + 750;

@@ -53,6 +53,6 @@ export class ScoreKeeper extends GameObjects.Text {
     static savedScoreIsHigh() {
         let score = parseInt(localStorage.getItem("score"), 10);
         let highScore = parseInt(localStorage.getItem("highScore"), 10);
-        return score >= highScore;
+        return score > highScore;
     }
 }
