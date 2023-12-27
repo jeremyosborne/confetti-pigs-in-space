@@ -50,15 +50,9 @@ export class Play extends Scene {
 
         this.load.image("bg-space", "assets/images/starfield.png");
         this.load.image("confetti", "assets/images/confetti.png");
+        this.load.image("flaktulence", "assets/images/flaktulence.png");
         this.load.image("pig", "assets/images/pig.png");
         this.load.image("purple-dino", "assets/images/purple-dino.png");
-
-        this.make
-            .graphics({ x: 0, y: 0 })
-            .fillStyle(0xff0000, 1)
-            .fillCircle(7, 7, 7)
-            .generateTexture("flaktulence", 14, 14)
-            .destroy();
     }
 
     create() {

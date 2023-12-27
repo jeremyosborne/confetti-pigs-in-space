@@ -41,5 +41,4 @@ and, point browser to:
 
 ## TODO
 
-* [ ] Update with better looking assets.
 * [ ] Rebuild and post when the game is visibly different.
