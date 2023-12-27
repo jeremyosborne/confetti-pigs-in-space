@@ -38,7 +38,6 @@ and, point browser to:
 * [Phaser 3](http://phaser.io) game engine.
 * [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for sound effects.
 * [Borderline (Fantastic Vamps : 8-Bit Mix)](http://dig.ccmixter.org/files/vamps/8749) for background music.
-* [Hubble Unmasks Ghost Galaxies](http://hubblesite.org/newscenter/archive/releases/2012/26/image/b/) as background image.
 
 ## TODO
 
