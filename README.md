@@ -1,7 +1,5 @@
 # confetti pigs in space
 
-Current version of code should be hosted on this project's github pages at http://jeremyosborne.github.io/shootdown.
-
 I originally made this game for my son, and then I played it more than he did.
 
 
