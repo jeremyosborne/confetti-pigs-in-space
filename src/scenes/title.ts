@@ -14,7 +14,7 @@ export class Title extends Scene {
     }
 
     preload() {
-        this.load.image("bg-space", "assets/images/starfield.png");
+        this.load.image("bg-space", "/assets/images/starfield.png");
     }
 
     create() {
@@ -33,7 +33,7 @@ export class Title extends Scene {
             .text(
                 this.sys.game.canvas.width / 2,
                 this.sys.game.canvas.height / 2,
-                "shootdown\n(the pigs in space)",
+                "confetti pigs in space",
                 {
                     color: "#ffffff",
                     font: "bold 42px Arial",

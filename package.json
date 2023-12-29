@@ -1,5 +1,5 @@
 {
-    "name": "shootdown",
+    "name": "confetti-pigs-in-space",
     "version": "0.0.3",
     "description": "An experiment with Phaser.",
     "author": {
@@ -9,18 +9,20 @@
     },
     "license": "UNLICENSED",
     "scripts": {
-        "build": "webpack --mode production",
-        "build:dev": "webpack serve --mode development",
-        "start": "http-server -a localhost -p 4242 `# Host the development versions of our game.`"
+        "clean": "del dist/*",
+        "build": "npm run clean && BUILD_TYPE=production webpack",
+        "start": "webpack-dev-server --open `# Start is dev focused. Use npm run build to produce files suitable for hosting.`"
     },
     "dependencies": {
         "phaser": "3.70.0"
     },
     "devDependencies": {
+        "@tsconfig/node18": "^18.2.1",
         "@types/node": "18.17.1",
         "@types/webpack": "^5.28.5",
-        "@tsconfig/node18": "^18.2.1",
-        "http-server": "^14.1.1",
+        "copy-webpack-plugin": "^11.0.0",
+        "del-cli": "^5.1.0",
+        "html-webpack-plugin": "^5.6.0",
         "prettier": "^3.1.0",
         "ts-loader": "^9.5.1",
         "ts-node": "^10.9.2",

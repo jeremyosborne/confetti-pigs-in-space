@@ -15,23 +15,39 @@
  *     than commonjs.
  *
  */
+import CopyPlugin from "copy-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
-import webpack from "webpack";
+import { Configuration } from "webpack";
 // in case you run into any typescript error when configuring `devServer`
 import "webpack-dev-server";
 
-const config: webpack.Configuration = {
-    entry: "./src/index.ts",
+/** The base folder for source code that needs some sort of transformation. */
+const INPUT_SRC_DIR = path.resolve(path.join(__dirname, "src"));
+/** The base folder for files that need to end up in the final build folder but receive no transformation. */
+const INPUT_STATIC_DIR = path.resolve(path.join(__dirname, "static"));
+/** The base folder where all built code ends up. */
+const OUTPUT_DIR = path.resolve(path.join(__dirname, "dist"));
+
+const config: Configuration = {
     devServer: {
-        hot: true,
-        open: true,
+        client: {
+            overlay: {
+                warnings: false,
+            },
+        },
+        port: 3000,
+        static: OUTPUT_DIR,
     },
-    output: {
-        path: path.resolve(__dirname, "build"),
-        filename: "app.js",
+    devtool:
+        process.env.BUILD_TYPE === "development"
+            ? "eval-source-map"
+            : undefined,
+    // If changing the name of the chunks, also change reference HtmlWebpackPlugin.
+    entry: {
+        game: path.join(INPUT_SRC_DIR, "index.ts"),
     },
-    // Handle this from the command line with --mode {development|production}
-    // mode: "development",
+    mode: (process.env.BUILD_TYPE as Configuration["mode"]) || "production", // "development" | "production"
     module: {
         rules: [
             {
@@ -41,6 +57,32 @@ const config: webpack.Configuration = {
             },
         ],
     },
+    output: {
+        chunkFilename: "[name].chunk.js",
+        filename: "[name].js",
+        path: OUTPUT_DIR,
+        // If you change this, you better check the HTML template hrefs for anything
+        // that assumes publicPath to be what it is, like the site-header.
+        publicPath: "/",
+    },
+    plugins: [
+        new CopyPlugin({
+            patterns: [
+                {
+                    // The `./static` folder contains files that we need
+                    // to have copied over to the build directory.
+                    from: INPUT_STATIC_DIR,
+                    to: OUTPUT_DIR,
+                },
+            ],
+        }),
+        new HtmlWebpackPlugin({
+            // This is required to inject <script> tags into the HTML
+            // with the links to our application code.
+            template: path.join(INPUT_SRC_DIR, "html", "index.html"),
+            chunks: ["game"],
+        }),
+    ],
     resolve: {
         extensions: [".ts", ".js"],
         alias: {

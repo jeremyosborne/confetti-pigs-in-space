@@ -1,8 +1,8 @@
-# shootdown
+# confetti pigs in space
 
 Current version of code should be hosted on this project's github pages at http://jeremyosborne.github.io/shootdown.
 
-A video game for my son, which I played more than he did.
+I originally made this game for my son, and then I played it more than he did.
 
 
 ## Development
@@ -12,19 +12,14 @@ A video game for my son, which I played more than he did.
 * [nvm with shell integration](https://github.com/nvm-sh/nvm?tab=readme-ov-file#deeper-shell-integration).
 * `npm install`
 
-### Modifying code
-
-WIP tooling....
-
-`npx webpack --watch --mode development`
-
-and
+### Development
 
 `npm start`
 
-and, point browser to:
+### Production build
 
-`http://localhost:4242/index.html`
+`npm run build`
+
 
 ## Dev notes
 
@@ -33,12 +28,16 @@ and, point browser to:
 * [Webpack](https://webpack.js.org/) as code bundle-orchestration.
   * Note on choice of webpack: had trouble using rollup or plain tsc with phaser output, so picked out a simple webpack config and things seem to "just work."
 
+
 ## Acknowledgements and Credits
 
 * [Phaser 3](http://phaser.io) game engine.
 * [Tomas Pettersson's sfxr](http://www.drpetter.se/project_sfxr.html) for sound effects.
 * [Borderline (Fantastic Vamps : 8-Bit Mix)](http://dig.ccmixter.org/files/vamps/8749) for background music.
+* ChatGPT, which helped me solve the idiomatic differences during the migration from Phaser 2 to Phaser 3.
+
 
 ## TODO
 
-* [ ] Rebuild and post when the game is visibly different.
+- [ ] Get rid of glitchy first 3 or 4 "flaktulence" renders.
+- [ ] Rebuild and post when the game is visibly different.
