@@ -41,4 +41,4 @@ Test the built files with:
 
 ## TODO
 
-- [ ] Rebuild and post when the game is visibly different.
+- [ ] Rebuild and post when the game is visibly different (prefer automating this process).
