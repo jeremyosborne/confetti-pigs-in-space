@@ -45,7 +45,8 @@ const config: Configuration = {
             : undefined,
     // If changing the name of the chunks, also change reference HtmlWebpackPlugin.
     entry: {
-        game: path.join(INPUT_SRC_DIR, "index.ts"),
+        // See optimization for our import code.
+        game: path.join(INPUT_SRC_DIR, "app", "index.ts"),
     },
     mode: (process.env.BUILD_TYPE as Configuration["mode"]) || "production", // "development" | "production"
     module: {
@@ -56,6 +57,19 @@ const config: Configuration = {
                 exclude: /node_modules/,
             },
         ],
+    },
+    // Split included code, mainly phaser, into a separate chunk named "vendors".
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    // If changing the name of the chunks, also change reference HtmlWebpackPlugin.
+                    name: "vendors",
+                    chunks: "all",
+                },
+            },
+        },
     },
     output: {
         chunkFilename: "[name].chunk.js",
@@ -80,7 +94,7 @@ const config: Configuration = {
             // This is required to inject <script> tags into the HTML
             // with the links to our application code.
             template: path.join(INPUT_SRC_DIR, "html", "index.html"),
-            chunks: ["game"],
+            chunks: ["game", "vendors"],
         }),
     ],
     resolve: {

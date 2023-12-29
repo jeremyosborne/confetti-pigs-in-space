@@ -20,6 +20,10 @@ I originally made this game for my son, and then I played it more than he did.
 
 `npm run build`
 
+Test the built files with:
+
+`npx http-server ./dist`
+
 
 ## Dev notes
 
