@@ -40,6 +40,9 @@ export class Flaktulence extends GameObjects.Sprite {
             .fillPath()
             .createGeometryMask();
         this.setMask(this.mask);
+        // Start off contracted, to fix glitchiness that I found when not initially scald to 0.
+        this.mask.geometryMask.scale = 0;
+        this.scale = 0;
         // Start off "dead" and are managed by the group.
         this.kill();
     }

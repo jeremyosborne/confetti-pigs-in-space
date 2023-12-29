@@ -41,5 +41,4 @@ Test the built files with:
 
 ## TODO
 
-- [ ] Get rid of glitchy first 3 or 4 "flaktulence" renders.
 - [ ] Rebuild and post when the game is visibly different.
