@@ -29,9 +29,11 @@ Test the built files with:
 - [Phaser](https://phaser.io/) as game engine.
 - [Webpack](https://webpack.js.org/) as code bundle-orchestration.
 - Code and artifact organization:
-  - `./src`: processed in some way and become transpiled output.
+  - `./.env.example`: contains documentation of all environment variables that can be passed at build time. The majority of environment variables are for developer convenience are not used during production builds.
+  - `./.env`: if included (presumed via copy-paste from `.env.example`), will be used during build time.
+  - `./src`: contents processed in some way and become transpiled output.
   - `./static`: not processed, but required in the output.'
-    - Game assets (images, sounds, etc.) live in `./static/assets`.
+    - `./static/assets`: game assets (images, sounds, etc.) live here.
       - Use relative references to assets in game, as the final deploy will be in an application document root, not the absolute path of the url.
   - `./dist`: target folder, becomes the application root of the final build.
 - Building code:
@@ -63,4 +65,4 @@ Test the built files with:
 
 ## TODO
 
-...
+- [ ] Add support for build time env vars (for things like debug).

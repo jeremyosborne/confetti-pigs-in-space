@@ -19,6 +19,8 @@ import CopyPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import { Configuration } from "webpack";
+// Support for .env files.
+import Dotenv from "dotenv-webpack";
 // in case you run into any typescript error when configuring `devServer`
 import "webpack-dev-server";
 
@@ -80,6 +82,7 @@ const config: Configuration = {
         // publicPath: "/",
     },
     plugins: [
+        new Dotenv(),
         new CopyPlugin({
             patterns: [
                 {

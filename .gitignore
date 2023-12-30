@@ -1,5 +1,8 @@
 node_modules
 .DS_Store
 
+# Environment variables used during build time, managed by webpack and dot-env
+.env
+
 # Contains browser "ready to run" code
 dist
