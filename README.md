@@ -46,6 +46,10 @@ Test the built files with:
       - To build the code into  `./dist` and then to replace all code in `gh-pages` with the contents of `./dist`.
       - To deploy the code in `gh-pages` document root to the github CDN (or wherever the documents go).
 
+## Game notes
+
+- Phaser is used mainly for rendering and entity management.
+- Phaser arcade physics is used for motion and collision management.
 
 ## Acknowledgements and Credits
 
