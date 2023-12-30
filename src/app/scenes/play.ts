@@ -19,6 +19,7 @@ export class Play extends Scene {
     /** Handle all of the explosions. */
     confettiEmitter: ConfettiEmitter;
 
+    /** Used to shoot down the pigs, a la missile command. */
     flaktulence: GameObjects.Group;
     flaktulenceSpawnNext: number = 0;
 
@@ -26,8 +27,11 @@ export class Play extends Scene {
     level: number = 0;
     levelDisplay: LevelDisplay;
 
+    /** The bad guys. */
     pigs: GameObjects.Group;
     pigSpawnNext: number = 0;
+
+    /** The protagonist. */
     purpleDino: PurpleDino;
 
     scoreKeeper: ScoreKeeper;
@@ -82,20 +86,17 @@ export class Play extends Scene {
             this.sys.game.canvas.height / 2,
         );
 
-        this.pigs = this.add.group();
-        // Enforce a maximum of pigs on the screen.
-        for (let i = 0; i < 10; i++) {
-            this.pigs.add(new Pig(this));
-        }
-        this.pigs.runChildUpdate = true;
+        this.pigs = this.add.group({
+            classType: Pig,
+            maxSize: 10,
+            runChildUpdate: true,
+        });
 
-        // Groups for watching flak.
-        this.flaktulence = this.add.group();
-        // Enforce a maximum of flatulence on the screen.
-        for (var i = 0; i < 10; i++) {
-            this.flaktulence.add(new Flaktulence(this));
-        }
-        this.flaktulence.runChildUpdate = true;
+        this.flaktulence = this.add.group({
+            classType: Flaktulence,
+            maxSize: 10,
+            runChildUpdate: true,
+        });
 
         //
         // Collision detection (begin).
@@ -212,7 +213,7 @@ export class Play extends Scene {
             this.pigSpawnNext < gameTime &&
             Math.min(this.pigs.countActive(), 10) < this.level
         ) {
-            var pig: Pig = this.pigs.getFirstDead() as Pig;
+            var pig: Pig = this.pigs.get() as Pig;
             if (pig) {
                 pig.spawn(this.purpleDino);
             }
@@ -235,7 +236,7 @@ export class Play extends Scene {
 
             if (direction.x || direction.y) {
                 let flaktulence: Flaktulence =
-                    this.flaktulence.getFirstDead(false);
+                    this.flaktulence.get() as Flaktulence;
                 if (flaktulence) {
                     // Spawn behind the dino.
                     flaktulence.spawn(

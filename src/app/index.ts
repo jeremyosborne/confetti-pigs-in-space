@@ -18,6 +18,10 @@ new Game({
     parent: "game-container",
     physics: {
         default: "arcade",
+        arcade: {
+            // TODO: support with dot-env-webpack
+            debug: false,
+        },
     },
     scene: [Title, Play, End],
     type: Phaser.AUTO,
