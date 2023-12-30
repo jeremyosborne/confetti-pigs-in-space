@@ -75,9 +75,9 @@ const config: Configuration = {
         chunkFilename: "[name].chunk.js",
         filename: "[name].js",
         path: OUTPUT_DIR,
-        // If you change this, you better check the HTML template hrefs for anything
-        // that assumes publicPath to be what it is, like the site-header.
-        publicPath: "/",
+        // We need to build in a relative way because our release to github pages ends up
+        // in its own app path.
+        // publicPath: "/",
     },
     plugins: [
         new CopyPlugin({
