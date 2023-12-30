@@ -55,7 +55,10 @@ Test the built files with:
 
 ## Known issues / historical notes
 
+- `.nvmrc` and `package.json#engines` need to be kept in sync manually.
+- `.tsconfig.json` is contorted to support both a node build environment with a `TypeScript` config for `webpack` and the needs of our application.
 - Note on choice of webpack: had trouble using rollup or plain tsc with phaser output, so picked out a simple webpack config and things seem to "just work."
+- `Phaser` will cause `webpack` to complain (appropriately) about artifact size, and I have not investigated tree shaking or partial builds for `Phaser`.
 
 
 ## TODO
