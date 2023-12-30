@@ -14,7 +14,7 @@ export class Title extends Scene {
     }
 
     preload() {
-        this.load.image("bg-space", "/assets/images/starfield.png");
+        this.load.image("bg-space", "assets/images/starfield.png");
     }
 
     create() {
