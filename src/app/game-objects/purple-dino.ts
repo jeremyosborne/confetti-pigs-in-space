@@ -3,7 +3,10 @@ import { GameObjects, Scene, Physics } from "phaser";
 /**
  * The purple dino is the main player.
  */
-export class PurpleDino extends GameObjects.Sprite {
+export class PurpleDino
+    extends GameObjects.Sprite
+    implements IGameObjectUpdate
+{
     body: Physics.Arcade.Body;
 
     constructor(scene: Scene, x: number, y: number) {

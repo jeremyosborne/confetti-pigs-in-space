@@ -3,7 +3,10 @@ import { Display, GameObjects, Scene } from "phaser";
 /**
  * A reusable, general particle emitter we use for explosions the pigs and the dinos.
  */
-export class ConfettiEmitter extends GameObjects.Particles.ParticleEmitter {
+export class ConfettiEmitter
+    extends GameObjects.Particles.ParticleEmitter
+    implements IGameObjectSpawn
+{
     /** Default number of particles. */
     quantity: number;
 
@@ -39,6 +42,12 @@ export class ConfettiEmitter extends GameObjects.Particles.ParticleEmitter {
         this.quantity = 15;
     }
 
+    /**
+     * Create this partical effect.
+     *
+     * @param x game world horizontal point.
+     * @param y game world vertical point.
+     */
     spawn(x: number, y: number) {
         // This seems better than explode or anything else.
         this.emitParticleAt(x, y, this.quantity);

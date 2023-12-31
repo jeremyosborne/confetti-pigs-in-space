@@ -4,7 +4,10 @@ import { Display, GameObjects, Scene, Physics } from "phaser";
  * The deadly flatulence emitted by the purple dino, used to blow up the confetti pigs,
  * and careless dinos.
  */
-export class Flaktulence extends GameObjects.Sprite {
+export class Flaktulence
+    extends GameObjects.Sprite
+    implements IGameObjectUpdate, IGameObjectSpawn
+{
     body: Physics.Arcade.Body;
 
     mask: Display.Masks.GeometryMask;
@@ -59,6 +62,12 @@ export class Flaktulence extends GameObjects.Sprite {
         this.body.enable = false;
     }
 
+    /**
+     * Create this explosion.
+     *
+     * @param x game world horizontal point.
+     * @param y game world vertical point.
+     */
     spawn(x: number, y: number) {
         this.birth = this.scene.time.now;
         // Circular cut out of the image.
@@ -69,8 +78,8 @@ export class Flaktulence extends GameObjects.Sprite {
         this.live();
     }
 
-    update(time: number) {
-        const lifespan = time - this.birth;
+    update(gameTime: number) {
+        const lifespan = gameTime - this.birth;
         // Increase the size of the sprite.
         let sizeRatio: number;
         // Whether we are imploding or exploding.

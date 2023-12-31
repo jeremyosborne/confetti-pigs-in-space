@@ -1,6 +1,6 @@
 import { GameObjects, Scene } from "phaser";
 
-export class LevelDisplay extends GameObjects.Text {
+export class LevelDisplay extends GameObjects.Text implements IGameObjectSpawn {
     constructor(scene: Scene) {
         // No initial text.
         super(scene, 0, 0, "", {

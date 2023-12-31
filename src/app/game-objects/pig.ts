@@ -3,7 +3,10 @@ import { GameObjects, Scene, Physics } from "phaser";
 /**
  * The main antagonists. They chase the purple dino.
  */
-export class Pig extends GameObjects.Sprite {
+export class Pig
+    extends GameObjects.Sprite
+    implements IGameObjectUpdate, IGameObjectSpawn
+{
     body: Physics.Arcade.Body;
     /** Pigs follow the purple dino. */
     target?: GameObjects.Sprite;
@@ -36,6 +39,11 @@ export class Pig extends GameObjects.Sprite {
         this.body.enable = false;
     }
 
+    /**
+     * Create this antagonist.
+     *
+     * @param target what this pig will follow (presumably the player).
+     */
     spawn(target: GameObjects.Sprite) {
         this.target = target;
         // Put the pig in one of the corners of the game and start again.

@@ -3,7 +3,7 @@ import { GameObjects, Scene } from "phaser";
 /**
  * Manages the numbers of the game.
  */
-export class ScoreKeeper extends GameObjects.Text {
+export class ScoreKeeper extends GameObjects.Text implements IGameObjectUpdate {
     /** What is the current high score? */
     highScore: number;
     /** How many live the player should have. */

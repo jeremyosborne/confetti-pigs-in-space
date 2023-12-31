@@ -1,0 +1,44 @@
+//
+// We rely on these types being included via tsconfig.js.
+//
+
+declare global {
+    /**
+     * Game object implements `.update()` method.
+     *
+     * `.update()` is called per frame, or per update cycle, in the event loop, and
+     * when we implement it, we use it to allow the game object to perform self
+     * updates outside of the physics engine or other systems in the game.
+     */
+    interface IGameObjectUpdate {
+        /**
+         * Phaser 3 does not require an update method on game objects, but
+         * does optionally allow it and provides support (via the Scene) for
+         * objects that implement their own update.
+         *
+         * Different objects have different updates. This helps enforce which
+         * type we expect.
+         */
+        update(gameTime: number, delta: number): void;
+    }
+
+    /**
+     * Game object implements the `.spawn()` metehod.
+     *
+     * `.spawn()` is used idiomatically to create an object within the game world and
+     * add it to the life cycle of the game, as well as reset an object that may have
+     * died (a la using up a life).
+     */
+    interface IGameObjectSpawn {
+        /**
+         * Spawn this particular object in the game.
+         *
+         * Idiomatically makes the object "live" if it is not currently live.
+         *
+         * Game objects are allowed to declare arguments specific for their needs.
+         */
+        spawn(...args: Array<any>): void;
+    }
+}
+
+export {};
