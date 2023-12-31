@@ -3,6 +3,7 @@
 // This code must be transpiled before being run.
 //
 
+import { config } from "./config";
 import { Game } from "phaser";
 import { End, Play, Title } from "./scenes";
 
@@ -19,8 +20,7 @@ new Game({
     physics: {
         default: "arcade",
         arcade: {
-            // TODO: support with dot-env-webpack
-            debug: false,
+            debug: config().PHASER_PHYSICS_ARCADE_DEBUG,
         },
     },
     scene: [Title, Play, End],
