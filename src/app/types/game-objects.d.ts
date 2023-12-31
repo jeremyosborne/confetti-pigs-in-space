@@ -39,6 +39,24 @@ declare global {
          */
         spawn(...args: Array<any>): void;
     }
+
+    /**
+     * Game object implements the `.live()` and `.kill()` methods.
+     */
+    interface IGameObjectLiveKill {
+        /**
+         * Idiomatic way to allow add the game object into the management cycle
+         * of the game engine.
+         *
+         * @see spawn for a wrapper that provides setup logic for newly created
+         * objects.
+         */
+        live(): void;
+        /**
+         * Idiomatic way to remove a game object from the management cycle of the game engine.
+         */
+        kill(): void;
+    }
 }
 
 export {};

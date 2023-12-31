@@ -5,7 +5,7 @@ import { GameObjects, Scene, Physics } from "phaser";
  */
 export class PurpleDino
     extends GameObjects.Sprite
-    implements IGameObjectUpdate
+    implements IGameObjectLiveKill, IGameObjectUpdate
 {
     body: Physics.Arcade.Body;
 

@@ -6,7 +6,7 @@ import { Display, GameObjects, Scene, Physics } from "phaser";
  */
 export class Flaktulence
     extends GameObjects.Sprite
-    implements IGameObjectUpdate, IGameObjectSpawn
+    implements IGameObjectLiveKill, IGameObjectSpawn, IGameObjectUpdate
 {
     body: Physics.Arcade.Body;
 

@@ -5,7 +5,7 @@ import { GameObjects, Scene, Physics } from "phaser";
  */
 export class Pig
     extends GameObjects.Sprite
-    implements IGameObjectUpdate, IGameObjectSpawn
+    implements IGameObjectLiveKill, IGameObjectSpawn, IGameObjectUpdate
 {
     body: Physics.Arcade.Body;
     /** Pigs follow the purple dino. */
