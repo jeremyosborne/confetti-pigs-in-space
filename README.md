@@ -70,4 +70,5 @@ Test the built files with:
 
 ## TODO
 
+- [ ] Capture the idioms in types (experiment, both for myself and best way to work with the Phaser types).
 - [ ] Add invincibility on death to the player entity.
