@@ -106,6 +106,9 @@ const config: Configuration = {
             phaser: path.join(__dirname, "/node_modules/phaser/dist/phaser.js"),
         },
     },
+    watchOptions: {
+        ignored: /node_modules/,
+    },
 };
 
 export default config;

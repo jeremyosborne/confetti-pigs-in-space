@@ -65,6 +65,7 @@ Test the built files with:
 - `.tsconfig.json` is contorted to support both a node build environment with a `TypeScript` config for `webpack` and the needs of our application.
 - Note on choice of webpack: had trouble using rollup or plain tsc with phaser output, so picked out a simple webpack config and things seem to "just work."
 - `Phaser` will cause `webpack` to complain (appropriately) about artifact size, and I have not investigated tree shaking or partial builds for `Phaser`.
+- The `.env` file is not watched by webpack dev server. Changes to this file will require a dev-server restart.
 
 
 ## TODO
