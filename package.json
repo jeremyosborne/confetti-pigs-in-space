@@ -26,6 +26,7 @@
         "dotenv-webpack": "^8.0.1",
         "html-webpack-plugin": "^5.6.0",
         "husky": "^8.0.3",
+        "lint-nvmrc-with-engines": "^0.1.2",
         "lint-staged": "^15.2.0",
         "prettier": "^3.1.0",
         "ts-loader": "^9.5.1",
@@ -40,6 +41,11 @@
     },
     "private": true,
     "lint-staged": {
-        "*.{css,js,ts}": "prettier --write"
+        "*.{css,js,ts}": [
+            "prettier --write"
+        ],
+        "{.nvmrc,package.json}": [
+            "lint-nvmrc-with-engines"
+        ]
     }
 }
