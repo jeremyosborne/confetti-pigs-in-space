@@ -11,7 +11,8 @@
     "scripts": {
         "clean": "del dist/*",
         "build": "npm run clean && BUILD_TYPE=production webpack",
-        "start": "webpack-dev-server --open `# Start is dev focused. Use npm run build to produce files suitable for hosting.`"
+        "start": "webpack-dev-server --open `# Start is dev focused. Use npm run build to produce files suitable for hosting.`",
+        "prepare": "husky install"
     },
     "dependencies": {
         "phaser": "3.70.0"
@@ -24,6 +25,8 @@
         "del-cli": "^5.1.0",
         "dotenv-webpack": "^8.0.1",
         "html-webpack-plugin": "^5.6.0",
+        "husky": "^8.0.3",
+        "lint-staged": "^15.2.0",
         "prettier": "^3.1.0",
         "ts-loader": "^9.5.1",
         "ts-node": "^10.9.2",
@@ -35,5 +38,8 @@
     "engines": {
         "node": "=18.17.1"
     },
-    "private": true
+    "private": true,
+    "lint-staged": {
+        "*.{css,js,ts}": "prettier --write"
+    }
 }
