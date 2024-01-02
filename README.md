@@ -70,4 +70,4 @@ Test the built files with:
 
 - [ ] Add invincibility on death to the player entity.
 - [ ] Add event queue, and handle the level change via our custom event queue (for find one in phaser).
-- [ ] Continue to capture the idioms in types (experiment, both for myself and best way to wrestle with how best to use the Phaser objects).
+- [ ] Continue to capture the idioms in types (experiment, wrestle with how best to use the Phaser objects).
