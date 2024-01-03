@@ -4,22 +4,21 @@
 
 declare global {
     /**
-     * Game object implements `.update()` method.
-     *
-     * `.update()` is called per frame, or per update cycle, in the event loop, and
-     * when we implement it, we use it to allow the game object to perform self
-     * updates outside of the physics engine or other systems in the game.
+     * Game object implements the `.live()` and `.kill()` methods.
      */
-    interface IGameObjectUpdate {
+    interface IGameObjectLiveKill {
         /**
-         * Phaser 3 does not require an update method on game objects, but
-         * does optionally allow it and provides support (via the Scene) for
-         * objects that implement their own update.
+         * Idiomatic way to allow add the game object into the management cycle
+         * of the game engine.
          *
-         * Different objects have different updates. This helps enforce which
-         * type we expect.
+         * @see spawn for a wrapper that provides setup logic for newly created
+         * objects.
          */
-        update(gameTime: number, delta: number): void;
+        live(): void;
+        /**
+         * Idiomatic way to remove a game object from the management cycle of the game engine.
+         */
+        kill(): void;
     }
 
     /**
@@ -41,21 +40,22 @@ declare global {
     }
 
     /**
-     * Game object implements the `.live()` and `.kill()` methods.
+     * Game object implements `.update()` method.
+     *
+     * `.update()` is called per frame, or per update cycle, in the event loop, and
+     * when we implement it, we use it to allow the game object to perform self
+     * updates outside of the physics engine or other systems in the game.
      */
-    interface IGameObjectLiveKill {
+    interface IGameObjectUpdate {
         /**
-         * Idiomatic way to allow add the game object into the management cycle
-         * of the game engine.
+         * Phaser 3 does not require an update method on game objects, but
+         * does optionally allow it and provides support (via the Scene) for
+         * objects that implement their own update.
          *
-         * @see spawn for a wrapper that provides setup logic for newly created
-         * objects.
+         * Different objects have different updates. This helps enforce which
+         * type we expect.
          */
-        live(): void;
-        /**
-         * Idiomatic way to remove a game object from the management cycle of the game engine.
-         */
-        kill(): void;
+        update(gameTime: number, delta: number): void;
     }
 }
 
