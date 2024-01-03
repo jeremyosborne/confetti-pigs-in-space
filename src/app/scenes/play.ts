@@ -89,11 +89,7 @@ export class Play extends Scene {
 
         this.confettiEmitter = new ConfettiEmitter(this);
 
-        this.purpleDino = new PurpleDino(
-            this,
-            this.sys.game.canvas.width / 2,
-            this.sys.game.canvas.height / 2,
-        );
+        this.purpleDino = new PurpleDino(this);
 
         this.pigs = this.add.group({
             classType: Pig,
@@ -166,10 +162,6 @@ export class Play extends Scene {
         this.scoreKeeper.livesDecrease();
         this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
         this.sound.play("explosion-dino");
-        purpleDino.setPosition(
-            this.sys.game.canvas.width / 2,
-            this.sys.game.canvas.height / 2,
-        );
     }
 
     /**
@@ -191,6 +183,12 @@ export class Play extends Scene {
             this.scoreKeeper.save();
             this.scene.start(sceneNames.end);
             return;
+        }
+
+        // If we still have lives, and the purple dino is "dead",
+        // respawn.
+        if (this.purpleDino.active === false) {
+            this.purpleDino.spawn();
         }
 
         // The event queue should be short.

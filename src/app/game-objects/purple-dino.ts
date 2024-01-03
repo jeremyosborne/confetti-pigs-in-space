@@ -5,11 +5,18 @@ import { GameObjects, Scene, Physics } from "phaser";
  */
 export class PurpleDino
     extends GameObjects.Sprite
-    implements IGameObjectLiveKill, IGameObjectUpdate
+    implements
+        IGameObjectInvincibility,
+        IGameObjectLiveKill,
+        IGameObjectSpawn,
+        IGameObjectUpdate
 {
     body: Physics.Arcade.Body;
 
-    constructor(scene: Scene, x: number, y: number) {
+    invincible = false;
+    invincibileUntil: number = -Infinity;
+
+    constructor(scene: Scene, x = 0, y = 0) {
         // Inversion of control since the sprites and the scenes need each other,
         // and so we isolate set some scene specific things within the sprite
         // since the sprite also needs to be configured with the scene.
@@ -21,6 +28,8 @@ export class PurpleDino
 
         // Shrink the body size to make collisions a bit more forgiving.
         this.body.setSize(this.width - 6, this.height - 6);
+        // Like most sprites, the player also starts off dead.
+        this.kill();
     }
 
     live() {
@@ -33,6 +42,15 @@ export class PurpleDino
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
+    }
+
+    spawn() {
+        this.live();
+        // We always spawn in the middle of the screen.
+        this.setPosition(
+            this.scene.sys.game.canvas.width / 2,
+            this.scene.sys.game.canvas.height / 2,
+        );
     }
 
     update() {

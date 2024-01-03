@@ -4,6 +4,15 @@
 
 declare global {
     /**
+     * Game object provides an `invincible` flag that will
+     * remove the object from collision detection.
+     */
+    interface IGameObjectInvincibility {
+        /** If true, ignore collision detection. */
+        invincible: boolean;
+    }
+
+    /**
      * Game object implements the `.live()` and `.kill()` methods.
      */
     interface IGameObjectLiveKill {
