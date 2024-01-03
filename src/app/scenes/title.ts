@@ -1,3 +1,4 @@
+import { Starfield } from "../game-objects";
 import { Scene, GameObjects } from "phaser";
 import { sceneNames } from "./scene-names";
 
@@ -5,7 +6,7 @@ import { sceneNames } from "./scene-names";
  * The initial scene of the game.
  */
 export class Title extends Scene {
-    background: GameObjects.TileSprite;
+    background: Starfield;
     marqueeText: GameObjects.Text;
     titleText: GameObjects.Text;
 
@@ -18,16 +19,7 @@ export class Title extends Scene {
     }
 
     create() {
-        this.background = this.add
-            .tileSprite(
-                0,
-                0,
-                this.sys.game.canvas.width,
-                this.sys.game.canvas.height,
-                "bg-space",
-            )
-            // This works because normal origin is 0.5, not the upper left of the screen.
-            .setOrigin(0, 0);
+        this.background = new Starfield(this);
 
         this.titleText = this.add
             .text(
@@ -75,6 +67,6 @@ export class Title extends Scene {
     update() {
         this.marqueeText.x -= 3;
 
-        this.background.tilePositionY += 0.5;
+        this.background.update();
     }
 }

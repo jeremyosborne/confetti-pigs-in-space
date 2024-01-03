@@ -1,4 +1,4 @@
-import { ScoreKeeper } from "../game-objects";
+import { ScoreKeeper, Starfield } from "../game-objects";
 import { Scene, GameObjects } from "phaser";
 import { sceneNames } from "./scene-names";
 
@@ -6,7 +6,7 @@ import { sceneNames } from "./scene-names";
  * The game over and high score scene.
  */
 export class End extends Scene {
-    background: GameObjects.TileSprite;
+    background: Starfield;
     titleText: GameObjects.Text;
 
     constructor() {
@@ -18,16 +18,7 @@ export class End extends Scene {
     }
 
     create() {
-        this.background = this.add
-            .tileSprite(
-                0,
-                0,
-                this.sys.game.canvas.width,
-                this.sys.game.canvas.height,
-                "bg-space",
-            )
-            // This works because normal origin is 0.5, not the upper left of the screen.
-            .setOrigin(0, 0);
+        this.background = new Starfield(this);
 
         let text = "The End.\nClick to play again";
         if (ScoreKeeper.savedScoreIsHigh()) {
@@ -56,6 +47,6 @@ export class End extends Scene {
     }
 
     update() {
-        this.background.tilePositionY += 0.5;
+        this.background.update();
     }
 }

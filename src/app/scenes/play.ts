@@ -6,6 +6,7 @@ import {
     Pig,
     PurpleDino,
     ScoreKeeper,
+    Starfield,
 } from "../game-objects";
 import { sceneNames } from "./scene-names";
 
@@ -14,7 +15,7 @@ import { sceneNames } from "./scene-names";
  */
 export class Play extends Scene {
     /** Background moves with the player, need to hold a reference to it. */
-    background: GameObjects.TileSprite;
+    background: Starfield;
 
     /** Handle all of the explosions. */
     confettiEmitter: ConfettiEmitter;
@@ -77,16 +78,7 @@ export class Play extends Scene {
         /** Game objects can push events into the update event queue via this listener. */
         this.events.addListener("updateEvent", this.updateEventCallback, this);
 
-        this.background = this.add
-            .tileSprite(
-                0,
-                0,
-                this.sys.game.canvas.width,
-                this.sys.game.canvas.height,
-                "bg-space",
-            )
-            // This works because normal origin is 0.5, not the upper left of the screen.
-            .setOrigin(0, 0);
+        this.background = new Starfield(this);
 
         this.scoreKeeper = new ScoreKeeper(this, 32, 32);
         this.levelDisplay = new LevelDisplay(this);
@@ -213,18 +205,11 @@ export class Play extends Scene {
         } while (this.updateEventQueue.length);
 
         // Perform normal sprite updates, either directly or via group.
+        this.background.update();
         this.purpleDino.update();
         this.scoreKeeper.update();
         this.pigs.preUpdate(gameTime, delta);
         this.flaktulence.preUpdate(gameTime, delta);
-
-        // Move the background tiles relative to the player movement.
-        let backgroundScroll = new PhaserMath.Vector2(
-            this.purpleDino.body.velocity.x,
-            this.purpleDino.body.velocity.y,
-        ).normalize();
-        this.background.tilePositionX += backgroundScroll.x / 3;
-        this.background.tilePositionY += backgroundScroll.y / 3;
 
         // Handle spawning of pigs relative to the level of the game
         // and the total number of pigs we allow on screen.
