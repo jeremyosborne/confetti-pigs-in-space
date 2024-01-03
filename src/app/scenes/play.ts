@@ -23,8 +23,6 @@ export class Play extends Scene {
     flaktulence: GameObjects.Group;
     flaktulenceSpawnNext: number = 0;
 
-    /** XXX: We hold onto a local reference to the current level since the score keeper doesn't (yet) emit an event on level change. */
-    level: number = 0;
     levelDisplay: LevelDisplay;
 
     /** The bad guys. */
@@ -35,6 +33,9 @@ export class Play extends Scene {
     purpleDino: PurpleDino;
 
     scoreKeeper: ScoreKeeper;
+
+    /** Scene specific events handled within the update cycle of the scene. */
+    updateEventQueue: Array<UpdateEventDataLevelChange> = [];
 
     constructor() {
         super({ key: sceneNames.play });
@@ -59,7 +60,23 @@ export class Play extends Scene {
         this.load.image("purple-dino", "assets/images/purple-dino.png");
     }
 
+    /** Handle the updateEvents. */
+    updateEventCallback(eventData: UpdateEventDataLevelChange) {
+        console.log("updateEventCallback eventData", eventData);
+        if (eventData.type === "levelChange") {
+            this.updateEventQueue.push(eventData);
+        } else {
+            console.warn(
+                "unknown event data passed to updateEventCallback:",
+                eventData,
+            );
+        }
+    }
+
     create() {
+        /** Game objects can push events into the update event queue via this listener. */
+        this.events.addListener("updateEvent", this.updateEventCallback, this);
+
         this.background = this.add
             .tileSprite(
                 0,
@@ -154,7 +171,7 @@ export class Play extends Scene {
     killPurpleDino(purpleDino: PurpleDino) {
         // Kill the player and reset on death.
         // TODO: provide moment of invincibility, or enemy detection, or some level of forgiveness to prevent a death chain.
-        this.scoreKeeper.decreaseLives();
+        this.scoreKeeper.livesDecrease();
         this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
         this.sound.play("explosion-dino");
         purpleDino.setPosition(
@@ -172,7 +189,7 @@ export class Play extends Scene {
         this.sound.play("explosion-pig");
         pig.kill();
         // Destroyed pigs provide a point.
-        this.scoreKeeper.addScore(1);
+        this.scoreKeeper.scoreIncrease(1);
     }
 
     update(gameTime: number, delta: number) {
@@ -181,7 +198,19 @@ export class Play extends Scene {
         if (this.scoreKeeper.lives <= 0) {
             this.scoreKeeper.save();
             this.scene.start(sceneNames.end);
+            return;
         }
+
+        // The event queue should be short.
+        do {
+            const event = this.updateEventQueue.shift();
+            if (!event) {
+                continue;
+            }
+            if (event.type === "levelChange") {
+                this.levelDisplay.spawn(event.level);
+            }
+        } while (this.updateEventQueue.length);
 
         // Perform normal sprite updates, either directly or via group.
         this.purpleDino.update();
@@ -197,13 +226,6 @@ export class Play extends Scene {
         this.background.tilePositionX += backgroundScroll.x / 3;
         this.background.tilePositionY += backgroundScroll.y / 3;
 
-        // XXX: scorekeeper should probably emit the level change as an event.
-        const currentLevel = this.scoreKeeper.currentLevel();
-        if (currentLevel > this.level) {
-            this.level = currentLevel;
-            this.levelDisplay.spawn(this.level);
-        }
-
         // Handle spawning of pigs relative to the level of the game
         // and the total number of pigs we allow on screen.
         if (this.pigSpawnNext === 0) {
@@ -211,7 +233,8 @@ export class Play extends Scene {
             this.pigSpawnNext = gameTime + 800;
         } else if (
             this.pigSpawnNext < gameTime &&
-            Math.min(this.pigs.countActive(), 10) < this.level
+            Math.min(this.pigs.countActive(), 10) <
+                this.scoreKeeper.levelCurrent
         ) {
             var pig: Pig = this.pigs.get() as Pig;
             if (pig) {
