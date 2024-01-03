@@ -63,7 +63,6 @@ export class Play extends Scene {
 
     /** Handle the updateEvents. */
     updateEventCallback(eventData: UpdateEventDataLevelChange) {
-        console.log("updateEventCallback eventData", eventData);
         if (eventData.type === "levelChange") {
             this.updateEventQueue.push(eventData);
         } else {
@@ -157,11 +156,12 @@ export class Play extends Scene {
      * sound effects, explosion effect, and scoring.
      */
     killPurpleDino(purpleDino: PurpleDino) {
-        // Kill the player and reset on death.
-        // TODO: provide moment of invincibility, or enemy detection, or some level of forgiveness to prevent a death chain.
-        this.scoreKeeper.livesDecrease();
-        this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
-        this.sound.play("explosion-dino");
+        if (!this.purpleDino.invincible) {
+            this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
+            this.sound.play("explosion-dino");
+            this.purpleDino.kill();
+            this.scoreKeeper.livesDecrease();
+        }
     }
 
     /**
@@ -185,8 +185,7 @@ export class Play extends Scene {
             return;
         }
 
-        // If we still have lives, and the purple dino is "dead",
-        // respawn.
+        // If we still have lives, and the purple dino is "dead", respawn.
         if (this.purpleDino.active === false) {
             this.purpleDino.spawn();
         }

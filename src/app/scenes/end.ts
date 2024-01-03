@@ -21,7 +21,7 @@ export class End extends Scene {
         this.background = new Starfield(this);
 
         let text = "The End.\nClick to play again";
-        if (ScoreKeeper.savedScoreIsHigh()) {
+        if (ScoreKeeper.scoreSavedIsHigh()) {
             text = "You got the high score!\n" + text;
         }
         this.titleText = this.add

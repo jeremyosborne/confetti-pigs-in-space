@@ -1,4 +1,4 @@
-import { GameObjects, Scene, Physics } from "phaser";
+import { GameObjects, Physics, Scene, Tweens } from "phaser";
 
 /**
  * The purple dino is the main player.
@@ -14,7 +14,7 @@ export class PurpleDino
     body: Physics.Arcade.Body;
 
     invincible = false;
-    invincibileUntil: number = -Infinity;
+    invincibleTween: Tweens.Tween;
 
     constructor(scene: Scene, x = 0, y = 0) {
         // Inversion of control since the sprites and the scenes need each other,
@@ -26,10 +26,28 @@ export class PurpleDino
         // For collision detection.
         scene.physics.add.existing(this);
 
+        this.invincibleTween = this.scene.tweens.add({
+            targets: this,
+            alpha: { from: 0.3, to: 1 },
+            ease: "Linear",
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+        });
+        this.invincibleTween.pause();
+
         // Shrink the body size to make collisions a bit more forgiving.
         this.body.setSize(this.width - 6, this.height - 6);
         // Like most sprites, the player also starts off dead.
         this.kill();
+    }
+
+    /** Turn off invincibility. */
+    invincibilityOff() {
+        this.invincible = false;
+        // Depending on where the tween ends, we need to reset our transparency.
+        this.alpha = 1;
+        this.invincibleTween.pause();
     }
 
     live() {
@@ -46,7 +64,17 @@ export class PurpleDino
 
     spawn() {
         this.live();
-        // We always spawn in the middle of the screen.
+        // A moment of invincibility when we spawn.
+        this.invincible = true;
+        this.invincibleTween.resume();
+        this.scene.time.addEvent({
+            delay: 3000,
+            callback: this.invincibilityOff,
+            callbackScope: this,
+        });
+
+        // We always spawn in the middle of the screen, which might
+        // be filled with flaktulence, hence the invincibility.
         this.setPosition(
             this.scene.sys.game.canvas.width / 2,
             this.scene.sys.game.canvas.height / 2,

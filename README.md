@@ -66,9 +66,3 @@ Test the built files with:
   - `.env`
   - `./src/app/types/*` global types
 - The game code does not watch resize events.
-
-
-## TODO
-
-- [ ] Add invincibility on death to the player entity.
-- [ ] Continue to capture the idioms in types (experiment, wrestle with how best to use the Phaser objects).

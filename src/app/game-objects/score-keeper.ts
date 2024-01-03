@@ -35,10 +35,6 @@ export class ScoreKeeper extends GameObjects.Text implements IGameObjectUpdate {
         return Math.floor(this.score / this.scorePerLevel) + 1;
     }
 
-    scoreIncrease(n = 1) {
-        this.score += n;
-    }
-
     livesDecrease(n = 1) {
         this.lives -= n;
     }
@@ -51,7 +47,11 @@ export class ScoreKeeper extends GameObjects.Text implements IGameObjectUpdate {
         );
     }
 
-    static savedScoreIsHigh() {
+    scoreIncrease(n = 1) {
+        this.score += n;
+    }
+
+    static scoreSavedIsHigh() {
         let score = parseInt(localStorage.getItem("score"), 10);
         let highScore = parseInt(localStorage.getItem("highScore"), 10);
         return score > highScore;
