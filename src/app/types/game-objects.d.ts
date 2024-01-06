@@ -23,11 +23,11 @@ declare global {
          * @see spawn for a wrapper that provides setup logic for newly created
          * objects.
          */
-        live(): void;
+        live(thisArg: unknown): void;
         /**
          * Idiomatic way to remove a game object from the management cycle of the game engine.
          */
-        kill(): void;
+        kill(thisArg: unknown): void;
     }
 
     /**

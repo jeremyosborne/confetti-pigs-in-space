@@ -45,8 +45,8 @@ export class Pig
      * @param target what this pig will follow (presumably the player).
      */
     spawn(target: GameObjects.Sprite) {
+        // Put the pig in one of the corners of the game and send it after the player.
         this.target = target;
-        // Put the pig in one of the corners of the game and start again.
         this.setPosition(
             Math.random() > 0.5 ? 0 : this.scene.sys.game.canvas.width,
             Math.random() > 0.5 ? 0 : this.scene.sys.game.canvas.height,
