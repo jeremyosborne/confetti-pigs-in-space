@@ -43,6 +43,8 @@
                 style="width: 30px; height: 30px; display: block"
             />
         </noscript>
+
+        <!-- Fake BIOS loading screen (begin) -->
         <div
             id="loading"
             style="
@@ -50,10 +52,55 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                background-color: black;
             "
         >
-            <p>Loading...</p>
+            <div
+                style="
+                    height: 480px;
+                    max-height: 100%;
+                    width: 640px;
+                    max-width: 100%;
+                    font-family:
+                        Courier New,
+                        monospace;
+                    background-color: #0000aa;
+                    color: #ffffff;
+                    padding: 20px;
+                    overflow-y: auto;
+                    white-space: pre;
+                "
+            >
+                <p style="margin: 0; font-size: 14px; line-height: 1.5">
+                    Plague King BIOS Loaded
+                </p>
+                <p style="margin: 0; font-size: 14px; line-height: 1.5">
+                    Querying interwebs for assets...<span id="loading-cursor"
+                        >|</span
+                    >
+                </p>
+            </div>
         </div>
+        <script>
+            (function () {
+                const display = ["/", "-", "\\", "|"];
+                let index = 0;
+                const repeat = display.length;
+                const loadingCursor = document.getElementById("loading-cursor");
+                const loading = document.getElementById("loading");
+                const spin = () => {
+                    loadingCursor.innerHTML = display[index % repeat];
+                    index += 1;
+                    // Depends on external code "turning off" this loading screen by this method.
+                    if (!loading.classList.contains("hidden")) {
+                        setTimeout(spin, 100);
+                    }
+                };
+                setTimeout(spin, 100);
+            })();
+        </script>
+        <!-- Fake BIOS loading screen (end) -->
+
         <div id="game-container" class="hidden" style="height: 100%"></div>
     </body>
 </html>
