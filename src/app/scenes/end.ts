@@ -14,7 +14,7 @@ export class End extends Scene {
     }
 
     preload() {
-        this.load.image("bg-space", "assets/images/starfield.png");
+        // All assets should be loaded in the title scene.
     }
 
     create() {
