@@ -8,6 +8,8 @@ import { sceneNames } from "./scene-names";
  * Designed with idea that all assets will be loaded up front before the
  * game itself loads, and assets will not be lazy loaded in other
  * spots of the game.
+ *
+ * @see assetConfigs
  */
 export class AssetLoader extends Scene {
     /** The key of the next scene we will transition to after loading. */

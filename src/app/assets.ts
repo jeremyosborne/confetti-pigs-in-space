@@ -1,3 +1,4 @@
+/** Asset identifiers, passed to phaser to reference pre-loaded assets. */
 export enum AssetNames {
     "bgMusic" = "bgMusic",
     "explosionFlaktulence" = "explosionFlaktulence",
@@ -11,6 +12,11 @@ export enum AssetNames {
     "purpleDino" = "purpleDino",
 }
 
+/**
+ * Assets that will be preloaded before the game begins.
+ *
+ * @see AssetLoader
+ */
 export const assetConfigs: Record<AssetNames, AssetLoaderConfig> = {
     //
     // Audio
