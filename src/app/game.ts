@@ -5,7 +5,7 @@
 
 import { config } from "./config";
 import { Game } from "phaser";
-import { End, Play, Title } from "./scenes";
+import { AssetLoader, End, Play, Title } from "./scenes";
 
 export const main = () => {
     new Game({
@@ -23,7 +23,7 @@ export const main = () => {
                 debug: config().PHASER_PHYSICS_ARCADE_DEBUG,
             },
         },
-        scene: [Title, Play, End],
+        scene: [AssetLoader, Title, Play, End],
         type: Phaser.AUTO,
     });
 };
