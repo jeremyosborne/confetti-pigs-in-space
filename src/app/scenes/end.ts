@@ -13,10 +13,6 @@ export class End extends Scene {
         super({ key: sceneNames.end });
     }
 
-    preload() {
-        // All assets should be loaded in the title scene.
-    }
-
     create() {
         this.background = new Starfield(this);
 

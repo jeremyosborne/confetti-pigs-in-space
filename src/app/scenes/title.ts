@@ -14,44 +14,6 @@ export class Title extends Scene {
         super({ key: sceneNames.title });
     }
 
-    preload() {
-        // Display loading text or a loading bar
-        let loadingText = this.add.text(40, 40, "Loading...", {
-            font: "20px Arial",
-            color: "#ffffff",
-        });
-
-        // Update loading progress
-        this.load.on("progress", (value: number) => {
-            loadingText.setText(
-                `Loading assets... ${Math.floor(value * 100)}%`,
-            );
-        });
-
-        // When everything is loaded, remove the loading text and start the main scene
-        this.load.on("complete", () => {
-            loadingText.destroy();
-        });
-
-        // Load all assets up front.
-        this.load.audio(
-            "bg-music",
-            "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3",
-        );
-        this.load.audio(
-            "explosion-flaktulence",
-            "assets/sounds/flaktulence.wav",
-        );
-        this.load.audio("explosion-pig", "assets/sounds/explosion.wav");
-        this.load.audio("explosion-dino", "assets/sounds/explosion2.wav");
-
-        this.load.image("bg-space", "assets/images/starfield.png");
-        this.load.image("confetti", "assets/images/confetti.png");
-        this.load.image("flaktulence", "assets/images/flaktulence.png");
-        this.load.image("pig", "assets/images/pig.png");
-        this.load.image("purple-dino", "assets/images/purple-dino.png");
-    }
-
     create() {
         this.background = new Starfield(this);
 

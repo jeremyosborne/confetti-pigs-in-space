@@ -1,3 +1,4 @@
+import { assetConfigs } from "../assets";
 import { Scene } from "phaser";
 import { sceneNames } from "./scene-names";
 
@@ -45,21 +46,16 @@ export class AssetLoader extends Scene {
         });
 
         // Load all assets up front.
-        this.load.audio(
-            "bg-music",
-            "assets/music/vamps_-_Borderline_(Fantastic_Vamps_8-Bit_Mix)_shortened.mp3",
-        );
-        this.load.audio(
-            "explosion-flaktulence",
-            "assets/sounds/flaktulence.wav",
-        );
-        this.load.audio("explosion-pig", "assets/sounds/explosion.wav");
-        this.load.audio("explosion-dino", "assets/sounds/explosion2.wav");
-
-        this.load.image("bg-space", "assets/images/starfield.png");
-        this.load.image("confetti", "assets/images/confetti.png");
-        this.load.image("flaktulence", "assets/images/flaktulence.png");
-        this.load.image("pig", "assets/images/pig.png");
-        this.load.image("purple-dino", "assets/images/purple-dino.png");
+        for (const [key, config] of Object.entries(assetConfigs)) {
+            if (config.type === "audio") {
+                this.load.audio(key, config.url);
+            } else if (config.type === "image") {
+                this.load.image(key, config.url);
+            } else {
+                throw new Error(
+                    `${key} has unknown config of ${JSON.stringify(config)}`,
+                );
+            }
+        }
     }
 }

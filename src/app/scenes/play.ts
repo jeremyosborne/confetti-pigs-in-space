@@ -1,3 +1,4 @@
+import { AssetNames } from "../assets";
 import { GameObjects, Math as PhaserMath, Scene } from "phaser";
 import {
     ConfettiEmitter,
@@ -42,10 +43,6 @@ export class Play extends Scene {
         super({ key: sceneNames.play });
     }
 
-    preload() {
-        // All assets should be loaded in the title scene.
-    }
-
     /** Handle the updateEvents. */
     updateEventCallback(eventData: UpdateEventDataLevelChange) {
         if (eventData.type === "levelChange") {
@@ -69,7 +66,7 @@ export class Play extends Scene {
 
         // Start background music.
         this.sound.stopAll();
-        this.sound.play("bg-music", { volume: 0.25, loop: true });
+        this.sound.play(AssetNames.bgMusic, { volume: 0.25, loop: true });
 
         this.confettiEmitter = new ConfettiEmitter(this);
 
@@ -143,7 +140,7 @@ export class Play extends Scene {
     killPurpleDino(purpleDino: PurpleDino) {
         if (!this.purpleDino.invincible) {
             this.confettiEmitter.spawn(purpleDino.x, purpleDino.y);
-            this.sound.play("explosion-dino");
+            this.sound.play(AssetNames.explosionDino);
             this.purpleDino.kill();
             this.scoreKeeper.livesDecrease();
         }
@@ -155,7 +152,7 @@ export class Play extends Scene {
      */
     killPig(pig: Pig) {
         this.confettiEmitter.spawn(pig.x, pig.y);
-        this.sound.play("explosion-pig");
+        this.sound.play(AssetNames.explosionPig);
         pig.kill();
         // Destroyed pigs provide a point.
         this.scoreKeeper.scoreIncrease(1);
@@ -233,7 +230,7 @@ export class Play extends Scene {
                         this.purpleDino.x - direction.x * 40,
                         this.purpleDino.y - direction.y * 40,
                     );
-                    this.sound.play("explosion-flaktulence");
+                    this.sound.play(AssetNames.explosionFlaktulence);
                     this.flaktulenceSpawnNext = gameTime + 750;
                 }
             }

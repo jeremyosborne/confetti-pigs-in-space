@@ -1,3 +1,4 @@
+import { AssetNames } from "../assets";
 import { Display, GameObjects, Scene, Physics } from "phaser";
 
 /**
@@ -26,7 +27,7 @@ export class Flaktulence
         // since the sprite also needs to be configured with the scene.
         // Not sure whether I actually like this method or not, but time will tell.
         // super(scene, x, y, scene.textures.get("flaktulence"));
-        super(scene, x, y, "flaktulence");
+        super(scene, x, y, AssetNames.flaktulence);
         scene.add.existing(this);
         // For collision detection.
         scene.physics.add.existing(this);

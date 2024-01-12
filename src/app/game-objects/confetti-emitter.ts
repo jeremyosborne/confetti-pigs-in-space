@@ -1,3 +1,4 @@
+import { AssetNames } from "../assets";
 import { Display, GameObjects, Scene } from "phaser";
 
 /**
@@ -11,7 +12,7 @@ export class ConfettiEmitter
     quantity: number;
 
     constructor(scene: Scene, quantity = 15) {
-        super(scene, 0, 0, "confetti", {
+        super(scene, 0, 0, AssetNames.confetti, {
             // blendMode: "ADD",
             // Whether this emitter constantly emits or not.
             emitting: false,

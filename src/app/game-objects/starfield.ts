@@ -1,3 +1,4 @@
+import { AssetNames } from "../assets";
 import { GameObjects, Scene, Math as PhaserMath } from "phaser";
 
 /**
@@ -14,7 +15,7 @@ export class Starfield
             0,
             scene.sys.game.canvas.width,
             scene.sys.game.canvas.height,
-            "bg-space",
+            AssetNames.bgSpace,
         );
         // This works because normal origin is 0.5, not the upper left of the screen.
         this.setOrigin(0, 0);

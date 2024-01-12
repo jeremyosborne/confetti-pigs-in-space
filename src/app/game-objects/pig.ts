@@ -1,3 +1,4 @@
+import { AssetNames } from "../assets";
 import { GameObjects, Scene, Physics } from "phaser";
 
 /**
@@ -16,7 +17,7 @@ export class Pig
         // and so we isolate set some scene specific things within the sprite
         // since the sprite also needs to be configured with the scene.
         // Not sure whether I actually like this method or not, but time will tell.
-        super(scene, x, y, "pig");
+        super(scene, x, y, AssetNames.pig);
         scene.add.existing(this);
         // For collision detection.
         scene.physics.add.existing(this);

@@ -1,3 +1,4 @@
+import { AssetNames } from "../assets";
 import { GameObjects, Physics, Scene, Tweens } from "phaser";
 
 /**
@@ -21,7 +22,7 @@ export class PurpleDino
         // and so we isolate set some scene specific things within the sprite
         // since the sprite also needs to be configured with the scene.
         // Not sure whether I actually like this method or not, but time will tell.
-        super(scene, x, y, "purple-dino");
+        super(scene, x, y, AssetNames.purpleDino);
         scene.add.existing(this);
         // For collision detection.
         scene.physics.add.existing(this);
