@@ -16,6 +16,7 @@
  *
  */
 import CopyPlugin from "copy-webpack-plugin";
+import FaviconsWebpackPlugin from "favicons-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import { Configuration } from "webpack";
@@ -98,6 +99,14 @@ const config: Configuration = {
             // with the links to our application code.
             template: path.join(INPUT_SRC_DIR, "html", "index.html"),
             chunks: ["app", "vendors"],
+        }),
+        new FaviconsWebpackPlugin({
+            logo: path.join(
+                INPUT_STATIC_DIR,
+                "assets",
+                "images",
+                "purple-dino.png",
+            ),
         }),
     ],
     resolve: {
