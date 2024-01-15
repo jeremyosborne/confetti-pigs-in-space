@@ -65,4 +65,4 @@ Test the built files with:
 - The `webpack dev server` does not watch the following files and will need a manual restart:
   - `.env`
   - `./src/app/types/*` global types
-- The game code does not watch resize events.
+- The game code does not watch browser resize events.
