@@ -1,4 +1,5 @@
 import { GameObjects, Scene } from "phaser";
+import { clientCache } from "../client-cache";
 
 /**
  * Manages the numbers of the game.
@@ -26,7 +27,7 @@ export class ScoreKeeper extends GameObjects.Text implements IGameObjectUpdate {
         this.levelCurrent = 0;
         this.lives = 3;
         this.score = 0;
-        this.highScore = parseInt(localStorage.getItem("highScore"), 10) || 0;
+        this.highScore = clientCache.get("highScore");
         this.scorePerLevel = 4;
     }
 
@@ -40,21 +41,18 @@ export class ScoreKeeper extends GameObjects.Text implements IGameObjectUpdate {
     }
 
     save() {
-        localStorage.setItem("score", this.score.toString());
-        localStorage.setItem(
-            "highScore",
-            Math.max(this.score, this.highScore).toString(),
-        );
+        clientCache.set("score", this.score);
+        clientCache.set("highScore", Math.max(this.score, this.highScore));
     }
 
     scoreIncrease(n = 1) {
         this.score += n;
     }
 
-    static scoreSavedIsHigh() {
-        let score = parseInt(localStorage.getItem("score"), 10);
-        let highScore = parseInt(localStorage.getItem("highScore"), 10);
-        return score > highScore;
+    static scoreIsHigh() {
+        const score = clientCache.get("score");
+        const highScore = clientCache.get("highScore");
+        return score >= highScore;
     }
 
     update() {

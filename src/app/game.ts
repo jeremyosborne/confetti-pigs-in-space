@@ -6,8 +6,12 @@
 import { config } from "./config";
 import { Game } from "phaser";
 import { AssetLoader, End, Play, Title } from "./scenes";
+import { clientCache } from "./client-cache";
 
 export const main = () => {
+    // Get initial data, if any.
+    clientCache.read();
+
     new Game({
         // Idiomatic "full browser" sizing in Phaser3.
         width: window.innerWidth,

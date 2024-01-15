@@ -7,6 +7,7 @@ import { sceneNames } from "./scene-names";
  */
 export class End extends Scene {
     background: Starfield;
+    scoreKeeper: ScoreKeeper;
     titleText: GameObjects.Text;
 
     constructor() {
@@ -17,7 +18,7 @@ export class End extends Scene {
         this.background = new Starfield(this);
 
         let text = "The End.\nClick to play again";
-        if (ScoreKeeper.scoreSavedIsHigh()) {
+        if (ScoreKeeper.scoreIsHigh()) {
             text = "You got the high score!\n" + text;
         }
         this.titleText = this.add
